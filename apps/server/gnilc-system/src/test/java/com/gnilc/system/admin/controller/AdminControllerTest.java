@@ -58,7 +58,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void loginAndUnauthorizedResponsesUseTheRequestLocale() throws Exception {
+    void loginAndExpiredSessionResponsesUseTheRequestLocale() throws Exception {
         mvc.perform(post("/sys/admin/login")
                         .header("Accept-Language", "zh-CN")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -70,7 +70,8 @@ class AdminControllerTest {
                         .header("Accept-Language", "zh-CN"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(20002))
-                .andExpect(jsonPath("$.error").value("未认证。"));
+                .andExpect(jsonPath("$.error").value("登录已过期，请重新登录。"))
+                .andExpect(jsonPath("$.message").value("登录已过期，请重新登录。"));
 
         mvc.perform(post("/sys/admin/login")
                         .header("Accept-Language", "fr-FR")
@@ -91,11 +92,15 @@ class AdminControllerTest {
         mvc.perform(post("/sys/admin/refresh"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(20002))
-                .andExpect(jsonPath("$.error").value("Unauthorized."));
+                .andExpect(jsonPath("$.error")
+                        .value("Your login has expired. Please sign in again."))
+                .andExpect(jsonPath("$.message")
+                        .value("Your login has expired. Please sign in again."));
         mvc.perform(post("/sys/admin/logout").header("X-Refresh-Token", "good"))
                 .andExpect(status().isOk());
         mvc.perform(post("/sys/admin/logout"))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("Unauthorized."));
     }
 
     @Test

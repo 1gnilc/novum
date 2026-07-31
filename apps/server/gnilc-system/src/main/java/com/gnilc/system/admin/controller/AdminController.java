@@ -106,11 +106,11 @@ public class AdminController {
     public ResponseEntity<R<?>> refresh(
             @RequestHeader(value = REFRESH_TOKEN_HEADER, required = false) String refreshToken) {
         if (StringUtils.isBlank(refreshToken)) {
-            return unauthorized();
+            return sessionExpired();
         }
         AdminTokenVo vo = adminService.refresh(refreshToken);
         if (vo == null) {
-            return unauthorized();
+            return sessionExpired();
         }
         return ResponseEntity.ok(R.success(vo));
     }
@@ -185,5 +185,10 @@ public class AdminController {
     private ResponseEntity<R<?>> unauthorized() {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(R.error(ResponseCode.UNAUTHORIZED, messages.get("system.auth.unauthorized")));
+    }
+
+    private ResponseEntity<R<?>> sessionExpired() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(R.error(ResponseCode.UNAUTHORIZED, messages.get("system.auth.session.expired")));
     }
 }

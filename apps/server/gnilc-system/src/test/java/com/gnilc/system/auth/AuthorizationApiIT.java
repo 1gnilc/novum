@@ -149,21 +149,33 @@ class AuthorizationApiIT extends AdminApiTestSupport {
                 .get("/api/sys/admin/user-info")
                 .then()
                 .statusCode(401)
-                .body(equalTo("The access token is invalid or has expired."));
+                .contentType("application/json;charset=UTF-8")
+                .body("code", equalTo(20002))
+                .body("data", equalTo(null))
+                .body("error", equalTo("The access token is invalid or has expired."))
+                .body("message", equalTo("The access token is invalid or has expired."));
 
         given()
                 .header("Authorization", "Bearer sys_admin.not-a-number.value")
                 .get("/api/sys/admin/user-info")
                 .then()
                 .statusCode(401)
-                .body(equalTo("The access token is invalid or has expired."));
+                .contentType("application/json;charset=UTF-8")
+                .body("code", equalTo(20002))
+                .body("data", equalTo(null))
+                .body("error", equalTo("The access token is invalid or has expired."))
+                .body("message", equalTo("The access token is invalid or has expired."));
 
         given()
                 .header("Authorization", bearer(pair.accessToken()) + " trailing")
                 .get("/api/sys/admin/user-info")
                 .then()
                 .statusCode(401)
-                .body(equalTo("The access token is invalid or has expired."));
+                .contentType("application/json;charset=UTF-8")
+                .body("code", equalTo(20002))
+                .body("data", equalTo(null))
+                .body("error", equalTo("The access token is invalid or has expired."))
+                .body("message", equalTo("The access token is invalid or has expired."));
     }
 
     @Test
@@ -223,7 +235,12 @@ class AuthorizationApiIT extends AdminApiTestSupport {
                 .when()
                 .get("/api/sys/admin/user-info")
                 .then()
-                .statusCode(401);
+                .statusCode(401)
+                .contentType("application/json;charset=UTF-8")
+                .body("code", equalTo(20002))
+                .body("data", equalTo(null))
+                .body("error", equalTo("The access token is invalid or has expired."))
+                .body("message", equalTo("The access token is invalid or has expired."));
     }
 
     private void replaceRoles(String managerAuth, String adminId, List<String> roleCodes) {

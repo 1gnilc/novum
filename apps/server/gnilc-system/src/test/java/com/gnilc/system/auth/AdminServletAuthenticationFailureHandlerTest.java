@@ -1,5 +1,7 @@
 package com.gnilc.system.auth;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gnilc.auth.authn.handler.AuthenticationResult;
 import com.gnilc.auth.authn.servlet.context.ServletAuthenticationContext;
 import com.gnilc.common.i18n.I18nMessageService;
@@ -31,9 +33,13 @@ class AdminServletAuthenticationFailureHandlerTest {
                 context,
                 AuthenticationResult.failed(null, new IllegalStateException("backend unavailable")));
 
+        JsonNode body = new ObjectMapper().readTree(response.getContentAsString());
         assertThat(response.getStatus()).isEqualTo(401);
-        assertThat(response.getContentType()).isEqualTo("text/plain;charset=UTF-8");
-        assertThat(response.getContentAsString()).isEqualTo("认证失败。");
+        assertThat(response.getContentType()).isEqualTo("application/json;charset=UTF-8");
+        assertThat(body.get("code").asInt()).isEqualTo(20002);
+        assertThat(body.get("data").isNull()).isTrue();
+        assertThat(body.get("error").asText()).isEqualTo("认证失败。");
+        assertThat(body.get("message").asText()).isEqualTo("认证失败。");
     }
 
     @Test
@@ -48,7 +54,9 @@ class AdminServletAuthenticationFailureHandlerTest {
                 new ServletAuthenticationContext(request, response),
                 AuthenticationResult.failed(null));
 
-        assertThat(response.getContentAsString()).isEqualTo("Authentication failed.");
+        JsonNode body = new ObjectMapper().readTree(response.getContentAsString());
+        assertThat(body.get("error").asText()).isEqualTo("Authentication failed.");
+        assertThat(body.get("message").asText()).isEqualTo("Authentication failed.");
     }
 
     private static I18nMessageService messages() {

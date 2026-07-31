@@ -98,7 +98,9 @@ class AdminAuthApiIT extends AdminApiTestSupport {
                 .post("/api/sys/admin/refresh")
                 .then()
                 .statusCode(401)
-                .body("code", equalTo(20002));
+                .body("code", equalTo(20002))
+                .body("error", equalTo("Your login has expired. Please sign in again."))
+                .body("message", equalTo("Your login has expired. Please sign in again."));
 
         given()
                 .header("Authorization", bearer(secondRefreshedAccessToken))
@@ -121,10 +123,13 @@ class AdminAuthApiIT extends AdminApiTestSupport {
         TokenPair pair = loginAsDefaultAdmin();
 
         given()
+                .header("Accept-Language", "zh-CN")
                 .post("/api/sys/admin/refresh")
                 .then()
                 .statusCode(401)
-                .body("code", equalTo(20002));
+                .body("code", equalTo(20002))
+                .body("error", equalTo("登录已过期，请重新登录。"))
+                .body("message", equalTo("登录已过期，请重新登录。"));
 
         for (String invalidToken : List.of(
                 " ",
