@@ -1,10 +1,10 @@
-# Gnilc Auth
+# Novum
 
 [English](README.md)
 
-Gnilc Auth 是一个面向 Java/Spring 应用的认证与授权框架，提供 RBAC 访问控制能力。项目采用 Maven 多模块结构，提供核心授权抽象、可选 Servlet 认证支持以及面向 RBAC 的实现。
+Novum 是一个面向 Java/Spring 应用的认证与授权框架，提供 RBAC 访问控制能力。项目采用 Maven 多模块结构，提供核心授权抽象、可选 Servlet 认证支持以及面向 RBAC 的实现。
 
-Java 包按职责区分：`com.gnilc.auth.authn.*` 表示认证，`com.gnilc.auth.authz.*` 表示授权，`com.gnilc.system.*` 表示编排认证、授权和 RBAC 资源的系统后台管理模块。`com.gnilc.system.auth.*` 放置后台管理员会话认证和系统访问拒绝响应等 auth adapter。
+Java 包按职责区分：`com.gnilc.auth.authn.*` 表示认证，`com.gnilc.auth.authz.*` 表示授权，`com.gnilc.novum.*` 表示编排认证、授权和 RBAC 资源的系统后台管理模块。`com.gnilc.novum.auth.*` 放置后台管理员会话认证和系统访问拒绝响应等 auth adapter。
 
 ## 模块
 
@@ -14,8 +14,8 @@ Java 包按职责区分：`com.gnilc.auth.authn.*` 表示认证，`com.gnilc.aut
 - `gnilc-auth`：认证与授权模块的 parent/aggregator。
 - `gnilc-auth/gnilc-auth-core`（`gnilc-auth-core`）：访问控制核心注解、决策、权限提供者以及可选 Servlet 认证/授权 adapter。
 - `gnilc-auth/gnilc-auth-rbac`（`gnilc-auth-rbac`）：RBAC 实体、Mapper、服务、Controller、权限提供者和缓存行为。
-- `gnilc-system`：后台管理员资料、会话和系统级 auth 编排。
-- `gnilc-bootstrap`：可执行应用和全应用集成边界。
+- `novum-core`：后台管理员资料、会话和系统级 auth 编排。
+- `novum-bootstrap`：可执行应用和全应用集成边界。
 
 ## 授权核心
 

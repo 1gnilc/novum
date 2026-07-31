@@ -1,6 +1,6 @@
-# Gnilc Auth Monorepo
+# Novum Monorepo
 
-This repository contains the Gnilc Auth product as a pnpm and Turborepo monorepo based on [Vue Vben Admin](https://github.com/vbenjs/vue-vben-admin).
+This repository contains the Novum product as a pnpm and Turborepo monorepo based on [Vue Vben Admin](https://github.com/vbenjs/vue-vben-admin).
 
 ## Applications
 
@@ -26,7 +26,7 @@ pnpm dev:admin
 pnpm dev:server
 ```
 
-The admin UI runs on port `5777` and proxies `/api` requests to the server on port `3666`.
+The admin UI runs on port `5777` and proxies `/api` requests to the server on port `3888`.
 
 ## Build and test
 

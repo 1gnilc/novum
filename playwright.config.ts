@@ -22,7 +22,7 @@ export default defineConfig({
   webServer: [
     {
       command:
-        'pnpm exec cross-env RUN_E2E_SERVER=true mvn --batch-mode --no-transfer-progress -f apps/server/pom.xml -pl :gnilc-bootstrap -am -Dit.test=E2eServerIT -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false verify',
+        'pnpm exec cross-env RUN_E2E_SERVER=true mvn --batch-mode --no-transfer-progress -f apps/server/pom.xml -pl :novum-bootstrap -am -Dit.test=E2eServerIT -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false verify',
       reuseExistingServer: false,
       timeout: 180_000,
       url: `${backendUrl}/api/sys/admin/user-info`,

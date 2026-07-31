@@ -130,9 +130,9 @@ deploy/sql/<script>.sql -> sql/schema/<script>.sql
 当前测试加载方式如下：
 
 - `gnilc-auth-rbac` 的 `RbacSchemaIT` 验证 `01_rbac.sql`、`03_framework_permissions.sql` 和 `04_rbac_permissions.sql`，其他模块集成测试只加载 `01_rbac.sql`；
-- `gnilc-system` 的 Schema 集成测试验证 `02_admin.sql`、`05_admin_permissions.sql`、`06_i18n.sql` 和 `07_rbac_admin.sql`，包括上一版结构补列与重复执行；其他模块集成测试依次加载 `01_rbac.sql`、`02_admin.sql`；
-- `gnilc-system` 的 Admin API 测试恢复基线数据时会重新执行 `02_admin.sql` 至 `07_rbac_admin.sql`，确保全库清理后框架、RBAC、后台管理员和国际化权限均恢复到真实部署基线；
-- `gnilc-bootstrap` 只验证最终应用组合和启动，不再复制或执行部署 SQL。
+- `novum-core` 的 Schema 集成测试验证 `02_admin.sql`、`05_admin_permissions.sql`、`06_i18n.sql` 和 `07_rbac_admin.sql`，包括上一版结构补列与重复执行；其他模块集成测试依次加载 `01_rbac.sql`、`02_admin.sql`；
+- `novum-core` 的 Admin API 测试恢复基线数据时会重新执行 `02_admin.sql` 至 `07_rbac_admin.sql`，确保全库清理后框架、RBAC、后台管理员和国际化权限均恢复到真实部署基线；
+- `novum-bootstrap` 只验证最终应用组合和启动，不再复制或执行部署 SQL。
 
 测试数据库固定为 Testcontainers 创建的 `gnilc_auth_test`，测试不会使用 H2、本机 MySQL、开发数据库或共享数据库。
 

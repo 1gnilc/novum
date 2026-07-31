@@ -13,8 +13,8 @@
       "type": "java",
       "name": "Server: Spring Boot",
       "request": "launch",
-      "mainClass": "com.gnilc.bootstrap.AccessControlApplication",
-      "projectName": "gnilc-bootstrap",
+      "mainClass": "com.gnilc.novum.NovumBootApplication",
+      "projectName": "novum-bootstrap",
       "cwd": "${workspaceFolder}/apps/server",
       "args": "--spring.profiles.active=dev"
     }

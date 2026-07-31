@@ -1,10 +1,10 @@
-# Gnilc Auth
+# Novum
 
 [中文文档](README.zh-CN.md)
 
-Gnilc Auth is a Java/Spring authentication and authorization framework with RBAC-based access control support. It is organized as a multi-module Maven project and provides core authorization abstractions, optional Servlet authentication support, and an RBAC-oriented implementation.
+Novum is a Java/Spring authentication and authorization framework with RBAC-based access control support. It is organized as a multi-module Maven project and provides core authorization abstractions, optional Servlet authentication support, and an RBAC-oriented implementation.
 
-Packages remain purpose-specific: `com.gnilc.auth.authn.*` is authentication, `com.gnilc.auth.authz.*` is authorization, and `com.gnilc.system.*` is the system administration module that coordinates authentication, authorization, and RBAC resources. `com.gnilc.system.auth.*` contains the system-administration auth adapters for admin-session authentication and system access-denied responses.
+Packages remain purpose-specific: `com.gnilc.auth.authn.*` is authentication, `com.gnilc.auth.authz.*` is authorization, and `com.gnilc.novum.*` is the system administration module that coordinates authentication, authorization, and RBAC resources. `com.gnilc.novum.auth.*` contains the system-administration auth adapters for admin-session authentication and system access-denied responses.
 
 ## Modules
 
@@ -14,8 +14,8 @@ Packages remain purpose-specific: `com.gnilc.auth.authn.*` is authentication, `c
 - `gnilc-auth`: parent/aggregator for authentication and authorization modules.
 - `gnilc-auth/gnilc-auth-core` (`gnilc-auth-core`): core access-control annotations, decisions, permission providers, and optional Servlet authentication/authorization adapters.
 - `gnilc-auth/gnilc-auth-rbac` (`gnilc-auth-rbac`): RBAC entities, mappers, services, controllers, permission providers, and cache behavior.
-- `gnilc-system`: administrator profiles, sessions, and system-level auth composition.
-- `gnilc-bootstrap`: executable application and whole-application integration boundary.
+- `novum-core`: administrator profiles, sessions, and system-level auth composition.
+- `novum-bootstrap`: executable application and whole-application integration boundary.
 
 ## Authorization core
 

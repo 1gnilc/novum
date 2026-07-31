@@ -11,8 +11,8 @@ const tasks = {
   build: [[...commonArgs, '-DskipTests', 'package']],
   clean: [[...commonArgs, 'clean']],
   dev: [
-    [...commonArgs, '-DskipTests', 'package'],
-    [...commonArgs, '-pl', 'gnilc-bootstrap', 'spring-boot:run'],
+    [...commonArgs, '-DskipTests', 'install'],
+    [...commonArgs, '-pl', 'novum-bootstrap', 'spring-boot:run'],
   ],
   test: [[...commonArgs, 'test']],
   typecheck: [[...commonArgs, '-DskipTests', 'compile']],

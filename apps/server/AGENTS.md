@@ -13,7 +13,7 @@
 - Treat `AccessContextAdapter` as the execution-environment boundary. Environment, identity, and target resolvers are optional helpers used to construct the context.
 - Granted- and required-permission providers must opt into the current access environment so unrelated environments do not contribute permissions to one decision.
 - Use `Web*` for functional Servlet entry points and configuration; use `Servlet*` for concrete types that depend on the Jakarta Servlet API.
-- Keep system-specific authentication, authorization, RBAC, and administration adapters under `com.gnilc.system.*`; do not move them into the framework-neutral auth core.
+- Keep system-specific authentication, authorization, RBAC, and administration adapters under `com.gnilc.novum.*`; do not move them into the framework-neutral auth core.
 
 ## Session Boundaries
 
