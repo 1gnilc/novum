@@ -1,4 +1,4 @@
-# Gnilc Auth Monorepo
+# Novum Monorepo
 
 本仓库以 [Vue Vben Admin](https://github.com/vbenjs/vue-vben-admin) 的 pnpm + Turborepo 工具链为基础，包含两个核心应用：
 
@@ -24,7 +24,7 @@ pnpm dev:admin
 pnpm dev:server
 ```
 
-管理后台运行在 `5777` 端口，并将 `/api` 请求代理到 `3666` 端口的服务端。
+管理后台运行在 `5777` 端口，并将 `/api` 请求代理到 `3888` 端口的服务端。
 
 ## 构建和测试
 

@@ -17,8 +17,8 @@ import { useAuthStore } from '#/store';
 import LoginForm from '#/views/_core/authentication/login.vue';
 
 const notifications = ref<NotificationItem[]>([]);
-const projectUrl = 'https://github.com/gnil0416/auth';
-const projectIssuesUrl = 'https://github.com/gnil0416/auth/issues';
+const projectUrl = 'https://github.com/1gnilc/novum';
+const projectIssuesUrl = 'https://github.com/1gnilc/novum/issues';
 
 const router = useRouter();
 const userStore = useUserStore();

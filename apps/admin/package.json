@@ -1,11 +1,11 @@
 {
   "name": "@app/admin",
   "version": "5.7.0",
-  "homepage": "https://github.com/gnil0416/auth",
-  "bugs": "https://github.com/gnil0416/auth/issues",
+  "homepage": "https://github.com/1gnilc/novum",
+  "bugs": "https://github.com/1gnilc/novum/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gnil0416/auth.git",
+    "url": "git+https://github.com/1gnilc/novum.git",
     "directory": "apps/admin"
   },
   "license": "MIT",

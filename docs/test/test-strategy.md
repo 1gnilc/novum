@@ -21,7 +21,7 @@ Only these support layers intentionally do not mirror one production class:
 - module-only context initializers and test applications live in that module's `support` test package;
 - deployment schema tests live beside the module that owns the schema;
 - random-port HTTP flows live beside the module that owns the API;
-- only final whole-application composition and startup checks live in `gnilc-bootstrap`.
+- only final whole-application composition and startup checks live in `novum-bootstrap`.
 
 ## Infrastructure
 

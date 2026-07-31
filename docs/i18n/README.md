@@ -131,7 +131,7 @@ gnilc-auth-rbac:   i18n/rbac/messages.properties
                    i18n/rbac/messages_zh_CN.properties
                    i18n/rbac/messages_en_US.properties
 
-gnilc-system:      i18n/system/messages.properties
+novum-core:      i18n/system/messages.properties
                    i18n/system/messages_zh_CN.properties
                    i18n/system/messages_en_US.properties
 ```
@@ -412,14 +412,14 @@ POST /sys/i18n-message/bundle/admin
 ```json
 {
   "zh-CN": {
-    "pageTitle": "Gnilc Auth 管理端",
+    "pageTitle": "Novum 管理端",
     "loginSubtitle": "请输入后台管理员账号信息",
     "dashboard": {
       "title": "首页"
     }
   },
   "en-US": {
-    "pageTitle": "Gnilc Auth Admin",
+    "pageTitle": "Novum Admin",
     "loginSubtitle": "Enter your administrator account details",
     "dashboard": {
       "title": "Dashboard"

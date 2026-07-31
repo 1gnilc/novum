@@ -1,12 +1,12 @@
 {
-  "name": "gnilc-auth-monorepo",
+  "name": "novum-monorepo",
   "version": "1.0.0",
   "private": true,
   "keywords": [
     "monorepo",
     "turbo",
     "vben",
-    "gnilc auth",
+    "novum",
     "spring boot",
     "vue",
     "vue admin",
@@ -14,9 +14,9 @@
     "vue vben admin pro",
     "vue3"
   ],
-  "homepage": "https://github.com/gnil0416/auth",
-  "bugs": "https://github.com/gnil0416/auth/issues",
-  "repository": "gnil0416/auth.git",
+  "homepage": "https://github.com/1gnilc/novum",
+  "bugs": "https://github.com/1gnilc/novum/issues",
+  "repository": "1gnilc/novum.git",
   "license": "MIT",
   "author": {
     "name": "gnil"

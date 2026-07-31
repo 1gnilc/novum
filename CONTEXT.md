@@ -1,6 +1,6 @@
 # Context Index
 
-Gnilc Auth contains two related domain contexts. Read only the context relevant to the behavior being changed; read both when work crosses authentication or authorization and the administration system.
+Novum contains two related domain contexts. Read only the context relevant to the behavior being changed; read both when work crosses authentication or authorization and the administration system.
 
 ## Contexts
 
@@ -11,7 +11,7 @@ Gnilc Auth contains two related domain contexts. Read only the context relevant 
 
 - `apps/server/gnilc-auth/gnilc-auth-core/**` primarily belongs to Server authentication and authorization.
 - `apps/admin/**` primarily belongs to Admin System.
-- `apps/server/gnilc-system/**` and `apps/server/gnilc-auth/gnilc-auth-rbac/**` serve both contexts: read Server for enforcement behavior and Admin System for administration behavior.
+- `apps/server/novum-core/**` and `apps/server/gnilc-auth/gnilc-auth-rbac/**` serve both contexts: read Server for enforcement behavior and Admin System for administration behavior.
 - `apps/server/deploy/sql/**` may initialize either context; follow the resource being initialized.
 
 ## Relationships

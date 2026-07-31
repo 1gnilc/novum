@@ -4,16 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.gnilc.auth</groupId>
-    <artifactId>gnilc-auth-parent</artifactId>
+    <groupId>com.gnilc.novum</groupId>
+    <artifactId>gnilc-novum</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>gnilc-common</module>
         <module>gnilc-auth</module>
-        <module>gnilc-system</module>
-        <module>gnilc-bootstrap</module>
+        <module>novum-core</module>
+        <module>novum-bootstrap</module>
     </modules>
 
     <properties>
@@ -30,13 +30,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.gnilc.auth</groupId>
+                <groupId>com.gnilc.novum</groupId>
                 <artifactId>gnilc-common-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.gnilc.auth</groupId>
+                <groupId>com.gnilc.novum</groupId>
                 <artifactId>gnilc-common-config</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -58,7 +58,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.gnilc.auth</groupId>
+                <groupId>com.gnilc.novum</groupId>
                 <artifactId>gnilc-test-support</artifactId>
                 <version>${project.version}</version>
             </dependency>

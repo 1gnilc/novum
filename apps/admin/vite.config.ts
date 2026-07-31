@@ -17,7 +17,7 @@ export default defineConfig(async () => {
         proxy: {
           '/api': {
             changeOrigin: true,
-            target: process.env.E2E_API_TARGET ?? 'http://localhost:3666',
+            target: process.env.E2E_API_TARGET ?? 'http://localhost:3888',
             ws: true,
           },
         },

@@ -21,7 +21,7 @@
 
 ```xml
 <dependency>
-    <groupId>com.gnilc.auth</groupId>
+    <groupId>com.gnilc.novum</groupId>
     <artifactId>gnilc-test-support</artifactId>
     <version>${project.version}</version>
     <scope>test</scope>

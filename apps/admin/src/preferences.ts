@@ -19,8 +19,8 @@ export const overridesPreferences = defineOverridesPreferences({
   },
   copyright: {
     ...appCopyrightPreferences,
-    companyName: 'Gnilc',
-    companySiteLink: 'https://github.com/gnil0416/auth',
+    companyName: 'Novum',
+    companySiteLink: 'https://github.com/1gnilc/novum',
     date: '2026',
     enable: false,
     settingShow: false,
