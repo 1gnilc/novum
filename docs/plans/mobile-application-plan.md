@@ -8,7 +8,7 @@
 | 工作分支 | 已从上述提交创建 `codex/feat-mobile-app` |
 | 参考项目 | 已克隆到仓库外 `/Volumes/fc/novum/vant-demo`，当前参考提交 `c382aeba` |
 | 本轮范围 | 只准备分支、参考资料和实施方案，不创建 `apps/mobile`，不安装依赖，不实现功能 |
-| 远端交付 | 不提交、不推送、不创建 PR |
+| 远端交付 | 计划文件只保存在本地提交中；不推送、不创建 PR |
 
 Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./mobile-vant-research.md)。
 
@@ -18,9 +18,9 @@ Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./m
 
 - 在 `apps/mobile` 新增独立的 Vue 3 + TypeScript + Vite 移动端应用。
 - 使用 Vant 4，组件和组件样式都按需加载。
-- 从 `apps/admin` 只继承仓库接入方式、基础构建文件和已经验证的请求刷新机制；移除 Admin UI、RBAC、后端动态路由、偏好设置和管理页面。
+- 从 `apps/admin` 只继承仓库接入方式、基础构建文件、i18n 启动链和已经验证的请求刷新机制；移除 Admin UI、RBAC、后端动态路由、动态翻译、偏好设置和管理页面。
 - 路由全部由前端静态声明。只有 `meta.requiresAuth: true` 的路由产生认证需求，导航永不被认证守卫拦截。
-- 将路由检查、受保护请求预检、401 刷新结果统一写入一个导航作用域内的认证公共态。
+- 将路由检查、受保护请求预检、401 刷新结果统一写入一个当前页面认证上下文内的认证公共态。
 - 全局只挂载一个底部登录询问组件；页面不需要逐个引用它。
 - 离开页面时清理旧页面的认证需求，并阻止旧请求的迟到结果在新页面重新弹窗。
 
@@ -41,7 +41,8 @@ Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./m
 | `.env*`、`index.html` | 复制结构后改名、端口、命名空间、viewport | 保留仓库环境约定，增加移动端安全区前提 |
 | `package.json`、`tsconfig*.json` | 复制结构后精简 | 保留 pnpm/Turbo/TypeScript 接入 |
 | `vite.config.ts` | 重写为 Vant 按需导入配置 | 删除 Element Plus 插件，关闭 Mobile 不使用的 Vben 构建能力 |
-| `src/main.ts`、`src/bootstrap.ts`、`src/app.vue` | 只保留 Vue/Pinia/Router 启动职责并重写 | 去除 preferences、i18n、Element Plus、指令和 Motion |
+| `src/main.ts`、`src/bootstrap.ts`、`src/app.vue` | 保留 Vue/Pinia/Router/i18n 启动职责并重写 | 去除 preferences、Element Plus、Admin 指令和 Motion，保留语言初始化与根应用的 locale 感知 |
+| `src/locales/**` | 保留目录和加载机制，删除 Admin 翻译内容 | Mobile 继续使用 i18n，但只发布 Mobile 实际使用的最小消息键 |
 | `src/api/request.ts` | 保留请求客户端思路并改为认证公共态适配器 | 复用已验证的并发刷新/重放机制 |
 | 其余 `apps/admin/src` | 不复制 | 都属于 Admin UI、Admin Session 页面或 RBAC/动态路由实现 |
 
@@ -58,6 +59,7 @@ Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./m
 | `vue` | dependency | 应用运行时 |
 | `vue-router` | dependency | 纯前端静态路由与非拦截式路由 hook |
 | `@vben/request` | dependency | 复用 RequestClient、统一响应解包、并发 401 刷新与单次重放；它是无 UI 的请求模块 |
+| `@vben/locales` | dependency | 保留 vue-i18n 装配、公共消息加载、语言切换与 `$t`/`useI18n`；不加载 Admin 动态翻译 |
 | `@vueuse/core` | dependency | 保留通用组合式工具，并用于页面标题等实际功能，避免闲置依赖 |
 | `@vue/test-utils` | devDependency | 验证全局认证提示与 RouterView 协作 |
 
@@ -70,12 +72,30 @@ Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./m
 | `@vben/access` | Admin 权限 | Mobile 不生成 RBAC 路由，也不做前端权限码过滤 |
 | `@vben/plugins` | Admin 插件 | 表格、Motion 等插件无使用点 |
 | `@vben/preferences` | Admin 配置 | Mobile 不继承 Admin 偏好设置和布局配置 |
-| `@vben/locales` | Admin 国际化 | 初始最小模块不复制 Admin 多语言资源；未来按 Mobile 产品范围独立引入 |
 | `@vben/hooks` | Admin/Vben hook | `useAppConfig` 改为直接读取类型化的 `import.meta.env`，其余 hook 无使用点 |
 | `@vben/constants` | Admin 常量 | 登录路径等由 Mobile 本地定义，避免隐式绑定 Admin 路由 |
 | `@vben/stores` | Admin 共享状态 | 包含访问码、菜单、标签页和偏好持久化；Mobile 改用本地 Pinia store |
 | `@vben/types` | Admin 类型 | Mobile 使用本地 RouteMeta/认证类型，不暴露 Vben 路由元数据 |
-| `@vben/utils` | 通用工具 | Mobile 没有直接使用点；请求包可保留自己的传递依赖 |
+
+### `@vben/utils` 常用能力评估
+
+`@vben/utils` 是 `packages/utils` 对路由 helper、shared cache、color 和通用 utils 的统一导出，并不等同于 Admin UI。首期仍遵循“有直接使用点才声明直接依赖”；`@vben/request` 自身已经把它作为传递依赖。若 Mobile 使用下列能力，应把 `@vben/utils: workspace:*` 加入直接依赖，不复制实现。
+
+| 能力类别 | 常用导出 | Mobile 可能用途 |
+| --- | --- | --- |
+| 日期与时区 | `formatDate`、`formatDateTime`、`getSystemTimezone`、`setCurrentTimezone` | 统一日期展示和时区处理 |
+| 类型与空值判断 | `isEmpty`、`isNumber`、`isString`、`isHttpUrl`、`isUndefined` | 请求参数、表单和外链校验 |
+| 对象与表单处理 | `trimToNull`、`cloneDeep`、`get`、`set`、`isEqual`、`diff`、`merge` | 登录/资料表单清理、变更比较、配置合并 |
+| 异步与频控 | `to`、`debounce`、`StateHandler` | Promise 错误元组、搜索防抖、等待状态 |
+| 本地缓存 | `StorageManager`、`LocalStorageDriver`、`MemoryStorageDriver`、`IndexedDBDriver` | 带 namespace/TTL 的浏览器存储及测试替身 |
+| 数组与树 | `uniqueByField`、`filterTree`、`mapTree`、`sortTree`、`traverseTreeValues` | 分类、级联选择和树形业务数据 |
+| DOM 与窗口 | `getElementVisibleRect`、`getScrollbarWidth`、`openWindow`、`openRouteInNewWindow`、`loadScript` | 可见区域计算、安全打开链接、外部脚本加载 |
+| 文件处理 | `downloadFileFromUrl`、`downloadFileFromBlob`、`downloadFileFromBase64`、`urlToBase64` | 下载文件、图片和 Blob |
+| 样式与颜色 | `cn`、`updateCSSVariables`、`isDarkColor`、`convertToRgb`、`generatorColorVariables` | class 合并、主题 CSS 变量和颜色转换 |
+| 路由/Admin helper | `mergeRouteModules`、`resetStaticRoutes`、`generateMenus`、`generateRoutesByBackend` | Mobile 当前不使用动态路由或菜单生成 |
+| 加载反馈 | `startProgress`、`stopProgress`、`unmountGlobalLoading` | 当前不保留 NProgress；只有重新启用注入式首屏 loading 时才用 |
+
+当前计划不为了“以后可能用”而直接保留 `@vben/utils`。执行时若登录表单采用 `trimToNull`、令牌持久化改用 `StorageManager`，或页面实际使用上表其他能力，再将其列为保留依赖并补对应测试。
 
 ### 新增
 
@@ -99,12 +119,21 @@ Vant 函数式调用是官方文档中特别提示的使用点。Vite 配置会�
 
 - `session`: `anonymous | authenticated | refreshing`
 - `accessToken`、`refreshToken`: 仅令牌持久化
-- `scopeId`: 每次目标路由导航递增的页面作用域
 - `routeDemand`: 当前目标路由是否声明 `requiresAuth`
-- `requestDemand`: 当前作用域是否发起过 `auth.required` 请求
+- `requestDemand`: 当前页面是否因请求预检或集合内请求的 401 产生认证需求
 - `reason`: `route-required | request-required | session-expired | null`
-- `dismissedScopeId`: 用户取消后，本页面作用域内不重复打扰
+- `promptDismissed`: 用户取消后，本页面内不重复打扰；新导航时重置
 - `targetFullPath`: 点击“前往登录”后的回跳目标
+
+store 的实现内部另有一个不持久化、不对调用方暴露的 `pageRequestKeys: Set<RequestKey>`：
+
+- 主 RequestClient 的每个首次请求由 `trackRequest(config)` 分配稳定 `requestKey` 并加入集合。
+- 刷新后的重放请求沿用原 `requestKey`；如果导航已清空集合，重放不得把旧 key 再加入。
+- 开始进入任一新路由时，store 在同一个 `enterRoute(to)` 操作中清空集合、旧 `requestDemand`、旧 `reason` 和 `promptDismissed`。
+- 401 观察处理器只把请求配置交给 `handleUnauthorized(config)`；是否仍在集合、能否记录页面级登录需求完全由 store 内部判断。
+- RT 刷新使用的基础 client 是全局会话操作，不属于任何页面请求，不调用 `trackRequest`，也不进入集合。
+
+集合表示“由当前页面发起过的请求”，不是 in-flight 请求表，因此正常响应不逐项删除。它只保留短字符串 key，并在每次导航开始时整体清空；这样刷新失败和并发等待队列不需要把内部生命周期泄漏给响应拦截器，也不会误删新页面请求。
 
 `session` 不持久化，而是由已水合的 AT 和瞬时 `refreshing` 标志派生：有 AT 为 `authenticated`，刷新期间为 `refreshing`，否则为 `anonymous`。这样刷新页面后不会出现“令牌已恢复但会话仍是匿名”的双状态；RT 单独存在时不视为已登录。
 
@@ -112,25 +141,30 @@ Vant 函数式调用是官方文档中特别提示的使用点。Vite 配置会�
 
 | 方法 | 调用方 | 行为 |
 | --- | --- | --- |
-| `enterRoute(to)` | 路由 before hook | 新建作用域、清空旧需求，记录静态路由判断；不返回重定向 |
-| `markRouteEntered(scopeId)` | 路由 after hook | 页面进入后才允许显示提示 |
-| `noteProtectedRequest(scopeId)` | 请求拦截器 | 记录当前页面的受保护请求需求；无 AT 时产生 `request-required` |
-| `beginRefresh()` | 401 刷新回调 | 进入 `refreshing`，不弹窗 |
-| `acceptSession(tokens)` | 登录/刷新成功 | 原子更新 AT/RT，清除认证问题 |
-| `expireSession()` | 二次 401/刷新失败 | 清令牌；仅当前页面仍有路由或请求需求时显示 `session-expired` |
-| `dismissPrompt()` | 全局 ActionSheet | 只抑制当前作用域，不伪造已登录状态 |
+| `enterRoute(to)` | 路由 before hook | 清空页面请求集合和旧页面需求，记录静态路由判断；不返回重定向 |
+| `markRouteEntered()` | 路由 after hook | 页面进入后才允许显示提示 |
+| `trackRequest(config)` | 主 client 请求拦截器 | 在内部生成/沿用 key、跟踪首次请求；受保护请求无 AT 时产生 `request-required` |
+| `handleUnauthorized(config)` | 401 观察处理器 | 内部判断请求是否仍属于当前页面；只有集合内请求才能记录当前页面的请求认证需求 |
+| `beginRefresh()` | 401 刷新回调 | 进入全局会话的 `refreshing`，本身不弹窗 |
+| `acceptSession(tokens)` | 登录/刷新成功 | 原子更新 AT/RT 并清除瞬时错误；不删除当前路由声明的需求 |
+| `expireSession()` | 二次 401/刷新失败 | 清理确认失效的令牌；仅当前页面仍有路由或请求需求时产生 `session-expired` |
+| `dismissPrompt()` | 全局 ActionSheet | 只抑制当前页面，不伪造已登录状态 |
 | `clearSession()` | 主动退出 | 清令牌和问题状态 |
 
-`shouldPrompt` 是 store 的派生状态：页面已经进入、会话为 anonymous、当前作用域存在认证需求、且本作用域没有被用户取消。提示组件不自行推导 401 或路由条件。
+`shouldPrompt` 是 store 的派生状态：页面已经进入、会话为 anonymous、当前页面存在认证需求、且本页面没有被用户取消。提示组件不自行推导 401、请求集合或路由条件。
+
+请求集合只门控页面级状态（`requestDemand`、`reason`、`shouldPrompt`），不否认全局会话事实。已经成功返回的新 AT/RT 必须原子保存；服务器明确判定 RT 无效时也必须清令牌，但旧请求不得据此在新公开页发布提示。否则在刷新请求进行中切换页面会丢掉服务器刚轮换的 RT，使下一次请求使用已经失效的旧令牌。
+
+这套接口利用了现有 `authenticateResponseInterceptor`，不修改共享请求包：Mobile 在它之前增加一个只观察并继续抛出 401 的响应拦截器。当前页面的每个 401 会先通过 `handleUnauthorized(config)` 留下请求需求；随后现有拦截器负责并发刷新和单次重放。即使刷新失败回调本身没有请求参数，`expireSession()` 也只会让当前页面已经存在的 demand 生效，旧页面 demand 已在导航时清空。
 
 ### 5.2 路由 hook 不拦截
 
 - 路由声明使用 `meta.requiresAuth?: boolean`，默认 `false`。
 - `beforeEach` 只调用 `enterRoute(to)` 并始终返回 `true`。
-- `afterEach` 在导航成功后调用 `markRouteEntered(scopeId)`；因此用户先进入目标页，再看到底部询问。
-- `to.meta` 只保存 `requiresAuth` 这类静态声明，不回写匿名/过期等运行时结果。hook 的判断结果写入认证公共态的当前 navigation scope，避免路由记录被旧状态污染。
+- `afterEach` 在导航成功后调用 `markRouteEntered()`；因此用户先进入目标页，再看到底部询问。
+- `to.meta` 只保存 `requiresAuth` 这类静态声明，不回写匿名/过期等运行时结果。hook 的判断结果写入认证公共态的当前页面上下文，避免路由记录被旧状态污染。
 - 不请求后端菜单，不动态添加路由，不检查角色或权限码。
-- 导航开始即递增 `scopeId` 并清理旧 demand。请求配置记录发起时的 `scopeId`，迟到结果不能把旧页面的提示带到新页面。
+- 导航开始即由 store 清空页面请求集合和旧 demand。迟到响应携带的 `requestKey` 已不在集合中，因此不能把旧页面的提示带到新页面。
 - 404、登录页和未标记页面默认公开。
 
 ### 5.3 无布局副作用的全局挂载
@@ -148,10 +182,10 @@ Vant 函数式调用是官方文档中特别提示的使用点。Vite 配置会�
 
 - 标题简洁说明需要登录。
 - 主操作“前往登录”：进入公开登录路由，并携带当前 `fullPath` 作为 redirect。
-- 取消操作：关闭并抑制当前页面作用域内的重复提示。
+- 取消操作：关闭并抑制当前页面内的重复提示。
 - 设置 `close-on-click-overlay="false"`，避免点击遮罩被误解为选择；关闭只通过明确的取消操作或路由变化发生。
 - 登录成功：`acceptSession` 后回到合法的站内 redirect；拒绝外部 URL。
-- 路由变化：旧 scope 立即失效，公开页不会继承旧弹窗。
+- 路由变化：旧页面上下文立即清理，公开页不会继承旧弹窗。
 
 ### 5.4 Vant 与安全区
 
@@ -161,23 +195,33 @@ Vant 函数式调用是官方文档中特别提示的使用点。Vite 配置会�
 - 固定底部业务元素后续优先使用 Vant 自带 `safe-area-inset-bottom` 能力；自定义元素才使用 `env(safe-area-inset-bottom)`。
 - Vite 生成 `components.d.ts` 和 `auto-imports.d.ts`，二者纳入版本控制，保证 `vue-tsc` 和编辑器一致。
 
-### 5.5 请求认证语义
+### 5.5 i18n 保留与精简
+
+- `src/main.ts` 保留 locale 初始化入口，`src/bootstrap.ts` 在挂载 Router 前执行 `setupI18n(app)`，`src/app.vue` 保持 locale-aware 的根应用职责。
+- 保留 `@vben/locales` 的 vue-i18n 装配、公共语言消息和 `html[lang]` 同步，不保留 Admin 的数据库动态翻译流程。
+- 保留 `src/locales/index.ts` 和 `src/locales/langs/{en-US,zh-CN}` 目录；删除现有 Admin 翻译内容，只留下 Mobile 首屏、登录询问、登录表单和页面标题实际用到的 key。JSON 文件不可为空文件，最小状态使用合法 `{}` 或实际消息对象。
+- Mobile locale adapter 同步 vue-i18n、Day.js 和 Vant Locale；不再加载 Element Plus 语言包。
+- 默认语言与切换策略由 Mobile 本地配置管理，不为此保留完整 `@vben/preferences`。
+
+### 5.6 请求认证语义
 
 Mobile 在本地扩展 Axios 请求配置：
 
 ```ts
 auth?: {
   required?: boolean;
-  scopeId?: number;
+  requestKey?: string;
 }
 ```
 
 - 公共接口默认不要求登录；受保护接口必须显式传 `auth.required: true`。
-- 请求拦截器先记录当前 `scopeId`。受保护请求没有 AT 时不发出网络请求，写入公共态并抛出可识别的 `AuthenticationRequiredError`。
+- 主 client 的请求拦截器无条件把 config 交给 `trackRequest`。受保护请求没有 AT 时不发出网络请求，store 写入公共态并抛出可识别的 `AuthenticationRequiredError`。
 - 该错误由统一错误处理器静默识别，避免同时出现 Toast 和 ActionSheet。
-- 有 AT 的请求带 Bearer token。401 交给现有 `authenticateResponseInterceptor`：一个刷新请求服务并发 401，刷新成功后重放一次。
-- 重放仍为 401，或 RT 刷新失败时，`expireSession()` 清 AT/RT 并按当前页面需求决定是否提示登录。
-- 刷新接口使用不挂认证响应拦截器的基础 client，避免刷新请求自身递归刷新。
+- 有 AT 的请求带 Bearer token。每个 401 先由观察拦截器调用 `handleUnauthorized(config)`，再交给现有 `authenticateResponseInterceptor`；一个刷新请求服务并发 401，刷新成功后重放一次。
+- 首次 401 只记录当前页面 demand 并进入 `refreshing`，不会立刻弹窗；刷新成功原子更新 AT/RT，重放请求沿用原 `requestKey`。
+- 重放仍为 401，或 RT 刷新失败时，`expireSession()` 清 AT/RT；此时只有当前页面已经存在的路由或请求 demand 能显示登录提示。
+- 观察拦截器和认证拦截器不直接读取或修改页面请求集合；它们只调用 store 接口，集合由下一次导航统一清理。
+- 刷新接口使用不挂页面请求/认证响应拦截器的基础 client，避免刷新请求自身进入集合或递归刷新。
 
 具体会话接口默认沿用仓库现有 Admin Session 合同（登录 `/sys/admin/login`、刷新 `/sys/admin/refresh`、退出 `/sys/admin/logout`，RT 放 `X-Refresh-Token`）。如果 Mobile 面向的不是 Admin User，执行前必须先确认新的身份域和接口合同，不能把路径静默替换成猜测值。
 
@@ -189,33 +233,49 @@ stateDiagram-v2
     Anonymous --> Authenticated: 登录成功 / acceptSession
     Authenticated --> Refreshing: 首次响应 401
     Refreshing --> Authenticated: RT 刷新成功，更新 AT/RT，重放请求
-    Refreshing --> LoginRequired: RT 刷新失败
-    Authenticated --> LoginRequired: 重放请求再次 401
+    Refreshing --> LoginRequired: RT 刷新失败，当前页面有 demand
+    Refreshing --> Anonymous: RT 刷新失败，当前页面无 demand
+    Authenticated --> LoginRequired: 重放请求再次 401，当前页面有 demand
+    Authenticated --> Anonymous: 重放请求再次 401，当前页面无 demand
     Anonymous --> LoginRequired: 当前路由 requiresAuth
     Anonymous --> LoginRequired: auth.required 请求被预检拦截
-    LoginRequired --> Anonymous: 用户取消（仅抑制当前 scope）
+    LoginRequired --> Anonymous: 用户取消（仅抑制当前页面）
     LoginRequired --> Authenticated: 前往登录并登录成功
-    LoginRequired --> Anonymous: 导航到公开页面，旧 scope 清理
+    LoginRequired --> Anonymous: 导航到公开页面，旧页面上下文清理
     Authenticated --> Anonymous: 主动退出
 ```
 
-作用域判定补充：
+页面请求集合判定补充：
 
 ```mermaid
 flowchart TD
-    A[开始导航] --> B[scopeId + 1，清空旧 demand 和取消标记]
+    A[开始导航] --> B[store 清空 pageRequestKeys、旧 demand 和取消标记]
     B --> C{to.meta.requiresAuth?}
     C -->|是| D[记录 route-required]
     C -->|否| E[无路由认证需求]
     D --> F[导航始终继续]
     E --> F
     F --> G[afterEach 标记页面已进入]
-    G --> H{anonymous 且当前 scope 有 demand?}
+    G --> H{anonymous 且当前页面有 demand?}
     H -->|是| I[全局 ActionSheet 从 body 底部显示]
     H -->|否| J[不显示]
-    K[请求或 401 异步结果] --> L{携带 scope 是否仍有效，或当前页仍有认证需求?}
-    L -->|是| H
-    L -->|否| M[忽略旧页面提示副作用]
+    K[主 client 请求拦截器] --> L[store 分配稳定 requestKey 并加入 Set]
+    L --> M{受保护请求且没有 AT?}
+    M -->|是| P[记录请求 demand 并阻止网络请求]
+    P --> H
+    M -->|否| Q[发出网络请求]
+    Q --> R{响应结果}
+    R -->|成功或非 401 失败| S[保持页面状态不变]
+    R -->|401| T[handleUnauthorized 检查 key]
+    T --> U{requestKey 仍在当前 Set?}
+    U -->|是| V[记录当前页面 requestDemand]
+    U -->|否| W[不写页面级状态]
+    V --> X[现有认证拦截器刷新或判定失效]
+    W --> X
+    X -->|刷新成功| Y[原子更新 AT/RT，以原 key 重放]
+    Y --> Q
+    X -->|刷新失败或重放 401| Z[全局清除失效令牌]
+    Z --> H
 ```
 
 ## 7. 文件变更清单
@@ -225,23 +285,24 @@ flowchart TD
 | 路径 | 内容 |
 | --- | --- |
 | `apps/mobile/AGENTS.md` | Mobile 独立规则：Vant-only UI、静态路由、非拦截认证 hook、受保护请求显式标记 |
-| `apps/mobile/CONTEXT.md` | Mobile Session、Authentication Demand、Navigation Scope 等术语表；不放实现约束 |
+| `apps/mobile/CONTEXT.md` | Mobile Session、Authentication Demand、Page Request、Page Authentication Context 等术语表；不放实现约束 |
 | `apps/mobile/.env*` | Mobile 标题、命名空间、`5078` 端口、base、API URL 和构建开关 |
 | `apps/mobile/index.html`、`public/favicon.ico` | 移动 viewport、安全区前提与基础入口资源 |
 | `apps/mobile/package.json` | 精简后的运行/构建/测试依赖和 scripts |
 | `apps/mobile/tsconfig.json`、`tsconfig.node.json` | 使用不含 Vben RouteMeta 的 `@vben/tsconfig/web.json`，声明本地路径别名 |
-| `apps/mobile/vite.config.ts` | Vant Components + AutoImport resolver；显式关闭 `i18n`、`vxeTableLazyImport`、`injectGlobalScss`、`injectAppLoading`、`extraAppConfig`、`nitroMock`、`pwa`、`archiver`、`license`、`print`、`devtools`、`injectMetadata` 和 `importmap` |
-| `apps/mobile/src/main.ts`、`bootstrap.ts`、`app.vue` | 最小 Vue + Pinia persisted-state + Router 启动链 |
+| `apps/mobile/vite.config.ts` | Vant Components + AutoImport resolver；保留 `i18n`，显式关闭 `vxeTableLazyImport`、`injectGlobalScss`、`injectAppLoading`、`extraAppConfig`、`nitroMock`、`pwa`、`archiver`、`license`、`print`、`devtools`、`injectMetadata` 和 `importmap` |
+| `apps/mobile/src/main.ts`、`bootstrap.ts`、`app.vue` | 最小 Vue + Pinia persisted-state + Router + i18n 启动链 |
+| `apps/mobile/src/locales/index.ts`、`langs/{en-US,zh-CN}/common.json` | Mobile 本地消息加载、Vant/Day.js locale 同步和精简翻译文件 |
 | `apps/mobile/src/layouts/global-layout.vue` | 无 DOM 包裹的 RouterView + 全局认证提示宿主 |
 | `apps/mobile/src/components/authentication/login-required-action-sheet.vue` | Vant 底部登录询问、取消与 redirect 行为 |
-| `apps/mobile/src/stores/authentication.ts` | 唯一认证公共态及导航作用域状态机 |
+| `apps/mobile/src/stores/authentication.ts` | 唯一认证公共态、页面上下文和页面请求集合状态机 |
 | `apps/mobile/src/router/index.ts`、`guard.ts`、`routes.ts` | 纯前端路由、`requiresAuth` 元数据、非拦截 hook |
 | `apps/mobile/src/api/request.ts`、`session.ts` | 认证请求预检、AT 注入、401 刷新/重放、会话接口适配 |
 | `apps/mobile/src/errors/authentication-required.ts` | 可识别的本地请求阻断错误，避免重复错误 UI |
-| `apps/mobile/src/types/axios.d.ts`、`vue-router.d.ts` | 请求 auth metadata 和 Mobile RouteMeta 类型扩展 |
+| `apps/mobile/src/types/axios.d.ts`、`vue-router.d.ts` | 请求 `required`/内部 `requestKey` metadata 和 Mobile RouteMeta 类型扩展 |
 | `apps/mobile/src/styles/base.css` | 最小 reset、根高度与安全区辅助样式 |
 | `apps/mobile/src/views/home.vue`、`login.vue`、`account.vue`、`not-found.vue` | 最小公开页、登录页、认证示例页和 404；不引入业务假设 |
-| `apps/mobile/src/test/**` | 认证 store、路由 hook、请求拦截/刷新、全局 ActionSheet 测试 |
+| `apps/mobile/src/test/**` | 认证 store、页面请求集合、路由 hook、请求拦截/刷新、i18n 和全局 ActionSheet 测试 |
 | `docs/plans/mobile-vant-research.md` | 官方资料和 demo 的一手来源记录 |
 
 ### 修改
@@ -262,7 +323,8 @@ flowchart TD
 | `.env.analyze`、构建归档配置 | 最小骨架不做 bundle 可视化和 zip 归档 |
 | `src/adapter/**` | 全部绑定 Element Plus/Vben Form/VXE Table |
 | `src/layouts/auth.vue`、`basic.vue` | Admin 页面壳、菜单、通知、水印和过期登录 Modal |
-| `src/locales/**`、`src/preferences.ts` | Admin 国际化消息和管理端偏好体系 |
+| `src/locales/dynamic.ts` 和 Admin 翻译 JSON 内容 | 删除数据库动态翻译和管理端文案；保留 Mobile 本地 i18n 目录与最小消息键 |
+| `src/preferences.ts` | 不复制完整 Admin 偏好体系；Mobile locale 使用本地轻量配置 |
 | `src/router/access.ts`、动态模块加载和后端路由生成 | Mobile 只有前端静态路由 |
 | `src/api/system/**`、Admin 管理 API | RBAC/菜单/用户管理不是 Mobile 骨架职责 |
 | Admin store、Admin 登录/资料页、dashboard、system、fallback 页面 | 用 Mobile 最小页面与认证公共态替换 |
@@ -273,12 +335,13 @@ flowchart TD
 
 1. 新增 Mobile 指令/上下文与最小构建骨架，配置独立端口和纯前端路由。
 2. 更新 catalog、Mobile 依赖和 lockfile，完成 Vant 组件/函数/样式按需导入。
-3. 实现认证公共态及其接口级单元测试，先覆盖作用域重置和三类认证来源。
-4. 实现非拦截路由 hook，并验证公开/受保护路由都能完成导航。
-5. 接入请求预检和现有并发刷新拦截器，覆盖首次 401 刷新成功、二次 401、刷新失败、无 AT 受保护请求、旧 scope 迟到响应。
-6. 实现 fragment GlobalLayout、Vant ActionSheet 和安全 redirect 登录流程。
-7. 删除/检查所有 Admin UI 残留和未使用依赖，运行依赖检查。
-8. 完成类型、单测、构建、lint 与浏览器视觉/交互验证。
+3. 保留并精简 i18n 启动链，接入 Mobile 本地消息及 Vant/Day.js locale，同步删除 Admin 翻译内容。
+4. 实现认证公共态及其接口级单元测试，覆盖页面请求 Set 的添加、导航清空、重试 key 继承且不复活旧 key，以及三类认证来源。
+5. 实现非拦截路由 hook，并验证公开/受保护路由都能完成导航。
+6. 接入请求预检和现有并发刷新拦截器，覆盖首次 401 刷新成功、二次 401、刷新失败、无 AT 受保护请求、旧 requestKey 迟到响应。
+7. 实现 fragment GlobalLayout、Vant ActionSheet 和安全 redirect 登录流程。
+8. 删除/检查所有 Admin UI 残留和未使用依赖，运行依赖检查。
+9. 完成类型、单测、构建、lint 与浏览器视觉/交互验证。
 
 ## 9. 验收清单
 
@@ -291,7 +354,8 @@ flowchart TD
 | 仓库检查 | `pnpm run check`、`pnpm run lint` | 依赖、循环引用、类型、拼写和 lint 通过 |
 | 路由行为 | Browser/Playwright | 匿名用户可以进入公开页和受保护页；受保护页进入后才弹底部询问，导航未被中断 |
 | 请求行为 | 测试 + 浏览器 | 三种场景分别得到刷新重放、登录提示、请求预检阻断；没有重复 Toast |
-| 作用域清理 | Browser/Playwright | 取消或从受保护页离开后，公开页不残留弹窗；旧请求迟到不复活弹窗 |
+| 请求集合清理 | 单测 + Browser/Playwright | 导航清空 Set；重试不复活旧 key；旧请求迟到不复活弹窗；拦截器不直接访问 Set |
+| i18n | 单测 + Browser/Playwright | 中英文 Mobile 消息、Vant 与 Day.js locale 同步；构建中不包含 Admin 翻译内容 |
 | 安全区 | 390x844、393x852 等移动 viewport 截图 | ActionSheet 操作区不被底部 Home Indicator 覆盖，页面无多余 layout wrapper 影响 |
 | 桌面回归 | 1280x800 截图 | Mobile 页面仍可查看，浮层无重叠、文本无溢出 |
 
