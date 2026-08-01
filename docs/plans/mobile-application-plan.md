@@ -60,6 +60,7 @@ Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./m
 | `vue-router` | dependency | 纯前端静态路由与非拦截式路由 hook |
 | `@vben/request` | dependency | 复用 RequestClient、统一响应解包、并发 401 刷新与单次重放；它是无 UI 的请求模块 |
 | `@vben/locales` | dependency | 保留 vue-i18n 装配、公共消息加载、语言切换与 `$t`/`useI18n`；不加载 Admin 动态翻译 |
+| `@vben/utils` | dependency | 明确保留为直接工作区依赖；首期使用 `trimToNull` 规范化登录请求数据，其余通用工具按需导入 |
 | `@vueuse/core` | dependency | 保留通用组合式工具，并用于页面标题等实际功能，避免闲置依赖 |
 | `@vue/test-utils` | devDependency | 验证全局认证提示与 RouterView 协作 |
 
@@ -77,9 +78,9 @@ Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./m
 | `@vben/stores` | Admin 共享状态 | 包含访问码、菜单、标签页和偏好持久化；Mobile 改用本地 Pinia store |
 | `@vben/types` | Admin 类型 | Mobile 使用本地 RouteMeta/认证类型，不暴露 Vben 路由元数据 |
 
-### `@vben/utils` 常用能力评估
+### `@vben/utils` 常用能力
 
-`@vben/utils` 是 `packages/utils` 对路由 helper、shared cache、color 和通用 utils 的统一导出，并不等同于 Admin UI。首期仍遵循“有直接使用点才声明直接依赖”；`@vben/request` 自身已经把它作为传递依赖。若 Mobile 使用下列能力，应把 `@vben/utils: workspace:*` 加入直接依赖，不复制实现。
+`@vben/utils` 是 `packages/utils` 对路由 helper、shared cache、color 和通用 utils 的统一导出，并不等同于 Admin UI。Mobile 明确以 `@vben/utils: workspace:*` 保留它作为直接依赖；虽然 `@vben/request` 已经传递依赖该包，Mobile 自己需要导入工具时仍必须声明直接依赖。
 
 | 能力类别 | 常用导出 | Mobile 可能用途 |
 | --- | --- | --- |
@@ -95,7 +96,7 @@ Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./m
 | 路由/Admin helper | `mergeRouteModules`、`resetStaticRoutes`、`generateMenus`、`generateRoutesByBackend` | Mobile 当前不使用动态路由或菜单生成 |
 | 加载反馈 | `startProgress`、`stopProgress`、`unmountGlobalLoading` | 当前不保留 NProgress；只有重新启用注入式首屏 loading 时才用 |
 
-当前计划不为了“以后可能用”而直接保留 `@vben/utils`。执行时若登录表单采用 `trimToNull`、令牌持久化改用 `StorageManager`，或页面实际使用上表其他能力，再将其列为保留依赖并补对应测试。
+首期以登录表单提交前的 `trimToNull` 作为明确使用点，并为请求数据规范化行为补测试。后续可直接复用上表中的通用能力，但不得为了证明依赖存在而引入无意义调用；动态路由 helper 和 NProgress 等当前明确不使用。
 
 ### 新增
 
