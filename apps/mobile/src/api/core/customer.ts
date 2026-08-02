@@ -1,13 +1,13 @@
 import type { AxiosResponse, HttpResponse } from '@vben/request';
 
-import { baseRequestClient, requestClient } from './request';
+import { baseRequestClient, requestClient } from '#/api/request';
 
 export interface CustomerSession {
   accessToken: string;
   refreshToken: string;
 }
 
-export interface CustomerInfo {
+export interface Customer {
   avatar?: string;
   createTime: string;
   id: string;
@@ -44,5 +44,5 @@ export async function logout(refreshToken: string) {
 }
 
 export function getCustomerUserInfo() {
-  return requestClient.get<CustomerInfo>('/customer/user-info');
+  return requestClient.get<Customer>('/customer/user-info');
 }

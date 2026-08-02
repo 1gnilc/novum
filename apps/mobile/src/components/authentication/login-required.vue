@@ -9,6 +9,8 @@ import { useAuthStore } from '#/stores';
 
 type LoginAction = ActionSheetAction & { value: 'login' };
 
+defineOptions({ name: 'LoginRequired' });
+
 const auth = useAuthStore();
 const route = useRoute();
 const router = useRouter();

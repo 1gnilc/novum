@@ -15,7 +15,7 @@ const api = vi.hoisted(() => ({
   logout: vi.fn(),
 }));
 
-vi.mock('#/api/session', () => api);
+vi.mock('#/api/core', () => api);
 vi.mock('#/router', () => ({
   router: {
     currentRoute: { value: { fullPath: '/' } },

@@ -3,8 +3,9 @@ import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { getCustomerUserInfo, login } from '#/api/core';
 import { baseRequestClient, requestClient } from '#/api/request';
-import { getCustomerUserInfo, login } from '#/api/session';
+import { preferences } from '#/preferences';
 import { useAuthStore } from '#/stores';
 
 vi.mock('#/router', () => ({
@@ -17,6 +18,8 @@ vi.mock('#/router', () => ({
 describe('mobile request client', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    preferences.app.enableRefreshToken = true;
+    preferences.app.locale = 'zh-CN';
     requestClient.isRefreshing = false;
     requestClient.refreshTokenQueue.splice(0);
   });
@@ -39,6 +42,7 @@ describe('mobile request client', () => {
     const auth = useAuthStore();
     auth.setAccessToken('access');
     auth.setRefreshToken('refresh');
+    preferences.app.locale = 'en-US';
     const adapter = vi.fn(async (config: AxiosRequestConfig) =>
       response(config, { code: 0, data: { ok: true } }),
     );
@@ -50,7 +54,7 @@ describe('mobile request client', () => {
 
     const config = adapter.mock.calls[0]?.[0];
     expect(config?.headers?.Authorization).toBe('Bearer access');
-    expect(config?.headers?.['Accept-Language']).toBe('zh-CN');
+    expect(config?.headers?.['Accept-Language']).toBe('en-US');
   });
 
   it('refreshes once, updates the token pair, and replays the failed request', async () => {
@@ -93,7 +97,7 @@ describe('mobile request client', () => {
     const auth = useAuthStore();
     auth.setAccessToken('old-access');
     auth.setRefreshToken('refresh');
-    auth.userInfo = customerInfo();
+    auth.userInfo = customer();
     requestClient.instance.defaults.adapter = vi.fn(async (config) => {
       throw unauthorized(config);
     });
@@ -114,7 +118,7 @@ describe('mobile request client', () => {
     const auth = useAuthStore();
     auth.setAccessToken('old-access');
     auth.setRefreshToken('refresh');
-    auth.userInfo = customerInfo();
+    auth.userInfo = customer();
     const adapter = vi.fn(async (config: AxiosRequestConfig) => {
       throw unauthorized(config);
     });
@@ -183,7 +187,7 @@ describe('mobile request client', () => {
     return error;
   }
 
-  function customerInfo() {
+  function customer() {
     return {
       createTime: '2026-08-03T00:00:00Z',
       id: '7',

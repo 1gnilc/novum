@@ -1,4 +1,4 @@
-import type { CustomerInfo } from '#/api/session';
+import type { Customer } from '#/api/core';
 
 import { computed, ref } from 'vue';
 
@@ -10,7 +10,7 @@ import {
   getCustomerUserInfo,
   login as loginCustomer,
   logout as logoutCustomer,
-} from '#/api/session';
+} from '#/api/core';
 import { router } from '#/router';
 
 interface LoginParams {
@@ -19,13 +19,14 @@ interface LoginParams {
 }
 
 type Token = null | string;
+type UserInfo = Customer;
 
 export const useAuthStore = defineStore(
   'auth',
   () => {
     const accessToken = ref<Token>(null);
     const refreshToken = ref<Token>(null);
-    const userInfo = ref<CustomerInfo | null>(null);
+    const userInfo = ref<null | UserInfo>(null);
     const loginLoading = ref(false);
     const authenticated = computed(() => Boolean(accessToken.value));
 

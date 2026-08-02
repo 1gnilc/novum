@@ -6,7 +6,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { ActionSheet } from 'vant';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import LoginRequiredActionSheet from '#/components/authentication/login-required-action-sheet.vue';
+import LoginRequired from '#/components/authentication/login-required.vue';
 import { DEFAULT_LOCALE, setupI18n } from '#/locales';
 import { useAuthStore } from '#/stores';
 
@@ -17,7 +17,7 @@ vi.mock('#/router', () => ({
   },
 }));
 
-describe('login required action sheet', () => {
+describe('login required', () => {
   const page = defineComponent({ template: '<main>Page</main>' });
 
   beforeEach(() => {
@@ -74,7 +74,7 @@ describe('login required action sheet', () => {
     const pinia = createPinia();
     setActivePinia(pinia);
     const i18n = await setupI18n(createApp(page), DEFAULT_LOCALE);
-    const wrapper = mount(LoginRequiredActionSheet, {
+    const wrapper = mount(LoginRequired, {
       attachTo: '#test-root',
       global: { plugins: [pinia, router, i18n] },
     });

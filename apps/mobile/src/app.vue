@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import GlobalLayout from '#/layouts/global-layout.vue';
+import BasicLayout from '#/layouts/basic.vue';
 
 defineOptions({ name: 'App' });
 </script>
 
 <template>
-  <GlobalLayout />
+  <BasicLayout />
 </template>

@@ -12,8 +12,8 @@ export {};
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    LanguageSelector: typeof import('./src/components/language-selector.vue')['default']
-    LoginRequiredActionSheet: typeof import('./src/components/authentication/login-required-action-sheet.vue')['default']
+    Language: typeof import('./src/components/language/index.vue')['default']
+    LoginRequired: typeof import('./src/components/authentication/login-required.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     VanActionSheet: typeof import('vant/es')['ActionSheet']
@@ -30,8 +30,8 @@ declare module 'vue' {
 
 // For TSX support
 declare global {
-  const LanguageSelector: (typeof import('./src/components/language-selector.vue'))['default'];
-  const LoginRequiredActionSheet: (typeof import('./src/components/authentication/login-required-action-sheet.vue'))['default'];
+  const Language: (typeof import('./src/components/language/index.vue'))['default'];
+  const LoginRequired: (typeof import('./src/components/authentication/login-required.vue'))['default'];
   const RouterLink: (typeof import('vue-router'))['RouterLink'];
   const RouterView: (typeof import('vue-router'))['RouterView'];
   const VanActionSheet: (typeof import('vant/es'))['ActionSheet'];

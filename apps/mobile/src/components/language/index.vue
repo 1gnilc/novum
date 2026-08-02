@@ -10,6 +10,8 @@ import { getLocale, setLocale, SUPPORTED_LOCALES } from '#/locales';
 
 type LocaleAction = ActionSheetAction & { value: AppLocale };
 
+defineOptions({ name: 'LanguageSelector' });
+
 const { t } = useI18n();
 const show = ref(false);
 const localeNames: Record<AppLocale, string> = {

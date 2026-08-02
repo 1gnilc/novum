@@ -7,10 +7,11 @@ import {
   RequestClient,
 } from '@vben/request';
 
-import { $t, getLocale } from '#/locales';
+import { $t } from '#/locales';
+import { preferences } from '#/preferences';
 import { useAuthStore } from '#/stores';
 
-import { refresh } from './session';
+import { refresh } from './core';
 
 const requestErrorMessages: Record<RequestErrorType, string> = {
   'bad-request': 'request.badRequest',
@@ -50,7 +51,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
     fulfilled: async (config) => {
       const auth = useAuthStore();
       config.headers.Authorization = formatToken(auth.accessToken);
-      config.headers['Accept-Language'] = getLocale();
+      config.headers['Accept-Language'] = preferences.app.locale;
       return config;
     },
   });
@@ -67,7 +68,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       client,
       doReAuthenticate,
       doRefreshToken,
-      enableRefreshToken: true,
+      enableRefreshToken: preferences.app.enableRefreshToken,
       formatToken,
     }),
   );

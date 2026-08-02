@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 
-import LanguageSelector from '#/components/language-selector.vue';
+import LanguageSelector from '#/components/language/index.vue';
 
 const { t } = useI18n();
 </script>

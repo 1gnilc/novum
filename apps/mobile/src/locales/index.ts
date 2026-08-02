@@ -1,5 +1,7 @@
 import type { App } from 'vue';
 
+import type { AppLocale } from '#/preferences';
+
 import { watch } from 'vue';
 import { createI18n } from 'vue-i18n';
 
@@ -10,16 +12,19 @@ import { Locale } from 'vant';
 import enUSVant from 'vant/es/locale/lang/en-US';
 import zhCNVant from 'vant/es/locale/lang/zh-CN';
 
+import { DEFAULT_LOCALE, preferences } from '#/preferences';
+
 import enUS from './langs/en-US/common.json';
 import zhCN from './langs/zh-CN/common.json';
 
 import 'dayjs/locale/en';
 import 'dayjs/locale/zh-cn';
 
-export const DEFAULT_LOCALE = 'zh-CN';
 export const SUPPORTED_LOCALES = ['zh-CN', 'en-US'] as const;
 
-export type AppLocale = (typeof SUPPORTED_LOCALES)[number];
+export type { AppLocale } from '#/preferences';
+export { DEFAULT_LOCALE } from '#/preferences';
+
 type LocaleStorage = Pick<StorageManager, 'getItem' | 'setItem'>;
 
 const storage = new StorageManager({ prefix: 'novum-mobile' });
@@ -53,8 +58,8 @@ export async function saveLocale(
 }
 
 export async function setupI18n(app: App, locale?: AppLocale) {
-  const current = locale ?? (await loadLocale());
-  i18n.global.locale.value = current;
+  preferences.app.locale = locale ?? (await loadLocale());
+  i18n.global.locale.value = preferences.app.locale;
   app.use(i18n);
   stopLocaleSync?.();
   stopLocaleSync = watch(getLocale, syncLocale, { immediate: true });
@@ -67,11 +72,13 @@ export function getLocale(): AppLocale {
 }
 
 export async function setLocale(locale: AppLocale) {
+  preferences.app.locale = locale;
   i18n.global.locale.value = locale;
   await saveLocale(locale);
 }
 
 function syncLocale(locale: AppLocale) {
+  preferences.app.locale = locale;
   document.documentElement.lang = locale;
   Locale.use(locale, vantLocales[locale]);
   dayjs.locale(dayjsLocales[locale]);

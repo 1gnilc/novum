@@ -28,6 +28,7 @@ Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./m
 - 新增内置 `customer` 角色并强制绑定到每个有效 Customer；初始化三条 Session 公开权限和一条绑定到该角色的当前 Customer 信息查询权限，不创建菜单绑定。
 - 路由全部由前端静态声明，不设置认证路由守卫。页面进入后，全局登录询问组件直接判断当前路由的 `meta.requiresAuth` 和认证状态。
 - `useAuthStore` 维护 AT、RT、派生认证状态、当前 Customer 信息和登录加载状态；主动退出负责跳转登录页，但刷新、重试、登录成功 redirect 和提示状态不进入 Store。
+- 使用 Mobile 本地 `preferences` 统一保存 `enableRefreshToken` 和当前 `locale`；不引入完整的 Admin preferences 基础设施。
 - 全局只挂载一个底部登录询问组件；页面不需要逐个引用它。
 - 请求刷新与重新认证采用 Admin 现有行为，不增加 AT 一致性比较、RT 快照、请求集合或迟到响应隔离。
 
@@ -51,7 +52,7 @@ Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./m
 | 参考来源 | Mobile 处理 | 原因 |
 | --- | --- | --- |
 | 根工作区配置 | 沿用 package 命名、catalog、Turbo scripts 和代码质量工具的接入方式 | Mobile 仍是 Novum monorepo 的应用 |
-| `apps/admin` | 只参考相邻代码的命名、目录习惯和可验证的行为，不复制应用骨架 | Admin 的基础设施与业务边界不属于 Mobile |
+| `apps/admin` | 参考相邻代码的命名、目录习惯、Router history、Store namespace 和精简 preferences 使用方式，不复制应用骨架 | Admin 的基础设施与业务边界不属于 Mobile |
 | `@vben/request` | 复用 `RequestClient`、响应解包、并发刷新和单次重放；保留 `requestClient`、`baseRequestClient` 命名 | 该能力无 UI，并直接对应 Mobile 请求场景 |
 | `@vben/utils` | 复用 `StorageManager`、`MemoryStorageDriver` 和 `trimToNull` | 已有明确的 locale 持久化、测试和登录输入场景 |
 | `@vben/locales`、`@vben/vite-config` | 只在对应场景讨论时审阅实现，不作为 Mobile 依赖 | Mobile 直接使用 `vue-i18n` 和原生 Vite 配置 |
@@ -151,25 +152,25 @@ Vant 函数式调用是官方文档中特别提示的使用点。Vite 配置会�
 | --- | --- |
 | `accessToken`、`refreshToken` | 运行时 token pair；通过 Pinia Store 的 `persist.pick` 持久化 |
 | `authenticated` | 由 `accessToken !== null` 派生；只有 RT 不视为已登录 |
-| `userInfo` | 当前 Customer 信息；未读取或 Session 已清除时为 `null` |
+| `userInfo` | Store 内以 `UserInfo` 表示的当前 Customer 信息；未读取或 Session 已清除时为 `null` |
 | `loginLoading` | `login()` 执行期间为 `true`，在 `finally` 中恢复为 `false` |
 
 | 方法 | 行为 |
 | --- | --- |
 | `login(params)` | 调用 Customer 登录接口，通过 token setter 写入 token pair，再调用 `getUserInfo()`；信息查询失败时执行 `$reset()` 并继续抛错；成功返回 `{ userInfo }` |
-| `getUserInfo()` | 调用 API 层的 `getCustomerUserInfo()`，更新并返回 `userInfo` |
+| `getUserInfo()` | 调用 API 层的 `getCustomerUserInfo()` 获取 `Customer`，更新并返回 `UserInfo` |
 | `logout(redirect = true)` | 有 RT 时尝试调用 Customer 退出接口；无论远端结果如何，最终执行 `$reset()` 并 `router.replace('/login')`；默认把退出前 `route.fullPath` 编码后放入 `redirect` query，传 `false` 时不携带该 query |
 | `setAccessToken(token)`、`setRefreshToken(token)` | 分别写入 AT 和 RT，供登录、请求刷新和其他 Session 调用方统一使用 |
 | `$reset()` | 清除 AT、RT、`userInfo`、`loginLoading` 和持久化 Session |
 
-`useAuthStore` 的 `persist.pick` 只包含 `accessToken` 和 `refreshToken`。Mobile 在创建任何 Store 前安装与 Admin 相同的 Pinia 持久化插件，Store 创建时由插件自动读取这两个字段。`doRefreshToken()` 使用公开 token setter 写入刷新后的 token pair，`doReAuthenticate()` 使用 `$reset()` 清除 Session。
+`useAuthStore` 的 `persist.pick` 只包含 `accessToken` 和 `refreshToken`。`initStores(app, { namespace })` 要求调用方传入 namespace，并用它隔离持久化 key；Store 创建时由插件自动读取这两个字段。`doRefreshToken()` 使用公开 token setter 写入刷新后的 token pair，`doReAuthenticate()` 使用 `$reset()` 清除 Session。
 
 Store 不提供独立的 `resetSessionToLogin()` 或登录成功回调。只有主动 `logout()` 参考 Admin 在 Store 内跳转登录页；登录成功后的回跳仍由登录页负责。Store 不包含 `refreshing`、路由需求、请求需求、提示开关、请求 key 或请求集合。并发刷新和单次重放由 `@vben/request` 的 `RequestClient` 管理；全局登录询问组件只读取当前路由和 `authenticated`。
 
 ### 5.2 静态路由与页面内认证询问
 
 - 路由声明使用 `meta.requiresAuth?: boolean`，默认 `false`。
-- Router 固定使用 `createWebHashHistory(import.meta.env.BASE_URL)`；本轮不增加可切换的路由模式配置，也不要求部署服务器提供 SPA history fallback。
+- Router 读取 `VITE_ROUTER_HISTORY`：值为 `hash` 时使用 `createWebHashHistory(import.meta.env.BASE_URL)`，其他值与 Admin 一样使用 `createWebHistory(import.meta.env.BASE_URL)`；Mobile `.env` 默认配置为 `hash`。
 - 不注册认证用途的 `beforeEach` 或 `afterEach`；认证不拦截、不改写路由，也不复制路由元数据到 Store。
 - 当前路由确认后，`RouterView` 渲染目标页；全局登录询问组件同时响应当前路由，因此用户先进入页面，再看到询问。
 - 需要认证的页面必须声明 `meta.requiresAuth: true`，并在页面内根据认证状态决定是否发起受保护请求；请求层不复制页面认证语义。
@@ -192,11 +193,11 @@ Store 不提供独立的 `resetSessionToLogin()` 或登录成功回调。只有�
 
 ### 5.3 无布局副作用的全局挂载
 
-`App.vue` 只渲染一次 `GlobalLayout`。`GlobalLayout` 使用 Vue fragment，根模板是两个兄弟节点：
+`App.vue` 只渲染一次 `BasicLayout`。`BasicLayout` 使用 Vue fragment，根模板是两个兄弟节点：
 
 ```vue
 <RouterView />
-<LoginRequiredActionSheet />
+<LoginRequired />
 ```
 
 它不会生成 `div`、`display`、尺寸、定位或新的 CSS containing block，因此不改变页面盒模型。ActionSheet 设置 `teleport="body"`，浮层节点也不参与 RouterView 页面的文档流。
@@ -222,17 +223,19 @@ Store 不提供独立的 `resetSessionToLogin()` 或登录成功回调。只有�
 
 ### 5.5 i18n 保留与精简
 
-- 直接使用 `vue-i18n`，只支持 `zh-CN` 和 `en-US`，默认 `zh-CN`；不依赖 `@vben/locales`、Vben 公共消息、Admin 动态翻译或 preferences。
+- 直接使用 `vue-i18n`，只支持 `zh-CN` 和 `en-US`，默认 `zh-CN`；不依赖 `@vben/locales`、Vben 公共消息、Admin 动态翻译或 `@vben/preferences`，只使用 Mobile 本地最小 `preferences`。
 - 两份 Mobile 消息静态导入，只保留登录、语言选择、认证询问、请求错误和页面标题实际使用的 key。
 - `src/main.ts` 只加载全局基础样式并启动 `bootstrap`，不处理 i18n、Pinia 或 Router 的模块细节。
-- `src/bootstrap.ts` 只创建应用并依次调用 locales、stores、router 的安装入口；初始语言必须在 Router 安装前完成。
-- `src/locales/index.ts` 读取并校验持久化 locale，安装 i18n，并监听当前 locale 同步 `html[lang]`、Vant `Locale.use` 和 Day.js locale。
+- `src/main.ts` 从环境读取 namespace 并调用 `bootstrap(namespace)`；`src/bootstrap.ts` 创建应用并依次调用 locales、`initStores(app, { namespace })`、router 的安装入口。
+- `src/locales/index.ts` 读取并校验持久化 locale，写入 `preferences.app.locale`，安装 i18n，并监听当前 locale 同步 preferences、`html[lang]`、Vant `Locale.use` 和 Day.js locale。
+- `watch(getLocale, syncLocale, { immediate: true })` 在安装时立即执行一次同步，并在 vue-i18n locale 变化时再次执行；`stopLocaleSync` 保存停止函数，重复安装时先移除旧 watcher，避免测试或多应用初始化产生重复副作用。
+- `setLocale(locale)` 同步写入 Mobile preferences 和 vue-i18n，再持久化 locale；`syncLocale(locale)` 负责将已生效语言同步到 preferences、HTML、Vant 和 Day.js，不负责持久化。
 - `src/locales/index.ts` 在模块级创建 i18n，并直接导出与 Admin 同名的 `$t`、`$te`；调用方不再经过 `translate()` 包装函数。
 - `src/router/index.ts` 安装 Router、等待初始路由就绪并同步本地化页面标题。
 - `src/app.vue` 只渲染全局根布局，不承担模块初始化或全局副作用。
 - 本轮实现语言选择器；选择后立即切换 vue-i18n、Vant 和 Day.js，并持久化 `locale`。
 - `LanguageSelector` 在公开 Home 页和登录页复用；触发器显示当前语言名称，ActionSheet 固定提供“简体中文”和“English”并标记当前项。
-- 语言选择器不进入 `App` 或 `GlobalLayout`，本轮也不创建只有语言一项的 Settings 页面。
+- 语言选择器不进入 `App` 或 `BasicLayout`，本轮也不创建只有语言一项的 Settings 页面。
 - 错误拦截器在错误发生时按当前 locale 调用 `$t`，不缓存启动时的翻译结果。
 
 ### 5.6 请求认证语义
@@ -253,7 +256,7 @@ Mobile 不定义客户端请求认证元数据，也不在请求拦截器中判�
 
 - `requestClient` 是业务请求实例，负责登录和其他业务请求，并安装 token、locale、响应解包、并发刷新/单次重放和 Mobile 错误反馈。
 - `baseRequestClient` 是裸 Session 请求实例，只负责刷新和退出，不安装请求或响应拦截器。
-- `createRequestClient` 只读取 Mobile 本地环境、精简认证 Store 和 i18n/Vant 反馈，不读取 preferences、Admin store、Element Plus 或动态路由。
+- `createRequestClient` 只读取 Mobile 本地环境、本地 `preferences`、精简认证 Store 和 i18n/Vant 反馈，不读取 `@vben/preferences`、Admin store、Element Plus 或动态路由。
 - 复用 `defaultResponseInterceptor`、`authenticateResponseInterceptor` 和解耦后的 `errorMessageResponseInterceptor`。
 
 共享错误拦截器使用以下固定接口：
@@ -438,12 +441,13 @@ flowchart TD
 | `apps/mobile/vite.config.ts` | 使用原生 Vite 配置 Vue、i18n 和 Vant Components + AutoImport resolver；开发环境将 `/api` 代理到 `http://localhost:3888`，不接入 Vben 应用插件集合 |
 | `apps/mobile/src/main.ts`、`bootstrap.ts`、`app.vue` | 最小 Vue + Pinia + Router + i18n 启动链；在创建 Store 前安装持久化插件 |
 | `apps/mobile/src/locales/index.ts`、`langs/{en-US,zh-CN}/common.json` | Mobile 本地消息、持久化 locale 校验及 Vant/Day.js/HTML locale 同步 |
-| `apps/mobile/src/components/language-selector.vue` | 当前语言触发器及 Vant ActionSheet；在 Home 和登录页复用，即时切换并持久化 |
-| `apps/mobile/src/layouts/global-layout.vue` | 无 DOM 包裹的 RouterView + 全局认证提示宿主 |
-| `apps/mobile/src/components/authentication/login-required-action-sheet.vue` | Vant 底部登录询问、取消与 redirect 行为 |
-| `apps/mobile/src/stores/index.ts`、`auth.ts` | 本地初始化 Pinia 持久化插件；认证 Store 维护 AT、RT、认证状态、当前 Customer、`loginLoading` 及 `login`、`getUserInfo`、token setter、`logout`、`$reset` |
-| `apps/mobile/src/router/index.ts`、`routes.ts` | Hash 模式纯前端静态路由和 `requiresAuth` 元数据；不创建认证 guard |
-| `apps/mobile/src/api/request.ts`、`session.ts` | AT 注入、401 刷新/重放及登录、刷新、退出、`getCustomerUserInfo` 当前 Customer 信息接口适配 |
+| `apps/mobile/src/preferences.ts` | Mobile 本地最小通用配置：`enableRefreshToken` 和当前 `locale` |
+| `apps/mobile/src/components/language/index.vue` | 当前语言触发器及 Vant ActionSheet；在 Home 和登录页复用，即时切换并持久化 |
+| `apps/mobile/src/layouts/basic.vue` | 无 DOM 包裹的 RouterView + 全局认证提示宿主 |
+| `apps/mobile/src/components/authentication/login-required.vue` | Vant 底部登录询问、取消与 redirect 行为 |
+| `apps/mobile/src/stores/index.ts`、`auth.ts` | 通过外部 `InitStoreOptions.namespace` 初始化 Pinia 持久化插件；认证 Store 维护 AT、RT、认证状态、`UserInfo`、`loginLoading` 及 Session 方法 |
+| `apps/mobile/src/router/index.ts`、`routes.ts` | `VITE_ROUTER_HISTORY` 控制 Hash/Web History，路由保持纯前端静态声明和 `requiresAuth` 元数据；不创建认证 guard |
+| `apps/mobile/src/api/request.ts`、`core/{index,customer}.ts` | AT 注入、401 刷新/重放及登录、刷新、退出、`Customer` 类型和 `getCustomerUserInfo` 接口适配 |
 | `apps/mobile/src/types/vue-router.d.ts` | Mobile `requiresAuth` RouteMeta 类型扩展 |
 | `apps/mobile/src/styles/base.css`、`page.css` | 基础 reset、根高度，以及页面共享样式 |
 | `apps/mobile/src/views/home.vue`、`login.vue`、`account.vue`、`not-found.vue` | 首页、登录、当前 Customer 信息与退出、404；首期无其他页面 |
@@ -495,7 +499,7 @@ flowchart TD
 | `src/adapter/**` | 全部绑定 Element Plus/Vben Form/VXE Table |
 | `src/layouts/auth.vue`、`basic.vue` | Admin 页面壳、菜单、通知、水印和过期登录 Modal |
 | `src/locales/dynamic.ts` 和 Admin 翻译 JSON 内容 | 删除数据库动态翻译和管理端文案；保留 Mobile 本地 i18n 目录与最小消息键 |
-| `src/preferences.ts` | 不复制完整 Admin 偏好体系；Mobile locale 使用本地轻量配置 |
+| `@vben/preferences` 完整状态管理、主题配置和偏好 UI | Mobile 只实现本地 `src/preferences.ts` 的两项已使用配置 |
 | `src/router/access.ts`、动态模块加载和后端路由生成 | Mobile 只有前端静态路由 |
 | `src/api/system/**`、Admin 管理 API | RBAC/菜单/用户管理不是 Mobile 骨架职责 |
 | Admin store、Admin 登录/资料页、dashboard、system、fallback 页面 | 用 Mobile 最小页面与精简认证 Store 替换 |
@@ -519,10 +523,10 @@ flowchart TD
 4. 在 RBAC 用户角色分配边界加入可扩展的必需角色策略，由 Novum 声明 `admin`/`customer` 绑定并覆盖替换、解绑和其他角色变更测试。
 5. 实现 Customer DAO、Service、Controller 和响应模型，依次覆盖登录、刷新、退出、当前信息、全局 RBAC 显式授权和完整 API 链路。
 6. 解耦 `@vben/request` 错误翻译与 UI，更新 Admin 注入适配并通过共享请求包及 Admin 回归测试。
-7. 新增 Mobile 原生 Vite 骨架、Hash Router、依赖、scripts、开发代理和 Vant 组件/函数/样式按需导入，然后更新 lockfile。
+7. 新增 Mobile 原生 Vite 骨架、可配置 Hash/Web Router、依赖、scripts、开发代理和 Vant 组件/函数/样式按需导入，然后更新 lockfile。
 8. 实现本地 i18n、locale 持久化、Pinia AT/RT 持久化、认证 Store 和 Customer API 请求层，覆盖登录、刷新、重新认证和退出测试。
-9. 实现四个页面、fragment GlobalLayout、全局 ActionSheet、语言选择器和安全 redirect，覆盖重复登录、受保护页面与取消状态测试。
-10. 清理 Admin UI/配置残留，运行前后端完整测试、类型、依赖、lint 和构建检查，再用 Browser/Playwright 验证移动安全区、Hash 刷新、认证交互及桌面回归；全部通过后使用 `pnpm run commit` 提交，不推送或创建 PR。
+9. 实现四个页面、fragment BasicLayout、全局登录询问、语言选择器和安全 redirect，覆盖重复登录、受保护页面与取消状态测试。
+10. 清理 Admin UI/配置残留，运行前后端完整测试、类型、依赖、lint 和构建检查，再用 Browser/Playwright 验证移动安全区、默认 Hash 刷新、认证交互及桌面回归；全部通过后使用 `pnpm run commit` 提交，不推送或创建 PR。
 
 ## 9. 验收清单
 
@@ -537,7 +541,8 @@ flowchart TD
 | 构建 | `pnpm --filter=@app/mobile run build` | 生产构建成功；未打入 Element Plus 样式/组件 |
 | 仓库检查 | `pnpm run check`、`pnpm run lint` | 依赖、循环引用、类型、拼写和 lint 通过 |
 | 路由行为 | Browser/Playwright | 匿名用户可以进入公开页和受保护页；受保护页进入后才弹底部询问，导航未被中断 |
-| 路由模式 | 构建预览 + Browser/Playwright | 使用 `/#/` Hash URL；直接打开或刷新 `/#/account`、`/#/login` 和 404 均可渲染，不依赖服务端回退 |
+| 路由模式 | 单测 + 构建预览 + Browser/Playwright | `VITE_ROUTER_HISTORY=hash` 使用 `/#/` URL，其他值使用 Web History；默认 Hash 下直接打开或刷新 Account、Login 和 404 不依赖服务端回退 |
+| Store namespace | 单测 | `initStores(app, { namespace })` 使用调用方传入值生成持久化 key，`main.ts` 可从环境自定义 namespace |
 | 首期页面范围 | 代码审查 + Browser/Playwright | 只存在 `/`、`/login`、`/account` 和 404；匿名 Account 不发送当前信息请求 |
 | 重复登录 | 单测 + Browser/Playwright | 已认证访问 `/login` 仍显示表单且不自动跳转；再次登录成功后保存新 token pair 并跳转到合法 redirect 或 `/` |
 | 主动退出 | 单测 + Browser/Playwright | 远端退出成功或失败都清理本地 Session；`logout()` 在 Store 内 replace 到 `/login`；默认携带退出前的站内 redirect |
@@ -556,4 +561,4 @@ flowchart TD
 
 ## 10. 已确认边界
 
-Customer 的范围、表结构、端点、登录失败边界、内置数据、Session TTL、刷新策略、当前信息合同、Server Java 文件落点及 `08`/`09` SQL 顺序均已确定。Mobile 认证 Store、Admin 式 AT/RT 持久化、请求刷新行为、登录询问取消范围、重复登录、首期四个路由、Hash 模式和根开发命令均已确定。Customer 与 Admin 共享全局 RBAC 授权域，显式角色绑定直接生效；`admin` 与 `customer` 基础角色绑定不可移除，但其他角色可自由追加或移除。实现必须遵循现有代码风格、专业命名和最小脚手架约束；验收后只创建本地提交，不推送或创建 PR。当前没有需要在实现前继续确认的核心产品或架构边界。
+Customer 的范围、表结构、端点、登录失败边界、内置数据、Session TTL、刷新策略、当前信息合同、Server Java 文件落点及 `08`/`09` SQL 顺序均已确定。Mobile 认证 Store、Admin 式 AT/RT 持久化、请求刷新行为、本地 preferences、外部 Store namespace、登录询问取消范围、重复登录、首期四个路由、可配置 Hash/Web History 和根开发命令均已确定。Customer 与 Admin 共享全局 RBAC 授权域，显式角色绑定直接生效；`admin` 与 `customer` 基础角色绑定不可移除，但其他角色可自由追加或移除。实现必须遵循现有代码风格、专业命名和最小脚手架约束；验收后只创建本地提交，不推送或创建 PR。当前没有需要在实现前继续确认的核心产品或架构边界。

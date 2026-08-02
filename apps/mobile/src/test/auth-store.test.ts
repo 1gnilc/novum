@@ -12,7 +12,7 @@ const mocks = vi.hoisted(() => ({
   replace: vi.fn(),
 }));
 
-vi.mock('#/api/session', () => ({
+vi.mock('#/api/core', () => ({
   getCustomerUserInfo: mocks.getCustomerUserInfo,
   login: mocks.login,
   logout: mocks.logout,
@@ -113,7 +113,8 @@ describe('useAuthStore', () => {
   });
 
   it('persists only the token pair and restores it until logout', async () => {
-    const auth = await createPersistedAuth();
+    const namespace = 'custom-mobile';
+    const auth = await createPersistedAuth(namespace);
     auth.setAccessToken('access');
     auth.setRefreshToken('refresh');
     auth.loginLoading = true;
@@ -128,13 +129,13 @@ describe('useAuthStore', () => {
     await nextTick();
 
     expect(
-      JSON.parse(localStorage.getItem('novum-mobile-auth') || '{}'),
+      JSON.parse(localStorage.getItem(`${namespace}-auth`) || '{}'),
     ).toEqual({
       accessToken: 'access',
       refreshToken: 'refresh',
     });
 
-    const restored = await createPersistedAuth();
+    const restored = await createPersistedAuth(namespace);
     expect(restored.accessToken).toBe('access');
     expect(restored.refreshToken).toBe('refresh');
     expect(restored.authenticated).toBe(true);
@@ -144,14 +145,14 @@ describe('useAuthStore', () => {
     mocks.logout.mockResolvedValue(undefined);
     await restored.logout(false);
 
-    const cleared = await createPersistedAuth();
+    const cleared = await createPersistedAuth(namespace);
     expect(cleared.accessToken).toBeNull();
     expect(cleared.refreshToken).toBeNull();
     expect(cleared.authenticated).toBe(false);
   });
 
-  async function createPersistedAuth() {
-    const pinia = await initStores(createApp({}));
+  async function createPersistedAuth(namespace: string) {
+    const pinia = await initStores(createApp({}), { namespace });
     setActivePinia(pinia);
     return useAuthStore();
   }

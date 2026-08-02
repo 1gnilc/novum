@@ -15,6 +15,10 @@ type SecureStorageConstructor = new (config?: {
   metaKey?: string;
 }) => SecureStorage;
 
+export interface InitStoreOptions {
+  namespace: string;
+}
+
 const secureStorageModule = SecureLS as unknown as {
   default?: SecureStorageConstructor;
   SecureLS?: SecureStorageConstructor;
@@ -24,10 +28,10 @@ const SecureStorage =
   secureStorageModule.SecureLS ??
   (SecureLS as unknown as SecureStorageConstructor);
 
-export async function initStores(app: App) {
+export async function initStores(app: App, options: InitStoreOptions) {
   const { createPersistedState } = await import('pinia-plugin-persistedstate');
   const pinia = createPinia();
-  const namespace = import.meta.env.VITE_APP_NAMESPACE || 'novum-mobile';
+  const { namespace } = options;
   const secureStorage = new SecureStorage({
     encodingType: 'aes',
     encryptionSecret: import.meta.env.VITE_APP_STORE_SECURE_KEY,

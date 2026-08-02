@@ -5,11 +5,11 @@ import { setupI18n } from './locales';
 import { setupRouter } from './router';
 import { initStores } from './stores';
 
-export async function bootstrap() {
+export async function bootstrap(namespace: string) {
   const app = createApp(App);
 
   await setupI18n(app);
-  await initStores(app);
+  await initStores(app, { namespace });
   await setupRouter(app);
   app.mount('#app');
 }

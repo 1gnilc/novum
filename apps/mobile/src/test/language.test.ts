@@ -4,7 +4,7 @@ import { createApp } from 'vue';
 import { ActionSheet, Button } from 'vant';
 import { describe, expect, it } from 'vitest';
 
-import LanguageSelector from '#/components/language-selector.vue';
+import LanguageSelector from '#/components/language/index.vue';
 import { DEFAULT_LOCALE, getLocale, loadLocale, setupI18n } from '#/locales';
 
 describe('language selector', () => {

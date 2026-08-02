@@ -3,7 +3,7 @@ import { reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
-import LanguageSelector from '#/components/language-selector.vue';
+import LanguageSelector from '#/components/language/index.vue';
 import { resolveRedirect } from '#/router/redirect';
 import { useAuthStore } from '#/stores';
 
