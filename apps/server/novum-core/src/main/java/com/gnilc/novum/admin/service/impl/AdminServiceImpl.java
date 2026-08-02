@@ -19,7 +19,7 @@ import com.gnilc.auth.authz.rbac.service.UserRoleService;
 import com.gnilc.auth.authz.rbac.service.UserService;
 import com.gnilc.novum.admin.dao.AdminDao;
 import com.gnilc.novum.session.AdminSessionManager;
-import com.gnilc.novum.session.AdminSessionTokenPair;
+import com.gnilc.novum.session.SessionTokenPair;
 import com.gnilc.novum.admin.entity.bo.AdminBo;
 import com.gnilc.novum.admin.entity.dto.AdminDto;
 import com.gnilc.novum.admin.entity.dto.AdminPageDto;
@@ -100,7 +100,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, AdminBo> implements 
         if (!PASSWORD_ENCODER.matches(password, bo.getPassword())) {
             return null;
         }
-        AdminSessionTokenPair pair = sessionManager.createSession(bo.getUserId());
+        SessionTokenPair pair = sessionManager.createSession(bo.getUserId());
         return AdminTokenVo.of(pair.getAccessToken(), pair.getRefreshToken());
     }
 
@@ -112,7 +112,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, AdminBo> implements 
         if (StringUtils.isBlank(refreshToken)) {
             return null;
         }
-        AdminSessionTokenPair pair = sessionManager.refreshSession(refreshToken);
+        SessionTokenPair pair = sessionManager.refreshSession(refreshToken);
         if (pair == null) {
             return null;
         }

@@ -17,6 +17,14 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./cache": {
+      "types": "./src/cache.ts",
+      "default": "./src/cache.ts"
+    },
+    "./shared": {
+      "types": "./src/shared.ts",
+      "default": "./src/shared.ts"
     }
   },
   "dependencies": {

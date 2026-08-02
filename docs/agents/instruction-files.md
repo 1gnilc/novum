@@ -2,7 +2,7 @@
 
 This repository uses two agent-facing file types: `AGENTS.md` for working and implementation instructions, and `CONTEXT.md` for domain language and boundaries. Tool-specific instruction files are intentionally omitted so rules have one canonical owner.
 
-Keep one pair at the repository root and one pair for each independently managed large module. Current large modules are `apps/admin` and `apps/server`; their internal feature and Maven subdirectories do not receive additional instruction files.
+Keep one pair at the repository root and one pair for each independently managed large module. Current large modules are `apps/admin`, `apps/mobile`, and `apps/server`; their internal feature and Maven subdirectories do not receive additional instruction files.
 
 System, developer, organization, and user-prompt instructions remain outside this repository chain and take precedence when the agent host defines them as higher priority.
 

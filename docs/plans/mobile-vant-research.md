@@ -30,7 +30,7 @@
 
 ### Vite 配置形状
 
-官方 Vite 方案的核心如下；实现时应把两个插件合并到本仓库已有 Vite 配置工厂，而不是以这段代码覆盖仓库配置：
+官方 Vite 方案的核心如下；实现时应把两个插件加入 Mobile 本地的原生 Vite 配置，并沿用仓库 catalog 版本，不直接复制这段示例或接入 Admin 的 Vite 配置工厂：
 
 ```ts
 import { VantResolver } from '@vant/auto-import-resolver';

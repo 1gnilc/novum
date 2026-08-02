@@ -27,6 +27,7 @@ type ExtendOptions<T = any> = {
    */
   responseReturn?: 'body' | 'data' | 'raw';
 };
+
 type RequestClientConfig<T = any> = AxiosRequestConfig<T> & ExtendOptions<T>;
 
 type RequestResponse<T = any> = AxiosResponse<T> & {
@@ -65,7 +66,19 @@ interface ResponseInterceptorConfig<T = any> {
   rejected?: (error: any) => any;
 }
 
-type MakeErrorMessageFn = (message: string, error: any) => void;
+type RequestErrorType =
+  | 'bad-request'
+  | 'forbidden'
+  | 'internal-server-error'
+  | 'network-error'
+  | 'not-found'
+  | 'request-timeout'
+  | 'unauthorized';
+
+interface ErrorMessageInterceptorOptions {
+  onError: (message: string, error: unknown) => void;
+  resolveMessage: (type: RequestErrorType, error: unknown) => string;
+}
 
 interface HttpResponse<T = any> {
   /**
@@ -78,11 +91,12 @@ interface HttpResponse<T = any> {
 }
 
 export type {
+  ErrorMessageInterceptorOptions,
   HttpResponse,
-  MakeErrorMessageFn,
   RequestClientConfig,
   RequestClientOptions,
   RequestContentType,
+  RequestErrorType,
   RequestInterceptorConfig,
   RequestResponse,
   ResponseInterceptorConfig,

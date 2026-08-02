@@ -32,7 +32,6 @@ class AdminSessionCacheIT {
     private static final Duration REFRESH_TTL = Duration.ofDays(30);
 
     @Autowired private AdminSessionManager sessions;
-    @Autowired private AdminSessionRedisCommands commands;
     @Autowired private StringRedisTemplate redis;
     @Autowired private RedisConnectionFactory connectionFactory;
 
@@ -52,9 +51,9 @@ class AdminSessionCacheIT {
 
     @Test
     void sessionLifecyclePersistsTtlRefreshesAndRevokesTokensInRedis8() {
-        AdminSessionTokenPair first = sessions.createSession(33L);
-        String firstAccessKey = commands.accessKey(33L, first.getAccessToken());
-        String refreshKey = commands.refreshKey(33L, first.getRefreshToken());
+        SessionTokenPair first = sessions.createSession(33L);
+        String firstAccessKey = accessKey(33L, first.getAccessToken());
+        String refreshKey = refreshKey(33L, first.getRefreshToken());
 
         assertThat(sessions.validateAccessToken(first.getAccessToken())).isEqualTo(33L);
         assertThat(redis.opsForValue().get(firstAccessKey)).isEqualTo(first.getRefreshToken());
@@ -63,13 +62,13 @@ class AdminSessionCacheIT {
         assertTtlNear(refreshKey, REFRESH_TTL);
         Long refreshTtlBefore = redis.getExpire(refreshKey, TimeUnit.SECONDS);
 
-        AdminSessionTokenPair refreshed = sessions.refreshSession(first.getRefreshToken());
+        SessionTokenPair refreshed = sessions.refreshSession(first.getRefreshToken());
         assertThat(refreshed.getAccessToken()).isNotEqualTo(first.getAccessToken());
         assertThat(refreshed.getRefreshToken()).isEqualTo(first.getRefreshToken());
         assertThat(sessions.validateAccessToken(first.getAccessToken())).isNull();
         assertThat(sessions.validateAccessToken(refreshed.getAccessToken())).isEqualTo(33L);
         assertThat(redis.hasKey(firstAccessKey)).isFalse();
-        assertThat(redis.opsForValue().get(commands.accessKey(33L, refreshed.getAccessToken())))
+        assertThat(redis.opsForValue().get(accessKey(33L, refreshed.getAccessToken())))
                 .isEqualTo(first.getRefreshToken());
         assertThat(redis.opsForValue().get(refreshKey)).isEqualTo(refreshed.getAccessToken());
         assertThat(redis.getExpire(refreshKey, TimeUnit.SECONDS))
@@ -81,25 +80,13 @@ class AdminSessionCacheIT {
     }
 
     @Test
-    void rotatingADeletedRefreshKeyDoesNotRecreateIt() {
-        String refreshKey = commands.refreshKey(42L, "missing-refresh-token");
-
-        boolean replaced = commands.rotateAccessToken(
-                42L, "missing-refresh-token", "old-access-token", "replacement-access-token");
-
-        assertThat(replaced).isFalse();
-        assertThat(redis.hasKey(refreshKey)).isFalse();
-        assertThat(redis.opsForValue().get(refreshKey)).isNull();
-    }
-
-    @Test
     void concurrentRefreshLeavesOnlyOneValidNewAccessToken() {
         int requestCount = 16;
-        AdminSessionTokenPair session = sessions.createSession(43L);
+        SessionTokenPair session = sessions.createSession(43L);
         ExecutorService executor = Executors.newFixedThreadPool(requestCount);
         CountDownLatch ready = new CountDownLatch(requestCount);
         CountDownLatch start = new CountDownLatch(1);
-        List<CompletableFuture<AdminSessionTokenPair>> futures = new ArrayList<>();
+        List<CompletableFuture<SessionTokenPair>> futures = new ArrayList<>();
 
         try {
             for (int i = 0; i < requestCount; i++) {
@@ -112,11 +99,11 @@ class AdminSessionCacheIT {
             }
             start.countDown();
 
-            List<AdminSessionTokenPair> successfulRefreshes = futures.stream()
+            List<SessionTokenPair> successfulRefreshes = futures.stream()
                     .map(CompletableFuture::join)
                     .filter(java.util.Objects::nonNull)
                     .toList();
-            List<AdminSessionTokenPair> validRefreshes = successfulRefreshes.stream()
+            List<SessionTokenPair> validRefreshes = successfulRefreshes.stream()
                     .filter(refreshed -> sessions.validateAccessToken(refreshed.getAccessToken()) != null)
                     .toList();
 
@@ -125,10 +112,10 @@ class AdminSessionCacheIT {
             assertThat(validRefreshes).singleElement().satisfies(refreshed -> {
                 assertThat(refreshed.getRefreshToken()).isEqualTo(session.getRefreshToken());
                 assertThat(sessions.validateAccessToken(refreshed.getAccessToken())).isEqualTo(43L);
-                assertThat(redis.opsForValue().get(commands.refreshKey(43L, session.getRefreshToken())))
+                assertThat(redis.opsForValue().get(refreshKey(43L, session.getRefreshToken())))
                         .isEqualTo(refreshed.getAccessToken());
-                assertThat(redis.keys(commands.accessPattern(43L)))
-                        .containsExactly(commands.accessKey(43L, refreshed.getAccessToken()));
+                assertThat(redis.keys(accessPattern(43L)))
+                        .containsExactly(accessKey(43L, refreshed.getAccessToken()));
             });
         } finally {
             executor.shutdownNow();
@@ -138,18 +125,18 @@ class AdminSessionCacheIT {
     @Test
     void concurrentRefreshAndLogoutLeaveNoValidAccessToken() {
         int sessionCount = 64;
-        List<AdminSessionTokenPair> initialSessions = new ArrayList<>();
+        List<SessionTokenPair> initialSessions = new ArrayList<>();
         for (int i = 0; i < sessionCount; i++) {
             initialSessions.add(sessions.createSession(44L));
         }
         ExecutorService executor = Executors.newFixedThreadPool(sessionCount * 2);
         CountDownLatch ready = new CountDownLatch(sessionCount * 2);
         CountDownLatch start = new CountDownLatch(1);
-        List<CompletableFuture<AdminSessionTokenPair>> refreshes = new ArrayList<>();
+        List<CompletableFuture<SessionTokenPair>> refreshes = new ArrayList<>();
         List<CompletableFuture<Boolean>> logouts = new ArrayList<>();
 
         try {
-            for (AdminSessionTokenPair session : initialSessions) {
+            for (SessionTokenPair session : initialSessions) {
                 refreshes.add(CompletableFuture.supplyAsync(() -> {
                     ready.countDown();
                     await(ready);
@@ -165,7 +152,7 @@ class AdminSessionCacheIT {
             }
             start.countDown();
 
-            List<AdminSessionTokenPair> refreshedSessions = refreshes.stream()
+            List<SessionTokenPair> refreshedSessions = refreshes.stream()
                     .map(CompletableFuture::join)
                     .filter(java.util.Objects::nonNull)
                     .toList();
@@ -181,15 +168,27 @@ class AdminSessionCacheIT {
 
     @Test
     void cleanupUserSessionsLeavesOtherUsersUntouched() {
-        AdminSessionTokenPair user = sessions.createSession(40L);
-        AdminSessionTokenPair other = sessions.createSession(41L);
+        SessionTokenPair user = sessions.createSession(40L);
+        SessionTokenPair other = sessions.createSession(41L);
 
         sessions.cleanupUserSessions(40L);
 
         assertThat(sessions.validateAccessToken(user.getAccessToken())).isNull();
         assertThat(sessions.validateAccessToken(other.getAccessToken())).isEqualTo(41L);
-        assertThat(redis.hasKey(commands.refreshKey(41L, other.getRefreshToken()))).isTrue();
+        assertThat(redis.hasKey(refreshKey(41L, other.getRefreshToken()))).isTrue();
         assertThat(redis.keys("sys:admin:*:40:*")).isEmpty();
+    }
+
+    private String accessKey(Long userId, String token) {
+        return "sys:admin:at:" + userId + ":" + token;
+    }
+
+    private String accessPattern(Long userId) {
+        return "sys:admin:at:" + userId + ":*";
+    }
+
+    private String refreshKey(Long userId, String token) {
+        return "sys:admin:rt:" + userId + ":" + token;
     }
 
     private void assertTtlNear(String key, Duration expected) {

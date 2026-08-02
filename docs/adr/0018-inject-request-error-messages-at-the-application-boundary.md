@@ -1,0 +1,3 @@
+# Inject request error messages at the application boundary
+
+Remove the direct `@vben/locales` dependency from `@vben/request`. The shared `errorMessageResponseInterceptor` classifies failures as `bad-request`, `forbidden`, `internal-server-error`, `network-error`, `not-found`, `request-timeout`, or `unauthorized`, then calls a required `resolveMessage(type, error)` callback and passes its result to `onError(message, error)`. Admin and Mobile each map those types to their own current-locale message keys and UI feedback component, so changing locale affects subsequent errors without rebuilding the interceptor.

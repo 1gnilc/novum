@@ -67,6 +67,14 @@
 
 该脚本依赖 `01_rbac.sql` 至 `06_i18n.sql`。它可以在当前空库结构上重复执行，也可以幂等补齐上一版 `az_permission` 和 `az_menu` 缺少的 `built_in` 字段；它不是通用迁移框架，不处理其他历史结构差异。重复执行不会覆盖已有动态翻译值。
 
+### `08_customer.sql`
+
+创建 `nv_customer` 表、内置 `customer` 角色和默认 Customer，并恢复其独立 RBAC 用户与必需角色绑定。默认用户名为 `customer`，初始密码为 `123456`。重复执行会恢复默认 Customer、RBAC 用户、角色和绑定的有效状态，但保留已有密码、昵称和头像。
+
+### `09_customer_permissions.sql`
+
+初始化 Customer 登录、刷新、退出三条公开权限，以及绑定到 `customer` 角色的当前信息查询权限。本脚本不创建菜单，依赖 `08_customer.sql`。
+
 ## 首次部署
 
 准备一个空的 MySQL 8 数据库，并按以下顺序执行：
@@ -86,6 +94,10 @@ mysql --host=<host> --user=<user> --password --database=<database> \
   < deploy/sql/06_i18n.sql
 mysql --host=<host> --user=<user> --password --database=<database> \
   < deploy/sql/07_rbac_admin.sql
+mysql --host=<host> --user=<user> --password --database=<database> \
+  < deploy/sql/08_customer.sql
+mysql --host=<host> --user=<user> --password --database=<database> \
+  < deploy/sql/09_customer_permissions.sql
 ```
 
 执行前确认目标数据库：
@@ -99,6 +111,7 @@ SELECT DATABASE();
 ```sql
 SHOW TABLES;
 SELECT id, username, status FROM sys_admin WHERE username = 'admin' AND del = 0;
+SELECT id, username, status FROM nv_customer WHERE username = 'customer' AND del = 0;
 SELECT id, code, built_in FROM az_role WHERE code = 'admin' AND del = 0;
 ```
 
@@ -116,6 +129,8 @@ SELECT id, code, built_in FROM az_role WHERE code = 'admin' AND del = 0;
 - `05_admin_permissions.sql` 会规范化 6 项当前用户权限的公开状态并补齐有效 `admin` 角色绑定，其他已有权限字段保持不变；
 - `06_i18n.sql` 会恢复国际化内置角色、菜单和默认关系，但不会覆盖已有翻译值；
 - `07_rbac_admin.sql` 会补齐 `built_in` 字段、恢复 RBAC 管理内置资源与关系、收紧管理接口公开状态，但不会覆盖已有动态翻译值；
+- `08_customer.sql` 会恢复默认 Customer、独立 RBAC 用户、内置角色和必需绑定，但不会覆盖已有密码、昵称或头像；
+- `09_customer_permissions.sql` 会恢复四条 Customer 权限和当前信息角色绑定，不创建菜单；
 - 脚本不会删除额外的业务数据；
 - 历史版本升级、字段变更和索引变更仍需专门的迁移脚本。
 
@@ -130,8 +145,8 @@ deploy/sql/<script>.sql -> sql/schema/<script>.sql
 当前测试加载方式如下：
 
 - `gnilc-auth-rbac` 的 `RbacSchemaIT` 验证 `01_rbac.sql`、`03_framework_permissions.sql` 和 `04_rbac_permissions.sql`，其他模块集成测试只加载 `01_rbac.sql`；
-- `novum-core` 的 Schema 集成测试验证 `02_admin.sql`、`05_admin_permissions.sql`、`06_i18n.sql` 和 `07_rbac_admin.sql`，包括上一版结构补列与重复执行；其他模块集成测试依次加载 `01_rbac.sql`、`02_admin.sql`；
-- `novum-core` 的 Admin API 测试恢复基线数据时会重新执行 `02_admin.sql` 至 `07_rbac_admin.sql`，确保全库清理后框架、RBAC、后台管理员和国际化权限均恢复到真实部署基线；
+- `novum-core` 的 Schema 集成测试验证 `02_admin.sql`、`05_admin_permissions.sql` 至 `09_customer_permissions.sql`，包括上一版结构补列与重复执行；共享应用集成测试按 `01` 至 `09` 顺序初始化；
+- `novum-core` 的 API 测试恢复基线数据时会重新执行 `02_admin.sql` 至 `09_customer_permissions.sql`，确保全库清理后框架、RBAC、Admin、Customer 和国际化权限均恢复到真实部署基线；
 - `novum-bootstrap` 只验证最终应用组合和启动，不再复制或执行部署 SQL。
 
 测试数据库固定为 Testcontainers 创建的 `gnilc_auth_test`，测试不会使用 H2、本机 MySQL、开发数据库或共享数据库。
@@ -147,7 +162,7 @@ mvn verify
 ## 安全要求
 
 - 不要把数据库密码写入 SQL、文档、脚本参数或提交记录；使用客户端交互式密码输入或安全的凭据管理方式。
-- 当前用户相关的 6 项权限默认要求 `admin` 角色；后台管理员、角色、权限和菜单管理接口要求 `rbac:manager` 角色；只有登录、刷新和退出等会话端点保持公开访问。
+- Admin 当前用户相关的 6 项权限默认要求 `admin` 角色；Customer 当前信息要求 `customer` 角色；后台管理员、角色、权限和菜单管理接口要求 `rbac:manager` 角色；只有登录、刷新和退出等会话端点保持公开访问。
 - 不要在共享数据库或未备份的现有数据库上试运行初始化脚本。
 - 自动化测试只能连接由 Testcontainers 管理的临时数据库。
 - 本目录只处理 MySQL 结构和基础数据，不负责 Redis 初始化。

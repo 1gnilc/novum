@@ -36,6 +36,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @ComponentScan(basePackages = {
         "com.gnilc.novum.admin",
         "com.gnilc.novum.auth",
+        "com.gnilc.novum.authz",
+        "com.gnilc.novum.customer",
         "com.gnilc.novum.i18n",
         "com.gnilc.novum.session"
 },

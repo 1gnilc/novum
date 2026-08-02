@@ -1,6 +1,6 @@
 # Server
 
-The Server establishes identities, evaluates access to protected targets, and enforces Admin System APIs. Admin-specific vocabulary remains canonical in [`apps/admin/CONTEXT.md`](../admin/CONTEXT.md) and is not duplicated here.
+The Server establishes identities, evaluates access to protected targets, and enforces application APIs. Admin-specific vocabulary remains canonical in [`apps/admin/CONTEXT.md`](../admin/CONTEXT.md), while Customer vocabulary remains canonical in [`apps/mobile/CONTEXT.md`](../mobile/CONTEXT.md); neither is duplicated here.
 
 ## Authentication And Authorization
 
