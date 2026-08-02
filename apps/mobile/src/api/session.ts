@@ -43,6 +43,6 @@ export async function logout(refreshToken: string) {
   );
 }
 
-export function getUserInfo() {
+export function getCustomerUserInfo() {
   return requestClient.get<CustomerInfo>('/customer/user-info');
 }

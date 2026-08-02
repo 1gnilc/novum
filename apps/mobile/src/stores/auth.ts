@@ -7,7 +7,7 @@ import { trimToNull } from '@vben/utils/shared';
 import { defineStore } from 'pinia';
 
 import {
-  getUserInfo as fetchUserInfo,
+  getCustomerUserInfo,
   login as loginCustomer,
   logout as logoutCustomer,
 } from '#/api/session';
@@ -18,11 +18,13 @@ interface LoginParams {
   username: string;
 }
 
+type Token = null | string;
+
 export const useAuthStore = defineStore(
   'auth',
   () => {
-    const accessToken = ref<null | string>(null);
-    const refreshToken = ref<null | string>(null);
+    const accessToken = ref<Token>(null);
+    const refreshToken = ref<Token>(null);
     const userInfo = ref<CustomerInfo | null>(null);
     const loginLoading = ref(false);
     const authenticated = computed(() => Boolean(accessToken.value));
@@ -35,8 +37,8 @@ export const useAuthStore = defineStore(
           credentials.username,
           credentials.password,
         );
-        accessToken.value = session.accessToken;
-        refreshToken.value = session.refreshToken;
+        setAccessToken(session.accessToken);
+        setRefreshToken(session.refreshToken);
         try {
           await getUserInfo();
         } catch (error) {
@@ -50,7 +52,7 @@ export const useAuthStore = defineStore(
     }
 
     async function getUserInfo() {
-      const info = await fetchUserInfo();
+      const info = await getCustomerUserInfo();
       userInfo.value = info;
       return info;
     }
@@ -71,9 +73,17 @@ export const useAuthStore = defineStore(
       });
     }
 
+    function setAccessToken(token: Token) {
+      accessToken.value = token;
+    }
+
+    function setRefreshToken(token: Token) {
+      refreshToken.value = token;
+    }
+
     function $reset() {
-      accessToken.value = null;
-      refreshToken.value = null;
+      setAccessToken(null);
+      setRefreshToken(null);
       userInfo.value = null;
       loginLoading.value = false;
     }
@@ -87,6 +97,8 @@ export const useAuthStore = defineStore(
       loginLoading,
       logout,
       refreshToken,
+      setAccessToken,
+      setRefreshToken,
       userInfo,
     };
   },

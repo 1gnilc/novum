@@ -156,12 +156,13 @@ Vant 函数式调用是官方文档中特别提示的使用点。Vite 配置会�
 
 | 方法 | 行为 |
 | --- | --- |
-| `login(params)` | 调用 Customer 登录接口，写入 token pair，再调用 `getUserInfo()`；信息查询失败时执行 `$reset()` 并继续抛错；成功返回 `{ userInfo }` |
-| `getUserInfo()` | 调用 Customer 当前信息接口，更新并返回 `userInfo` |
+| `login(params)` | 调用 Customer 登录接口，通过 token setter 写入 token pair，再调用 `getUserInfo()`；信息查询失败时执行 `$reset()` 并继续抛错；成功返回 `{ userInfo }` |
+| `getUserInfo()` | 调用 API 层的 `getCustomerUserInfo()`，更新并返回 `userInfo` |
 | `logout(redirect = true)` | 有 RT 时尝试调用 Customer 退出接口；无论远端结果如何，最终执行 `$reset()` 并 `router.replace('/login')`；默认把退出前 `route.fullPath` 编码后放入 `redirect` query，传 `false` 时不携带该 query |
+| `setAccessToken(token)`、`setRefreshToken(token)` | 分别写入 AT 和 RT，供登录、请求刷新和其他 Session 调用方统一使用 |
 | `$reset()` | 清除 AT、RT、`userInfo`、`loginLoading` 和持久化 Session |
 
-`useAuthStore` 的 `persist.pick` 只包含 `accessToken` 和 `refreshToken`。Mobile 在创建任何 Store 前安装与 Admin 相同的 Pinia 持久化插件，Store 创建时由插件自动读取这两个字段。`doRefreshToken()` 使用 `$patch()` 写入刷新后的 token pair，`doReAuthenticate()` 使用 `$reset()` 清除 Session。
+`useAuthStore` 的 `persist.pick` 只包含 `accessToken` 和 `refreshToken`。Mobile 在创建任何 Store 前安装与 Admin 相同的 Pinia 持久化插件，Store 创建时由插件自动读取这两个字段。`doRefreshToken()` 使用公开 token setter 写入刷新后的 token pair，`doReAuthenticate()` 使用 `$reset()` 清除 Session。
 
 Store 不提供独立的 `resetSessionToLogin()` 或登录成功回调。只有主动 `logout()` 参考 Admin 在 Store 内跳转登录页；登录成功后的回跳仍由登录页负责。Store 不包含 `refreshing`、路由需求、请求需求、提示开关、请求 key 或请求集合。并发刷新和单次重放由 `@vben/request` 的 `RequestClient` 管理；全局登录询问组件只读取当前路由和 `authenticated`。
 
@@ -226,6 +227,7 @@ Store 不提供独立的 `resetSessionToLogin()` 或登录成功回调。只有�
 - `src/main.ts` 只加载全局基础样式并启动 `bootstrap`，不处理 i18n、Pinia 或 Router 的模块细节。
 - `src/bootstrap.ts` 只创建应用并依次调用 locales、stores、router 的安装入口；初始语言必须在 Router 安装前完成。
 - `src/locales/index.ts` 读取并校验持久化 locale，安装 i18n，并监听当前 locale 同步 `html[lang]`、Vant `Locale.use` 和 Day.js locale。
+- `src/locales/index.ts` 在模块级创建 i18n，并直接导出与 Admin 同名的 `$t`、`$te`；调用方不再经过 `translate()` 包装函数。
 - `src/router/index.ts` 安装 Router、等待初始路由就绪并同步本地化页面标题。
 - `src/app.vue` 只渲染全局根布局，不承担模块初始化或全局副作用。
 - 本轮实现语言选择器；选择后立即切换 vue-i18n、Vant 和 Day.js，并持久化 `locale`。
@@ -241,7 +243,7 @@ Mobile 不定义客户端请求认证元数据，也不在请求拦截器中判�
 - 主 client 的请求拦截器只注入当前 AT 和 locale。没有 AT 的请求仍会发送且不携带 Authorization，由服务端决定接口是否返回 401。
 - 登录询问只由当前路由 `meta.requiresAuth` 和认证状态驱动，不读取请求结果或请求配置。
 - 有 AT 的请求带 Bearer token。401 刷新和重放直接采用 Admin 已有的 `authenticateResponseInterceptor`。
-- `doRefreshToken()` 读取调用时的当前 RT，刷新成功后使用 `$patch()` 写入新 token pair 并返回新 AT；共享拦截器让并发 401 等待同一次刷新并各自重放一次。
+- `doRefreshToken()` 读取调用时的当前 RT，刷新成功后使用 Store 的 token setter 写入新 token pair 并返回新 AT；共享拦截器让并发 401 等待同一次刷新并各自重放一次。
 - 刷新失败、未启用刷新或重放后再次返回 401 时，`doReAuthenticate()` 无条件调用 `$reset()`。
 - 不比较 401 请求携带的 AT 与当前 AT，不保存 RT 快照，不维护请求集合，也不隔离旧 Session 的迟到响应；这一竞态行为与 Admin 保持一致。
 - Session 清除后，全局询问组件只根据当前路由 `meta.requiresAuth` 和 `!authenticated` 决定是否显示。公开路由不显示，受保护路由显示。
@@ -439,9 +441,9 @@ flowchart TD
 | `apps/mobile/src/components/language-selector.vue` | 当前语言触发器及 Vant ActionSheet；在 Home 和登录页复用，即时切换并持久化 |
 | `apps/mobile/src/layouts/global-layout.vue` | 无 DOM 包裹的 RouterView + 全局认证提示宿主 |
 | `apps/mobile/src/components/authentication/login-required-action-sheet.vue` | Vant 底部登录询问、取消与 redirect 行为 |
-| `apps/mobile/src/stores/index.ts`、`auth.ts` | 本地初始化 Pinia 持久化插件；认证 Store 维护 AT、RT、认证状态、当前 Customer、`loginLoading` 及 `login`、`getUserInfo`、`logout`、`$reset` |
+| `apps/mobile/src/stores/index.ts`、`auth.ts` | 本地初始化 Pinia 持久化插件；认证 Store 维护 AT、RT、认证状态、当前 Customer、`loginLoading` 及 `login`、`getUserInfo`、token setter、`logout`、`$reset` |
 | `apps/mobile/src/router/index.ts`、`routes.ts` | Hash 模式纯前端静态路由和 `requiresAuth` 元数据；不创建认证 guard |
-| `apps/mobile/src/api/request.ts`、`session.ts` | AT 注入、401 刷新/重放及登录、刷新、退出、当前 Customer 信息接口适配 |
+| `apps/mobile/src/api/request.ts`、`session.ts` | AT 注入、401 刷新/重放及登录、刷新、退出、`getCustomerUserInfo` 当前 Customer 信息接口适配 |
 | `apps/mobile/src/types/vue-router.d.ts` | Mobile `requiresAuth` RouteMeta 类型扩展 |
 | `apps/mobile/src/styles/base.css`、`page.css` | 基础 reset、根高度，以及页面共享样式 |
 | `apps/mobile/src/views/home.vue`、`login.vue`、`account.vue`、`not-found.vue` | 首页、登录、当前 Customer 信息与退出、404；首期无其他页面 |

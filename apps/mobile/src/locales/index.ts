@@ -1,5 +1,4 @@
 import type { App } from 'vue';
-import type { Composer, I18n } from 'vue-i18n';
 
 import { watch } from 'vue';
 import { createI18n } from 'vue-i18n';
@@ -30,8 +29,15 @@ const messages = {
 };
 const dayjsLocales = { 'en-US': 'en', 'zh-CN': 'zh-cn' } as const;
 const vantLocales = { 'en-US': enUSVant, 'zh-CN': zhCNVant } as const;
+const i18n = createI18n({
+  fallbackLocale: DEFAULT_LOCALE,
+  legacy: false,
+  locale: DEFAULT_LOCALE,
+  messages,
+});
+const $t = i18n.global.t;
+const $te = i18n.global.te;
 
-let i18n: I18n | undefined;
 let stopLocaleSync: (() => void) | undefined;
 
 export async function loadLocale(target: LocaleStorage = storage) {
@@ -48,12 +54,7 @@ export async function saveLocale(
 
 export async function setupI18n(app: App, locale?: AppLocale) {
   const current = locale ?? (await loadLocale());
-  i18n = createI18n({
-    fallbackLocale: DEFAULT_LOCALE,
-    legacy: false,
-    locale: current,
-    messages,
-  });
+  i18n.global.locale.value = current;
   app.use(i18n);
   stopLocaleSync?.();
   stopLocaleSync = watch(getLocale, syncLocale, { immediate: true });
@@ -61,24 +62,13 @@ export async function setupI18n(app: App, locale?: AppLocale) {
 }
 
 export function getLocale(): AppLocale {
-  const locale = composer()?.locale.value;
+  const locale = i18n.global.locale.value;
   return isAppLocale(locale) ? locale : DEFAULT_LOCALE;
 }
 
 export async function setLocale(locale: AppLocale) {
-  const active = composer();
-  if (active) {
-    active.locale.value = locale;
-  }
+  i18n.global.locale.value = locale;
   await saveLocale(locale);
-}
-
-export function translate(key: string) {
-  return composer()?.t(key) ?? key;
-}
-
-function composer() {
-  return i18n?.global as Composer | undefined;
 }
 
 function syncLocale(locale: AppLocale) {
@@ -90,3 +80,5 @@ function syncLocale(locale: AppLocale) {
 function isAppLocale(locale: unknown): locale is AppLocale {
   return SUPPORTED_LOCALES.includes(locale as AppLocale);
 }
+
+export { $t, $te };

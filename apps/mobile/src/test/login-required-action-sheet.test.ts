@@ -39,7 +39,7 @@ describe('login required action sheet', () => {
     await nextTick();
     expect(sheet.props('show')).toBe(true);
 
-    auth.$patch({ accessToken: 'access' });
+    auth.setAccessToken('access');
     await nextTick();
     expect(sheet.props('show')).toBe(false);
   });

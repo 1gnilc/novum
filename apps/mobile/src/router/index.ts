@@ -5,7 +5,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 
 import { useTitle } from '@vueuse/core';
 
-import { translate } from '#/locales';
+import { $t } from '#/locales';
 
 import { routes } from './routes';
 
@@ -23,7 +23,7 @@ export async function setupRouter(app: App) {
   useTitle(
     computed(() => {
       const key = router.currentRoute.value.meta.title;
-      return key ? `${translate(key)} - ${appTitle}` : appTitle;
+      return key ? `${$t(key)} - ${appTitle}` : appTitle;
     }),
   );
 }

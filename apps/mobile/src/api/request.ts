@@ -7,7 +7,7 @@ import {
   RequestClient,
 } from '@vben/request';
 
-import { getLocale, translate } from '#/locales';
+import { $t, getLocale } from '#/locales';
 import { useAuthStore } from '#/stores';
 
 import { refresh } from './session';
@@ -37,7 +37,8 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       throw new Error('Refresh token is missing.');
     }
     const session = await refresh(auth.refreshToken);
-    auth.$patch(session);
+    auth.setAccessToken(session.accessToken);
+    auth.setRefreshToken(session.refreshToken);
     return session.accessToken;
   }
 
@@ -77,7 +78,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         const responseMessage = responseData?.error ?? responseData?.message;
         showToast({ message: responseMessage || message, type: 'fail' });
       },
-      resolveMessage: (type) => translate(requestErrorMessages[type]),
+      resolveMessage: (type) => $t(requestErrorMessages[type]),
     }),
   );
 

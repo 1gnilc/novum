@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import { createApp, nextTick } from 'vue';
 
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -6,14 +6,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { initStores, useAuthStore } from '#/stores';
 
 const mocks = vi.hoisted(() => ({
-  getUserInfo: vi.fn(),
+  getCustomerUserInfo: vi.fn(),
   login: vi.fn(),
   logout: vi.fn(),
   replace: vi.fn(),
 }));
 
 vi.mock('#/api/session', () => ({
-  getUserInfo: mocks.getUserInfo,
+  getCustomerUserInfo: mocks.getCustomerUserInfo,
   login: mocks.login,
   logout: mocks.logout,
 }));
@@ -31,12 +31,30 @@ describe('useAuthStore', () => {
     vi.clearAllMocks();
   });
 
+  it('sets and clears the token pair through public actions', () => {
+    const auth = useAuthStore();
+
+    auth.setAccessToken('access');
+    auth.setRefreshToken('refresh');
+
+    expect(auth.accessToken).toBe('access');
+    expect(auth.refreshToken).toBe('refresh');
+    expect(auth.authenticated).toBe(true);
+
+    auth.setAccessToken(null);
+    auth.setRefreshToken(null);
+
+    expect(auth.accessToken).toBeNull();
+    expect(auth.refreshToken).toBeNull();
+    expect(auth.authenticated).toBe(false);
+  });
+
   it('logs in, stores the token pair, and loads current customer info', async () => {
     mocks.login.mockResolvedValue({
       accessToken: 'access',
       refreshToken: 'refresh',
     });
-    mocks.getUserInfo.mockResolvedValue({
+    mocks.getCustomerUserInfo.mockResolvedValue({
       id: '7',
       nickname: 'Customer',
       roleCodes: ['customer'],
@@ -64,7 +82,7 @@ describe('useAuthStore', () => {
       accessToken: 'access',
       refreshToken: 'refresh',
     });
-    mocks.getUserInfo.mockRejectedValue(new Error('user info failed'));
+    mocks.getCustomerUserInfo.mockRejectedValue(new Error('user info failed'));
     const auth = useAuthStore();
 
     await expect(
@@ -80,7 +98,8 @@ describe('useAuthStore', () => {
   it('clears local state and replaces the route even when remote logout fails', async () => {
     mocks.logout.mockRejectedValue(new Error('offline'));
     const auth = useAuthStore();
-    auth.$patch({ accessToken: 'access', refreshToken: 'refresh' });
+    auth.setAccessToken('access');
+    auth.setRefreshToken('refresh');
 
     await auth.logout();
 
@@ -95,12 +114,18 @@ describe('useAuthStore', () => {
 
   it('persists only the token pair and restores it until logout', async () => {
     const auth = await createPersistedAuth();
-    auth.$patch({
-      accessToken: 'access',
-      loginLoading: true,
-      refreshToken: 'refresh',
-      userInfo: { nickname: 'Customer', username: 'customer' },
-    });
+    auth.setAccessToken('access');
+    auth.setRefreshToken('refresh');
+    auth.loginLoading = true;
+    auth.userInfo = {
+      createTime: '2026-08-03T00:00:00Z',
+      id: '7',
+      nickname: 'Customer',
+      roleCodes: ['customer'],
+      userId: '8',
+      username: 'customer',
+    };
+    await nextTick();
 
     expect(
       JSON.parse(localStorage.getItem('novum-mobile-auth') || '{}'),

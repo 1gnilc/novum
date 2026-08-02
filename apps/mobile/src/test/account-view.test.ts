@@ -10,7 +10,7 @@ import { useAuthStore } from '#/stores';
 import AccountView from '#/views/account.vue';
 
 const api = vi.hoisted(() => ({
-  getUserInfo: vi.fn(),
+  getCustomerUserInfo: vi.fn(),
   login: vi.fn(),
   logout: vi.fn(),
 }));
@@ -32,11 +32,11 @@ describe('account view', () => {
     const { wrapper } = await mountView();
 
     expect(wrapper.text()).toContain('登录后查看账户信息');
-    expect(api.getUserInfo).not.toHaveBeenCalled();
+    expect(api.getCustomerUserInfo).not.toHaveBeenCalled();
   });
 
   it('loads customer information for an authenticated customer', async () => {
-    api.getUserInfo.mockResolvedValue({
+    api.getCustomerUserInfo.mockResolvedValue({
       id: '1',
       nickname: 'Customer',
       roleCodes: ['customer'],
@@ -46,7 +46,7 @@ describe('account view', () => {
     const { auth, wrapper } = await mountView(true);
     await flushPromises();
 
-    expect(api.getUserInfo).toHaveBeenCalledOnce();
+    expect(api.getCustomerUserInfo).toHaveBeenCalledOnce();
     expect(auth.userInfo?.username).toBe('customer');
     expect(wrapper.text()).toContain('Customer');
   });
@@ -56,7 +56,8 @@ describe('account view', () => {
     setActivePinia(pinia);
     const auth = useAuthStore();
     if (authenticated) {
-      auth.$patch({ accessToken: 'access', refreshToken: 'refresh' });
+      auth.setAccessToken('access');
+      auth.setRefreshToken('refresh');
     }
     const router = createRouter({
       history: createMemoryHistory(),

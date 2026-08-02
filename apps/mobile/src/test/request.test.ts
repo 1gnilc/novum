@@ -4,7 +4,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { baseRequestClient, requestClient } from '#/api/request';
-import { getUserInfo, login } from '#/api/session';
+import { getCustomerUserInfo, login } from '#/api/session';
 import { useAuthStore } from '#/stores';
 
 vi.mock('#/router', () => ({
@@ -27,7 +27,9 @@ describe('mobile request client', () => {
     );
     requestClient.instance.defaults.adapter = adapter;
 
-    await expect(getUserInfo()).resolves.toEqual({ username: 'customer' });
+    await expect(getCustomerUserInfo()).resolves.toEqual({
+      username: 'customer',
+    });
 
     expect(adapter).toHaveBeenCalledOnce();
     expect(adapter.mock.calls[0]?.[0].headers?.Authorization).toBeNull();
@@ -35,7 +37,8 @@ describe('mobile request client', () => {
 
   it('adds the bearer token and current locale to authenticated requests', async () => {
     const auth = useAuthStore();
-    auth.$patch({ accessToken: 'access', refreshToken: 'refresh' });
+    auth.setAccessToken('access');
+    auth.setRefreshToken('refresh');
     const adapter = vi.fn(async (config: AxiosRequestConfig) =>
       response(config, { code: 0, data: { ok: true } }),
     );
@@ -52,7 +55,8 @@ describe('mobile request client', () => {
 
   it('refreshes once, updates the token pair, and replays the failed request', async () => {
     const auth = useAuthStore();
-    auth.$patch({ accessToken: 'old-access', refreshToken: 'refresh' });
+    auth.setAccessToken('old-access');
+    auth.setRefreshToken('refresh');
     const adapter = vi.fn(async (config: AxiosRequestConfig) => {
       if (adapter.mock.calls.length === 1) {
         const error = new Error('Unauthorized') as Error & {
@@ -87,11 +91,9 @@ describe('mobile request client', () => {
 
   it('clears the session when refreshing fails', async () => {
     const auth = useAuthStore();
-    auth.$patch({
-      accessToken: 'old-access',
-      refreshToken: 'refresh',
-      userInfo: { nickname: 'Customer', username: 'customer' },
-    });
+    auth.setAccessToken('old-access');
+    auth.setRefreshToken('refresh');
+    auth.userInfo = customerInfo();
     requestClient.instance.defaults.adapter = vi.fn(async (config) => {
       throw unauthorized(config);
     });
@@ -110,11 +112,9 @@ describe('mobile request client', () => {
 
   it('clears the refreshed session when the replay is unauthorized', async () => {
     const auth = useAuthStore();
-    auth.$patch({
-      accessToken: 'old-access',
-      refreshToken: 'refresh',
-      userInfo: { nickname: 'Customer', username: 'customer' },
-    });
+    auth.setAccessToken('old-access');
+    auth.setRefreshToken('refresh');
+    auth.userInfo = customerInfo();
     const adapter = vi.fn(async (config: AxiosRequestConfig) => {
       throw unauthorized(config);
     });
@@ -181,5 +181,16 @@ describe('mobile request client', () => {
     error.config = config;
     error.response = response(config, null, 401);
     return error;
+  }
+
+  function customerInfo() {
+    return {
+      createTime: '2026-08-03T00:00:00Z',
+      id: '7',
+      nickname: 'Customer',
+      roleCodes: ['customer'],
+      userId: '8',
+      username: 'customer',
+    };
   }
 });

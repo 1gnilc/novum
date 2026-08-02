@@ -10,7 +10,7 @@ import { useAuthStore } from '#/stores';
 import LoginView from '#/views/login.vue';
 
 const api = vi.hoisted(() => ({
-  getUserInfo: vi.fn(),
+  getCustomerUserInfo: vi.fn(),
   login: vi.fn(),
   logout: vi.fn(),
 }));
@@ -32,12 +32,13 @@ describe('login view', () => {
     const pinia = createPinia();
     setActivePinia(pinia);
     const auth = useAuthStore();
-    auth.$patch({ accessToken: 'old-access', refreshToken: 'old-refresh' });
+    auth.setAccessToken('old-access');
+    auth.setRefreshToken('old-refresh');
     api.login.mockResolvedValue({
       accessToken: 'new-access',
       refreshToken: 'new-refresh',
     });
-    api.getUserInfo.mockResolvedValue({
+    api.getCustomerUserInfo.mockResolvedValue({
       id: '1',
       nickname: 'Customer',
       roleCodes: ['customer'],
