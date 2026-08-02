@@ -223,9 +223,11 @@ Store 不提供独立的 `resetSessionToLogin()` 或登录成功回调。只有�
 
 - 直接使用 `vue-i18n`，只支持 `zh-CN` 和 `en-US`，默认 `zh-CN`；不依赖 `@vben/locales`、Vben 公共消息、Admin 动态翻译或 preferences。
 - 两份 Mobile 消息静态导入，只保留登录、语言选择、认证询问、请求错误和页面标题实际使用的 key。
-- `src/main.ts` 先读取并校验持久化 locale，再将初始 locale 传给 `bootstrap`。
-- `src/bootstrap.ts` 创建并安装 i18n；不得在 Router 挂载后才切换初始语言。
-- `src/app.vue` 监听当前 locale，同步 `html[lang]`、Vant `Locale.use` 和 Day.js locale。
+- `src/main.ts` 只加载全局基础样式并启动 `bootstrap`，不处理 i18n、Pinia 或 Router 的模块细节。
+- `src/bootstrap.ts` 只创建应用并依次调用 locales、stores、router 的安装入口；初始语言必须在 Router 安装前完成。
+- `src/locales/index.ts` 读取并校验持久化 locale，安装 i18n，并监听当前 locale 同步 `html[lang]`、Vant `Locale.use` 和 Day.js locale。
+- `src/router/index.ts` 安装 Router、等待初始路由就绪并同步本地化页面标题。
+- `src/app.vue` 只渲染全局根布局，不承担模块初始化或全局副作用。
 - 本轮实现语言选择器；选择后立即切换 vue-i18n、Vant 和 Day.js，并持久化 `locale`。
 - `LanguageSelector` 在公开 Home 页和登录页复用；触发器显示当前语言名称，ActionSheet 固定提供“简体中文”和“English”并标记当前项。
 - 语言选择器不进入 `App` 或 `GlobalLayout`，本轮也不创建只有语言一项的 Settings 页面。

@@ -1,4 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils';
+import { createApp } from 'vue';
 
 import { ActionSheet, Button } from 'vant';
 import { describe, expect, it } from 'vitest';
@@ -8,7 +9,7 @@ import { DEFAULT_LOCALE, getLocale, loadLocale, setupI18n } from '#/locales';
 
 describe('language selector', () => {
   it('switches and persists the selected locale', async () => {
-    const i18n = setupI18n(DEFAULT_LOCALE);
+    const i18n = await setupI18n(createApp({}), DEFAULT_LOCALE);
     const wrapper = mount(LanguageSelector, {
       global: { plugins: [i18n] },
     });

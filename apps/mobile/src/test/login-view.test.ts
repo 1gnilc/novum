@@ -1,4 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils';
+import { createApp } from 'vue';
 import { createMemoryHistory, createRouter } from 'vue-router';
 
 import { createPinia, setActivePinia } from 'pinia';
@@ -55,9 +56,10 @@ describe('login view', () => {
       query: { redirect: encodeURIComponent('/account?tab=profile') },
     });
     await router.isReady();
+    const i18n = await setupI18n(createApp({}), DEFAULT_LOCALE);
     const wrapper = mount(LoginView, {
       global: {
-        plugins: [pinia, router, setupI18n(DEFAULT_LOCALE)],
+        plugins: [pinia, router, i18n],
       },
     });
 

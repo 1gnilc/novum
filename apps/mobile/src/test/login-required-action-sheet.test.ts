@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { defineComponent, nextTick } from 'vue';
+import { createApp, defineComponent, nextTick } from 'vue';
 import { createMemoryHistory, createRouter, RouterView } from 'vue-router';
 
 import { createPinia, setActivePinia } from 'pinia';
@@ -73,7 +73,7 @@ describe('login required action sheet', () => {
     await router.isReady();
     const pinia = createPinia();
     setActivePinia(pinia);
-    const i18n = setupI18n(DEFAULT_LOCALE);
+    const i18n = await setupI18n(createApp(page), DEFAULT_LOCALE);
     const wrapper = mount(LoginRequiredActionSheet, {
       attachTo: '#test-root',
       global: { plugins: [pinia, router, i18n] },
