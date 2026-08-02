@@ -1,4 +1,6 @@
-import { baseRequestClient, requestClient, requestConfig } from './request';
+import type { AxiosResponse, HttpResponse } from '@vben/request';
+
+import { baseRequestClient, requestClient } from './request';
 
 export interface CustomerSession {
   accessToken: string;
@@ -18,23 +20,31 @@ export interface CustomerInfo {
 const REFRESH_TOKEN_HEADER = 'X-Refresh-Token';
 
 export function login(username: string, password: string) {
-  return baseRequestClient.post<CustomerSession>(
-    '/customer/login',
-    { password, username },
-    { responseReturn: 'data' },
-  );
-}
-
-export async function logout(refreshToken: string) {
-  await baseRequestClient.post('/customer/logout', undefined, {
-    headers: { [REFRESH_TOKEN_HEADER]: refreshToken },
-    responseReturn: 'data',
+  return requestClient.post<CustomerSession>('/customer/login', {
+    password,
+    username,
   });
 }
 
-export function getUserInfo() {
-  return requestClient.get<CustomerInfo>(
-    '/customer/user-info',
-    requestConfig({ auth: { required: true } }),
+export async function refresh(refreshToken: string) {
+  const response = await baseRequestClient.post<
+    AxiosResponse<HttpResponse<CustomerSession>>
+  >('/customer/refresh', undefined, {
+    headers: { [REFRESH_TOKEN_HEADER]: refreshToken },
+  });
+  return response.data.data;
+}
+
+export async function logout(refreshToken: string) {
+  await baseRequestClient.post<AxiosResponse<HttpResponse<null>>>(
+    '/customer/logout',
+    undefined,
+    { headers: { [REFRESH_TOKEN_HEADER]: refreshToken } },
   );
+}
+
+export function getUserInfo() {
+  return requestClient.get<CustomerInfo>('/customer/user-info', {
+    requestAuth: { required: true },
+  });
 }

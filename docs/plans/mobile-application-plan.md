@@ -171,7 +171,7 @@ Store 不提供独立的 `resetSessionToLogin()` 或登录成功回调。只有�
 - Router 固定使用 `createWebHashHistory(import.meta.env.BASE_URL)`；本轮不增加可切换的路由模式配置，也不要求部署服务器提供 SPA history fallback。
 - 不注册认证用途的 `beforeEach` 或 `afterEach`；认证不拦截、不改写路由，也不复制路由元数据到 Store。
 - 当前路由确认后，`RouterView` 渲染目标页；全局登录询问组件同时响应当前路由，因此用户先进入页面，再看到询问。
-- 所有可能发起 `auth.required: true` 请求的页面都必须声明 `meta.requiresAuth: true`。请求预检不负责产生页面提示。
+- 所有可能发起 `requestAuth.required: true` 请求的页面都必须声明 `meta.requiresAuth: true`。请求预检不负责产生页面提示。
 - 不请求后端菜单，不动态添加路由，不检查角色或权限码。
 - 首期只声明以下四个路由：
 
@@ -233,17 +233,17 @@ Store 不提供独立的 `resetSessionToLogin()` 或登录成功回调。只有�
 
 ### 5.6 请求认证语义
 
-Mobile 在 API 调用层定义本地业务请求配置：
+Mobile 在本地 Axios 类型扩展中定义请求认证配置：
 
 ```ts
-auth?: {
+requestAuth?: {
   required?: boolean;
 }
 ```
 
-`requestConfig()` 将该业务字段映射为仅在 Mobile Axios 类型扩展中声明的 `requestAuth`。共享 `@vben/request` 保持 Axios 原生 `auth`（HTTP Basic Auth）语义，不感知 Mobile 的认证要求。
+共享 `@vben/request` 不感知 Mobile 的认证要求，Axios 原生 `auth` 继续保持 HTTP Basic Auth 语义。
 
-- 公共接口默认不要求登录；受保护接口必须显式传 `auth.required: true`。
+- 公共接口默认不要求登录；受保护接口必须显式传 `requestAuth.required: true`。
 - 主 client 的请求拦截器发现受保护请求没有 AT 时不发出网络请求，并抛出可识别的 `AuthenticationRequiredError`；它不修改 Store 中的页面或提示状态。
 - 该错误由统一错误处理器静默识别，避免同时出现 Toast 和 ActionSheet。
 - 有 AT 的请求带 Bearer token。401 刷新和重放直接采用 Admin 已有的 `authenticateResponseInterceptor`。
@@ -255,8 +255,8 @@ auth?: {
 
 请求模块保留 Admin 已有的组织形状和命名：
 
-- `requestClient` 是业务请求实例，安装 token、受保护请求预检、响应解包、并发刷新/单次重放和 Mobile 错误反馈。
-- `baseRequestClient` 是 Session 请求实例，负责登录、刷新和退出，不安装认证刷新响应拦截器。
+- `requestClient` 是业务请求实例，负责登录和其他业务请求，并安装 token、受保护请求预检、响应解包、并发刷新/单次重放和 Mobile 错误反馈。
+- `baseRequestClient` 是裸 Session 请求实例，只负责刷新和退出，不安装请求或响应拦截器。
 - `createRequestClient` 只读取 Mobile 本地环境、精简认证 Store 和 i18n/Vant 反馈，不读取 preferences、Admin store、Element Plus 或动态路由。
 - 复用 `defaultResponseInterceptor`、`authenticateResponseInterceptor` 和解耦后的 `errorMessageResponseInterceptor`。
 
@@ -412,7 +412,7 @@ flowchart TD
     H -->|login 成功| I[回到合法 redirect]
     I --> D
 
-    J[业务请求] --> K{auth.required 且没有 AT?}
+    J[业务请求] --> K{requestAuth.required 且没有 AT?}
     K -->|是| L[本地拒绝请求，不修改提示状态]
     K -->|否| M[发送请求]
     M -->|首次响应 401| N[共享拦截器使用当前 RT 刷新]
@@ -451,7 +451,7 @@ flowchart TD
 | `apps/mobile/src/router/index.ts`、`routes.ts` | Hash 模式纯前端静态路由和 `requiresAuth` 元数据；不创建认证 guard |
 | `apps/mobile/src/api/request.ts`、`session.ts` | 认证请求预检、AT 注入、401 刷新/重放及登录、刷新、退出、当前 Customer 信息接口适配 |
 | `apps/mobile/src/errors/authentication-required.ts` | 可识别的本地请求阻断错误，避免重复错误 UI |
-| `apps/mobile/src/types/axios.d.ts`、`vue-router.d.ts` | Axios 内部 `requestAuth` 和 Mobile `requiresAuth` RouteMeta 类型扩展；业务调用仍使用 `auth.required` |
+| `apps/mobile/src/types/axios.d.ts`、`vue-router.d.ts` | Mobile `requestAuth` Axios 配置和 `requiresAuth` RouteMeta 类型扩展 |
 | `apps/mobile/src/styles/base.css`、`page.css` | 基础 reset、根高度，以及页面共享样式 |
 | `apps/mobile/src/views/home.vue`、`login.vue`、`account.vue`、`not-found.vue` | 首页、登录、当前 Customer 信息与退出、404；首期无其他页面 |
 | `apps/mobile/src/test/**` | 精简认证 Store、路由提示条件、请求预检/刷新、i18n 和全局 ActionSheet 测试 |

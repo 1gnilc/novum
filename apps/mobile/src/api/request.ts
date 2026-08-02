@@ -1,10 +1,4 @@
-import type {
-  AxiosResponse,
-  HttpResponse,
-  RequestClientConfig,
-  RequestClientOptions,
-  RequestErrorType,
-} from '@vben/request';
+import type { RequestClientOptions, RequestErrorType } from '@vben/request';
 
 import {
   authenticateResponseInterceptor,
@@ -17,6 +11,8 @@ import { AuthenticationRequiredError } from '#/errors/authentication-required';
 import { getLocale, translate } from '#/locales';
 import { useAuthStore } from '#/stores';
 
+import { refresh } from './session';
+
 const requestErrorMessages: Record<RequestErrorType, string> = {
   'bad-request': 'request.badRequest',
   forbidden: 'request.forbidden',
@@ -27,57 +23,9 @@ const requestErrorMessages: Record<RequestErrorType, string> = {
   unauthorized: 'request.unauthorized',
 };
 
-interface TokenPair {
-  accessToken: string;
-  refreshToken: string;
-}
-
-interface RequestAuthOptions {
-  required?: boolean;
-}
-
-interface RequestError {
-  response?: {
-    data?: { error?: string; message?: string };
-    status?: number;
-  };
-}
-
-type MobileRequestConfig = Omit<RequestClientConfig, 'auth' | 'requestAuth'> & {
-  auth?: RequestAuthOptions;
-};
-
 const apiURL = import.meta.env.VITE_APP_API_URL || '/api';
-const refreshTokenHeader = 'X-Refresh-Token';
 
-export const baseRequestClient = new RequestClient({ baseURL: apiURL });
-
-export function requestConfig(config: MobileRequestConfig) {
-  const { auth, ...request } = config;
-  return { ...request, requestAuth: auth };
-}
-
-function showRequestError(message: string, error: unknown) {
-  const data = (error as RequestError)?.response?.data;
-  showToast({
-    message: data?.error || data?.message || message,
-    type: 'fail',
-  });
-}
-
-async function refreshSession(refreshToken: string) {
-  const response = await baseRequestClient.post<
-    AxiosResponse<HttpResponse<TokenPair>>
-  >('/customer/refresh', undefined, {
-    headers: { [refreshTokenHeader]: refreshToken },
-  });
-  return response.data.data;
-}
-
-export function createRequestClient(
-  baseURL: string,
-  options?: RequestClientOptions,
-) {
+function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   const client = new RequestClient({ ...options, baseURL });
 
   async function doReAuthenticate() {
@@ -89,7 +37,7 @@ export function createRequestClient(
     if (!auth.refreshToken) {
       throw new Error('Refresh token is missing.');
     }
-    const session = await refreshSession(auth.refreshToken);
+    const session = await refresh(auth.refreshToken);
     auth.$patch(session);
     return session.accessToken;
   }
@@ -128,11 +76,13 @@ export function createRequestClient(
   );
   client.addResponseInterceptor(
     errorMessageResponseInterceptor({
-      onError: (message, error) => {
+      onError: (message, error: any) => {
         if (error instanceof AuthenticationRequiredError) {
           return;
         }
-        showRequestError(message, error);
+        const responseData = error?.response?.data ?? {};
+        const responseMessage = responseData?.error ?? responseData?.message;
+        showToast({ message: responseMessage || message, type: 'fail' });
       },
       resolveMessage: (type) => translate(requestErrorMessages[type]),
     }),
@@ -141,31 +91,8 @@ export function createRequestClient(
   return client;
 }
 
-baseRequestClient.addRequestInterceptor({
-  fulfilled: async (config) => {
-    config.headers['Accept-Language'] = getLocale();
-    return config;
-  },
-});
-baseRequestClient.addResponseInterceptor(
-  defaultResponseInterceptor({
-    codeField: 'code',
-    dataField: 'data',
-    successCode: 0,
-  }),
-);
-baseRequestClient.addResponseInterceptor(
-  errorMessageResponseInterceptor({
-    onError: (message, error) => {
-      if ((error as RequestError)?.response?.status === 401) {
-        return;
-      }
-      showRequestError(message, error);
-    },
-    resolveMessage: (type) => translate(requestErrorMessages[type]),
-  }),
-);
-
 export const requestClient = createRequestClient(apiURL, {
   responseReturn: 'data',
 });
+
+export const baseRequestClient = new RequestClient({ baseURL: apiURL });

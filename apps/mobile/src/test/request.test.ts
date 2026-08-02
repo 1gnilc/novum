@@ -3,7 +3,7 @@ import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { baseRequestClient, requestClient, requestConfig } from '#/api/request';
+import { baseRequestClient, requestClient } from '#/api/request';
 import { login } from '#/api/session';
 import { AuthenticationRequiredError } from '#/errors/authentication-required';
 import { useAuthStore } from '#/stores';
@@ -27,10 +27,9 @@ describe('mobile request client', () => {
     requestClient.instance.defaults.adapter = adapter;
 
     await expect(
-      requestClient.get(
-        '/customer/user-info',
-        requestConfig({ auth: { required: true } }),
-      ),
+      requestClient.get('/customer/user-info', {
+        requestAuth: { required: true },
+      }),
     ).rejects.toBeInstanceOf(AuthenticationRequiredError);
 
     expect(adapter).not.toHaveBeenCalled();
@@ -45,10 +44,9 @@ describe('mobile request client', () => {
     requestClient.instance.defaults.adapter = adapter;
 
     await expect(
-      requestClient.get(
-        '/customer/user-info',
-        requestConfig({ auth: { required: true } }),
-      ),
+      requestClient.get('/customer/user-info', {
+        requestAuth: { required: true },
+      }),
     ).resolves.toEqual({ ok: true });
 
     const config = adapter.mock.calls[0]?.[0];
@@ -80,10 +78,9 @@ describe('mobile request client', () => {
     );
 
     await expect(
-      requestClient.get(
-        '/customer/user-info',
-        requestConfig({ auth: { required: true } }),
-      ),
+      requestClient.get('/customer/user-info', {
+        requestAuth: { required: true },
+      }),
     ).resolves.toEqual({ ok: true });
 
     expect(adapter).toHaveBeenCalledTimes(2);
@@ -109,10 +106,9 @@ describe('mobile request client', () => {
     });
 
     await expect(
-      requestClient.get(
-        '/customer/user-info',
-        requestConfig({ auth: { required: true } }),
-      ),
+      requestClient.get('/customer/user-info', {
+        requestAuth: { required: true },
+      }),
     ).rejects.toBeDefined();
 
     expect(auth.accessToken).toBeNull();
@@ -139,10 +135,9 @@ describe('mobile request client', () => {
     );
 
     await expect(
-      requestClient.get(
-        '/customer/user-info',
-        requestConfig({ auth: { required: true } }),
-      ),
+      requestClient.get('/customer/user-info', {
+        requestAuth: { required: true },
+      }),
     ).rejects.toBeDefined();
 
     expect(adapter).toHaveBeenCalledTimes(2);
@@ -151,16 +146,16 @@ describe('mobile request client', () => {
     expect(auth.userInfo).toBeNull();
   });
 
-  it('uses the session client for login and unwraps the token pair', async () => {
+  it('uses the request client for login and leaves the base client bare', async () => {
     const sessionAdapter = vi.fn(async (config: AxiosRequestConfig) =>
       response(config, {
         code: 0,
         data: { accessToken: 'access', refreshToken: 'refresh' },
       }),
     );
-    const requestAdapter = vi.fn();
-    baseRequestClient.instance.defaults.adapter = sessionAdapter;
-    requestClient.instance.defaults.adapter = requestAdapter;
+    const baseAdapter = vi.fn();
+    requestClient.instance.defaults.adapter = sessionAdapter;
+    baseRequestClient.instance.defaults.adapter = baseAdapter;
 
     await expect(login('customer', '123456')).resolves.toEqual({
       accessToken: 'access',
@@ -168,7 +163,7 @@ describe('mobile request client', () => {
     });
 
     expect(sessionAdapter).toHaveBeenCalledOnce();
-    expect(requestAdapter).not.toHaveBeenCalled();
+    expect(baseAdapter).not.toHaveBeenCalled();
     expect(sessionAdapter.mock.calls[0]?.[0].headers?.['Accept-Language']).toBe(
       'zh-CN',
     );

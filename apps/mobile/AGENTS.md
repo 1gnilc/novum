@@ -10,7 +10,7 @@
 
 - Use Vant as the only UI component library.
 - Keep routes static and client-side. Do not add authentication router guards or backend route generation.
-- Mark protected requests with `auth.required: true` and protected pages with `meta.requiresAuth: true`.
+- Mark protected requests with `requestAuth.required: true` and protected pages with `meta.requiresAuth: true`.
 - Keep the global login prompt derived from the current route and authentication state; do not copy route state into a Store.
 - Do not depend on Admin layouts, adapters, preferences, stores, dynamic locales, or UI packages.
 - Reuse `@vben/request` and `@vben/utils` only at the concrete Mobile use sites documented in the implementation plan.
