@@ -7,7 +7,6 @@ import {
   RequestClient,
 } from '@vben/request';
 
-import { AuthenticationRequiredError } from '#/errors/authentication-required';
 import { getLocale, translate } from '#/locales';
 import { useAuthStore } from '#/stores';
 
@@ -49,9 +48,6 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   client.addRequestInterceptor({
     fulfilled: async (config) => {
       const auth = useAuthStore();
-      if (config.requestAuth?.required && !auth.accessToken) {
-        throw new AuthenticationRequiredError();
-      }
       config.headers.Authorization = formatToken(auth.accessToken);
       config.headers['Accept-Language'] = getLocale();
       return config;
@@ -77,9 +73,6 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   client.addResponseInterceptor(
     errorMessageResponseInterceptor({
       onError: (message, error: any) => {
-        if (error instanceof AuthenticationRequiredError) {
-          return;
-        }
         const responseData = error?.response?.data ?? {};
         const responseMessage = responseData?.error ?? responseData?.message;
         showToast({ message: responseMessage || message, type: 'fail' });

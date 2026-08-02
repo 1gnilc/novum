@@ -4,8 +4,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { baseRequestClient, requestClient } from '#/api/request';
-import { login } from '#/api/session';
-import { AuthenticationRequiredError } from '#/errors/authentication-required';
+import { getUserInfo, login } from '#/api/session';
 import { useAuthStore } from '#/stores';
 
 vi.mock('#/router', () => ({
@@ -22,17 +21,16 @@ describe('mobile request client', () => {
     requestClient.refreshTokenQueue.splice(0);
   });
 
-  it('rejects protected requests locally when no access token exists', async () => {
-    const adapter = vi.fn();
+  it('delegates anonymous requests to the server', async () => {
+    const adapter = vi.fn(async (config: AxiosRequestConfig) =>
+      response(config, { code: 0, data: { username: 'customer' } }),
+    );
     requestClient.instance.defaults.adapter = adapter;
 
-    await expect(
-      requestClient.get('/customer/user-info', {
-        requestAuth: { required: true },
-      }),
-    ).rejects.toBeInstanceOf(AuthenticationRequiredError);
+    await expect(getUserInfo()).resolves.toEqual({ username: 'customer' });
 
-    expect(adapter).not.toHaveBeenCalled();
+    expect(adapter).toHaveBeenCalledOnce();
+    expect(adapter.mock.calls[0]?.[0].headers?.Authorization).toBeNull();
   });
 
   it('adds the bearer token and current locale to authenticated requests', async () => {
@@ -43,11 +41,9 @@ describe('mobile request client', () => {
     );
     requestClient.instance.defaults.adapter = adapter;
 
-    await expect(
-      requestClient.get('/customer/user-info', {
-        requestAuth: { required: true },
-      }),
-    ).resolves.toEqual({ ok: true });
+    await expect(requestClient.get('/customer/user-info')).resolves.toEqual({
+      ok: true,
+    });
 
     const config = adapter.mock.calls[0]?.[0];
     expect(config?.headers?.Authorization).toBe('Bearer access');
@@ -77,11 +73,9 @@ describe('mobile request client', () => {
       }),
     );
 
-    await expect(
-      requestClient.get('/customer/user-info', {
-        requestAuth: { required: true },
-      }),
-    ).resolves.toEqual({ ok: true });
+    await expect(requestClient.get('/customer/user-info')).resolves.toEqual({
+      ok: true,
+    });
 
     expect(adapter).toHaveBeenCalledTimes(2);
     expect(adapter.mock.calls[1]?.[0].headers?.Authorization).toBe(
@@ -106,9 +100,7 @@ describe('mobile request client', () => {
     });
 
     await expect(
-      requestClient.get('/customer/user-info', {
-        requestAuth: { required: true },
-      }),
+      requestClient.get('/customer/user-info'),
     ).rejects.toBeDefined();
 
     expect(auth.accessToken).toBeNull();
@@ -135,9 +127,7 @@ describe('mobile request client', () => {
     );
 
     await expect(
-      requestClient.get('/customer/user-info', {
-        requestAuth: { required: true },
-      }),
+      requestClient.get('/customer/user-info'),
     ).rejects.toBeDefined();
 
     expect(adapter).toHaveBeenCalledTimes(2);

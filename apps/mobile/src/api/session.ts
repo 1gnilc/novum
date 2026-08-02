@@ -44,7 +44,5 @@ export async function logout(refreshToken: string) {
 }
 
 export function getUserInfo() {
-  return requestClient.get<CustomerInfo>('/customer/user-info', {
-    requestAuth: { required: true },
-  });
+  return requestClient.get<CustomerInfo>('/customer/user-info');
 }

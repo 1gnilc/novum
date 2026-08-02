@@ -171,7 +171,7 @@ Store 不提供独立的 `resetSessionToLogin()` 或登录成功回调。只有�
 - Router 固定使用 `createWebHashHistory(import.meta.env.BASE_URL)`；本轮不增加可切换的路由模式配置，也不要求部署服务器提供 SPA history fallback。
 - 不注册认证用途的 `beforeEach` 或 `afterEach`；认证不拦截、不改写路由，也不复制路由元数据到 Store。
 - 当前路由确认后，`RouterView` 渲染目标页；全局登录询问组件同时响应当前路由，因此用户先进入页面，再看到询问。
-- 所有可能发起 `requestAuth.required: true` 请求的页面都必须声明 `meta.requiresAuth: true`。请求预检不负责产生页面提示。
+- 需要认证的页面必须声明 `meta.requiresAuth: true`，并在页面内根据认证状态决定是否发起受保护请求；请求层不复制页面认证语义。
 - 不请求后端菜单，不动态添加路由，不检查角色或权限码。
 - 首期只声明以下四个路由：
 
@@ -235,19 +235,11 @@ Store 不提供独立的 `resetSessionToLogin()` 或登录成功回调。只有�
 
 ### 5.6 请求认证语义
 
-Mobile 在本地 Axios 类型扩展中定义请求认证配置：
+Mobile 不定义客户端请求认证元数据，也不在请求拦截器中判断某个接口是否要求登录。
 
-```ts
-requestAuth?: {
-  required?: boolean;
-}
-```
-
-共享 `@vben/request` 不感知 Mobile 的认证要求，Axios 原生 `auth` 继续保持 HTTP Basic Auth 语义。
-
-- 公共接口默认不要求登录；受保护接口必须显式传 `requestAuth.required: true`。
-- 主 client 的请求拦截器发现受保护请求没有 AT 时不发出网络请求，并抛出可识别的 `AuthenticationRequiredError`；它不修改 Store 中的页面或提示状态。
-- 该错误由统一错误处理器静默识别，避免同时出现 Toast 和 ActionSheet。
+- 页面根据自身业务和认证状态决定是否发起请求；Account 页面在未认证时不请求当前 Customer 信息。
+- 主 client 的请求拦截器只注入当前 AT 和 locale。没有 AT 的请求仍会发送且不携带 Authorization，由服务端决定接口是否返回 401。
+- 登录询问只由当前路由 `meta.requiresAuth` 和认证状态驱动，不读取请求结果或请求配置。
 - 有 AT 的请求带 Bearer token。401 刷新和重放直接采用 Admin 已有的 `authenticateResponseInterceptor`。
 - `doRefreshToken()` 读取调用时的当前 RT，刷新成功后使用 `$patch()` 写入新 token pair 并返回新 AT；共享拦截器让并发 401 等待同一次刷新并各自重放一次。
 - 刷新失败、未启用刷新或重放后再次返回 401 时，`doReAuthenticate()` 无条件调用 `$reset()`。
@@ -257,7 +249,7 @@ requestAuth?: {
 
 请求模块保留 Admin 已有的组织形状和命名：
 
-- `requestClient` 是业务请求实例，负责登录和其他业务请求，并安装 token、受保护请求预检、响应解包、并发刷新/单次重放和 Mobile 错误反馈。
+- `requestClient` 是业务请求实例，负责登录和其他业务请求，并安装 token、locale、响应解包、并发刷新/单次重放和 Mobile 错误反馈。
 - `baseRequestClient` 是裸 Session 请求实例，只负责刷新和退出，不安装请求或响应拦截器。
 - `createRequestClient` 只读取 Mobile 本地环境、精简认证 Store 和 i18n/Vant 反馈，不读取 preferences、Admin store、Element Plus 或动态路由。
 - 复用 `defaultResponseInterceptor`、`authenticateResponseInterceptor` 和解耦后的 `errorMessageResponseInterceptor`。
@@ -414,9 +406,7 @@ flowchart TD
     H -->|login 成功| I[回到合法 redirect]
     I --> D
 
-    J[业务请求] --> K{requestAuth.required 且没有 AT?}
-    K -->|是| L[本地拒绝请求，不修改提示状态]
-    K -->|否| M[发送请求]
+    J[业务请求] --> M[携带当前 AT 或不带 AT 发送请求]
     M -->|首次响应 401| N[共享拦截器使用当前 RT 刷新]
     N -->|成功| O[写入 token pair 并重放一次]
     O -->|成功| P[返回业务响应]
@@ -437,7 +427,7 @@ flowchart TD
 
 | 路径 | 内容 |
 | --- | --- |
-| `apps/mobile/AGENTS.md` | Mobile 独立规则：代码与命名风格、Vant-only UI、静态路由、无认证守卫、受保护请求显式标记和依赖最小化 |
+| `apps/mobile/AGENTS.md` | Mobile 独立规则：代码与命名风格、Vant-only UI、静态路由、无认证守卫、页面认证元数据和依赖最小化 |
 | `apps/mobile/CONTEXT.md` | Customer、Customer Session 和 Customer Access Baseline Role 等术语表；不放实现约束 |
 | `apps/mobile/.env*` | Mobile 标题、命名空间、Store 安全密钥、`5078` 端口、base、API URL 和构建开关 |
 | `apps/mobile/index.html`、`public/favicon.ico` | 移动 viewport、安全区前提与基础入口资源 |
@@ -451,12 +441,11 @@ flowchart TD
 | `apps/mobile/src/components/authentication/login-required-action-sheet.vue` | Vant 底部登录询问、取消与 redirect 行为 |
 | `apps/mobile/src/stores/index.ts`、`auth.ts` | 本地初始化 Pinia 持久化插件；认证 Store 维护 AT、RT、认证状态、当前 Customer、`loginLoading` 及 `login`、`getUserInfo`、`logout`、`$reset` |
 | `apps/mobile/src/router/index.ts`、`routes.ts` | Hash 模式纯前端静态路由和 `requiresAuth` 元数据；不创建认证 guard |
-| `apps/mobile/src/api/request.ts`、`session.ts` | 认证请求预检、AT 注入、401 刷新/重放及登录、刷新、退出、当前 Customer 信息接口适配 |
-| `apps/mobile/src/errors/authentication-required.ts` | 可识别的本地请求阻断错误，避免重复错误 UI |
-| `apps/mobile/src/types/axios.d.ts`、`vue-router.d.ts` | Mobile `requestAuth` Axios 配置和 `requiresAuth` RouteMeta 类型扩展 |
+| `apps/mobile/src/api/request.ts`、`session.ts` | AT 注入、401 刷新/重放及登录、刷新、退出、当前 Customer 信息接口适配 |
+| `apps/mobile/src/types/vue-router.d.ts` | Mobile `requiresAuth` RouteMeta 类型扩展 |
 | `apps/mobile/src/styles/base.css`、`page.css` | 基础 reset、根高度，以及页面共享样式 |
 | `apps/mobile/src/views/home.vue`、`login.vue`、`account.vue`、`not-found.vue` | 首页、登录、当前 Customer 信息与退出、404；首期无其他页面 |
-| `apps/mobile/src/test/**` | 精简认证 Store、路由提示条件、请求预检/刷新、i18n 和全局 ActionSheet 测试 |
+| `apps/mobile/src/test/**` | 精简认证 Store、路由提示条件、请求刷新、i18n 和全局 ActionSheet 测试 |
 | `apps/server/novum-core/src/main/java/com/gnilc/novum/customer/controller/CustomerController.java` | Customer 登录、刷新、退出和当前信息 HTTP 合同 |
 | `apps/server/novum-core/src/main/java/com/gnilc/novum/customer/dao/CustomerDao.java` | `nv_customer` MyBatis-Plus Mapper |
 | `apps/server/novum-core/src/main/java/com/gnilc/novum/customer/entity/bo/CustomerBo.java` | `nv_customer` 表映射 |
@@ -552,7 +541,7 @@ flowchart TD
 | 主动退出 | 单测 + Browser/Playwright | 远端退出成功或失败都清理本地 Session；`logout()` 在 Store 内 replace 到 `/login`；默认携带退出前的站内 redirect |
 | AT/RT 持久化 | 单测 + Browser/Playwright | Store 创建时可直接获得插件保存的 AT/RT，且只有 AT/RT 被持久化 |
 | 询问取消状态 | 单测 + Browser/Playwright | 同一页面取消后不重复弹出；路由变化、认证成功或浏览器刷新后重置；状态不进入 Pinia 或持久化存储 |
-| 请求行为 | 测试 + 浏览器 | 首次 401 刷新并重放；刷新失败或二次 401 清除 Session；无 AT 受保护请求在本地阻断且没有重复 Toast |
+| 请求行为 | 测试 + 浏览器 | 首次 401 刷新并重放；刷新失败或二次 401 清除 Session；无 AT 请求不在客户端阻断，由页面避免无效调用并由服务端执行最终认证 |
 | Admin 行为对齐 | 单测 + 代码审查 | Mobile 不实现 AT 比对、RT 快照、请求集合或迟到响应隔离；`doRefreshToken` 和 `doReAuthenticate` 与 Admin 语义一致 |
 | 全局 RBAC | 后端集成测试 | Customer 默认只有 `customer` 角色权限；显式追加其他角色后，对应权限对 Customer AT 生效；没有身份域字段或路径过滤 |
 | 基础角色绑定 | 后端单测 + 集成测试 | 通用角色替换和解绑无法移除 Admin 的 `admin` 或 Customer 的 `customer`；追加和移除其他角色不受影响；拒绝结果包含明确业务错误 |
