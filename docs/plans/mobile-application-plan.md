@@ -19,7 +19,7 @@ Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./m
 
 - 在 `apps/mobile` 新增独立的 Vue 3 + TypeScript + Vite 移动端应用。
 - 使用 Vant 4，组件和组件样式都按需加载。
-- 接入现有 pnpm/Turbo 仓库，但使用标准 Vue 生态独立搭建应用，不依赖服务 Admin 的 Vben 应用基础设施。
+- 接入现有 pnpm/Turbo 仓库，使用标准 Vue 生态独立搭建应用，只复用有明确 Mobile 场景的 UI 无关公共能力。
 - 只在出现具体 Mobile 使用场景时研究 Vben 公共能力库；借鉴其优秀实现思路前，明确来源、Mobile 落点和取舍，不预先承诺复用。
 - Customer 是 Mobile 与 Server 共享的规范身份术语，并且独立于 Admin User；不复用 Admin Session，也不默认继承 Admin 角色、权限或菜单。
 - Customer 与 Admin 使用独立账号记录和 Session，但共享全局 RBAC 授权域；角色绑定是显式授权事实，不按身份类型限制角色或权限。
@@ -28,14 +28,14 @@ Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./m
 - 新增内置 `customer` 角色并强制绑定到每个有效 Customer；初始化三条 Session 公开权限和一条绑定到该角色的当前 Customer 信息查询权限，不创建菜单绑定。
 - 路由全部由前端静态声明，不设置认证路由守卫。页面进入后，全局登录询问组件直接判断当前路由的 `meta.requiresAuth` 和认证状态。
 - `useAuthStore` 维护 AT、RT、派生认证状态、当前 Customer 信息和登录加载状态；主动退出负责跳转登录页，但刷新、重试、登录成功 redirect 和提示状态不进入 Store。
-- 使用 Mobile 本地 `preferences` 统一保存 `enableRefreshToken` 和当前 `locale`；不引入完整的 Admin preferences 基础设施。
+- 使用 `@vben/preferences` 的 Preferences Manager 统一管理并按 Mobile namespace 持久化 `enableRefreshToken` 和当前 `locale`，不引入 Admin 偏好 UI、布局或动态语言包。
 - 全局只挂载一个底部登录询问组件；页面不需要逐个引用它。
 - 请求刷新与重新认证采用 Admin 现有行为，不增加 AT 一致性比较、RT 快照、请求集合或迟到响应隔离。
 
 ### 非目标
 
 - 不复制 Admin 的菜单/RBAC、后端路由生成、管理页面、Element Plus 适配器或 Vben 布局。
-- 不依赖 `@vben/locales`、`@vben/vite-config` 或 `@vben/tsconfig`；`@vben/request` 和 `@vben/utils` 只复用已有明确使用场景的通用能力。
+- 不依赖 `@vben/locales`、`@vben/vite-config` 或 `@vben/tsconfig`；`@vben/preferences`、`@vben/request` 和 `@vben/utils` 只复用已有明确使用场景的通用能力。
 - 不为了复用 Vben 公共能力而引入 Mobile 没有使用场景的配置、抽象或间接依赖。
 - 不为 Customer/Admin 增加 RBAC 身份域字段、角色域字段或基于请求路径的 Token 过滤。
 - 不改变 `apps/admin` 的请求行为；只调整 `src/api/request.ts` 以适配共享错误拦截器的新注入接口。
@@ -52,13 +52,14 @@ Vant 一手资料与参考 demo 的核对结果见 [mobile-vant-research.md](./m
 | 参考来源 | Mobile 处理 | 原因 |
 | --- | --- | --- |
 | 根工作区配置 | 沿用 package 命名、catalog、Turbo scripts 和代码质量工具的接入方式 | Mobile 仍是 Novum monorepo 的应用 |
-| `apps/admin` | 参考相邻代码的命名、目录习惯、Router history、Store namespace 和精简 preferences 使用方式，不复制应用骨架 | Admin 的基础设施与业务边界不属于 Mobile |
+| `apps/admin` | 参考相邻代码的命名、目录习惯、Router history、Store namespace、Preferences Manager 初始化和显式语言切换方式，不复制应用骨架 | Admin 的基础设施与业务边界不属于 Mobile |
 | `@vben/request` | 复用 `RequestClient`、响应解包、并发刷新和单次重放；保留 `requestClient`、`baseRequestClient` 命名 | 该能力无 UI，并直接对应 Mobile 请求场景 |
-| `@vben/utils` | 复用 `StorageManager`、`MemoryStorageDriver` 和 `trimToNull` | 已有明确的 locale 持久化、测试和登录输入场景 |
+| `@vben/preferences` | 复用 Preferences Manager 的 namespace 初始化、响应式配置和持久化；只覆盖 `enableRefreshToken`、`locale` 与固定浅色模式 | 避免 Mobile 重复实现通用配置存储，同时不引入 Admin 偏好 UI |
+| `@vben/utils` | 复用 `trimToNull` | 已有明确的登录输入规范化场景 |
 | `@vben/locales`、`@vben/vite-config` | 只在对应场景讨论时审阅实现，不作为 Mobile 依赖 | Mobile 直接使用 `vue-i18n` 和原生 Vite 配置 |
 | Mobile 构建与 i18n | 分别使用原生 Vite 和 `vue-i18n` 在模块内实现最小能力 | 避免通过多项关闭配置来适配 Admin 基础设施 |
 
-Mobile 通过 `@vben/utils/cache` 导入 `StorageManager` 和 `MemoryStorageDriver`，通过 `@vben/utils/shared` 导入 `trimToNull`；`@vben/request` 也只从 `@vben/utils/shared` 导入通用函数。两个子路径隔离了根入口聚合的路由 helper，根入口继续兼容现有调用方。
+Mobile 通过 `@vben/utils/shared` 导入 `trimToNull`；`@vben/request` 也只从该子路径导入通用函数，避免依赖根入口聚合的路由 helper。locale 由 `@vben/preferences` 持久化，不再直接使用 `@vben/utils/cache`。
 
 ### 实现质量约束
 
@@ -84,7 +85,8 @@ Mobile 通过 `@vben/utils/cache` 导入 `StorageManager` 和 `MemoryStorageDriv
 | `@vben/request` | dependency | 复用 `RequestClient`、默认响应解包、并发 401 刷新和单次重放 |
 | `axios` | dependency | 使用标准 HTTP client；认证、刷新和错误语义在 Mobile 内按具体场景设计 |
 | `vue-i18n` | dependency | Mobile 本地 i18n 运行时；不加载 Vben 或 Admin 翻译 |
-| `@vben/utils` | dependency | 使用 `StorageManager` 持久化 locale、`MemoryStorageDriver` 隔离 locale 测试，并用 `trimToNull` 规范化登录数据 |
+| `@vben/preferences` | dependency | 使用 Preferences Manager 管理并按 namespace 持久化 `enableRefreshToken` 和 `locale`；不引入偏好 UI |
+| `@vben/utils` | dependency | 使用 `trimToNull` 规范化登录数据 |
 | `@vueuse/core` | dependency | 用户确认保留；首期只使用 `useTitle` 同步当前页面标题，其他能力仍需出现具体场景后再导入 |
 | `@vue/test-utils` | devDependency | 验证全局认证提示与 RouterView 协作 |
 
@@ -96,7 +98,6 @@ Mobile 通过 `@vben/utils/cache` 导入 `StorageManager` 和 `MemoryStorageDriv
 | `@vben/common-ui`、`@vben/icons`、`@vben/layouts`、`@vben/styles` | UI | Admin 的组件、图标、布局和样式体系，不进入 Mobile |
 | `@vben/access` | Admin 权限 | Mobile 不生成 RBAC 路由，也不做前端权限码过滤 |
 | `@vben/plugins` | Admin 插件 | 表格、Motion 等插件无使用点 |
-| `@vben/preferences` | Admin 配置 | Mobile 不继承 Admin 偏好设置和布局配置 |
 | `@vben/hooks` | Admin/Vben hook | `useAppConfig` 改为直接读取类型化的 `import.meta.env`，其余 hook 无使用点 |
 | `@vben/constants` | Admin 常量 | 登录路径等由 Mobile 本地定义，避免隐式绑定 Admin 路由 |
 | `@vben/stores` | Admin 共享状态 | 包含访问码、菜单、标签页和偏好持久化；Mobile 改用本地 Pinia store |
@@ -120,7 +121,7 @@ Mobile 通过 `@vben/utils/cache` 导入 `StorageManager` 和 `MemoryStorageDriv
 | 路由/Admin helper | `mergeRouteModules`、`resetStaticRoutes`、`generateMenus`、`generateRoutesByBackend` | Mobile 当前不使用动态路由或菜单生成 |
 | 加载反馈 | `startProgress`、`stopProgress`、`unmountGlobalLoading` | 当前不保留 NProgress；只有重新启用注入式首屏 loading 时才用 |
 
-首期实际使用 `StorageManager`、`MemoryStorageDriver` 和 `trimToNull`，分别覆盖 locale 持久化、locale 测试隔离和登录数据规范化。后续只有出现具体 Mobile 场景时才增加其他导入；动态路由 helper 和 NProgress 等当前明确不使用。
+首期实际只使用 `trimToNull` 规范化登录数据。后续只有出现具体 Mobile 场景时才增加其他导入；缓存、动态路由 helper 和 NProgress 等当前明确不使用。
 
 ### 新增
 
@@ -223,17 +224,17 @@ Store 不提供独立的 `resetSessionToLogin()` 或登录成功回调。只有�
 
 ### 5.5 i18n 保留与精简
 
-- 直接使用 `vue-i18n`，只支持 `zh-CN` 和 `en-US`，默认 `zh-CN`；不依赖 `@vben/locales`、Vben 公共消息、Admin 动态翻译或 `@vben/preferences`，只使用 Mobile 本地最小 `preferences`。
+- 直接使用 `vue-i18n`，只支持 `zh-CN` 和 `en-US`，默认 `zh-CN`；不依赖 `@vben/locales`、Vben 公共消息或 Admin 动态翻译。
 - 两份 Mobile 消息静态导入，只保留登录、语言选择、认证询问、请求错误和页面标题实际使用的 key。
-- `src/main.ts` 只加载全局基础样式并启动 `bootstrap`，不处理 i18n、Pinia 或 Router 的模块细节。
-- `src/main.ts` 从环境读取 namespace 并调用 `bootstrap(namespace)`；`src/bootstrap.ts` 创建应用并依次调用 locales、`initStores(app, { namespace })`、router 的安装入口。
-- `src/locales/index.ts` 读取并校验持久化 locale，写入 `preferences.app.locale`，安装 i18n，并监听当前 locale 同步 preferences、`html[lang]`、Vant `Locale.use` 和 Day.js locale。
-- `watch(getLocale, syncLocale, { immediate: true })` 在安装时立即执行一次同步，并在 vue-i18n locale 变化时再次执行；`stopLocaleSync` 保存停止函数，重复安装时先移除旧 watcher，避免测试或多应用初始化产生重复副作用。
-- `setLocale(locale)` 同步写入 Mobile preferences 和 vue-i18n，再持久化 locale；`syncLocale(locale)` 负责将已生效语言同步到 preferences、HTML、Vant 和 Day.js，不负责持久化。
+- `src/main.ts` 从环境读取 namespace，先以 Mobile overrides 初始化 Preferences Manager，再动态导入并启动 `bootstrap(namespace)`；i18n、Pinia 和 Router 的安装细节仍由各自模块负责。
+- `src/bootstrap.ts` 创建应用并依次调用 locales、`initStores(app, { namespace })`、router 的安装入口。
+- `src/preferences.ts` 只定义 Mobile overrides：启用 refresh token、默认 locale 为 `zh-CN`，并固定浅色模式以保持 Mobile 当前外观。
+- `src/locales/index.ts` 从 `preferences.app.locale` 读取并校验当前值，安装 i18n 后显式调用 `loadLocaleMessages(locale)`，同步 vue-i18n、`html[lang]`、Vant 和 Day.js。
+- 不使用 locale watcher，也不提供 `getLocale`、`setLocale`、`syncLocale`、`loadLocale` 或 `saveLocale`；语言切换只有一条显式调用链：`updatePreferences({ app: { locale } })` 后调用 `loadLocaleMessages(locale)`。
 - `src/locales/index.ts` 在模块级创建 i18n，并直接导出与 Admin 同名的 `$t`、`$te`；调用方不再经过 `translate()` 包装函数。
 - `src/router/index.ts` 安装 Router、等待初始路由就绪并同步本地化页面标题。
 - `src/app.vue` 只渲染全局根布局，不承担模块初始化或全局副作用。
-- 本轮实现语言选择器；选择后立即切换 vue-i18n、Vant 和 Day.js，并持久化 `locale`。
+- 本轮实现语言选择器；选择后由 Preferences Manager 持久化 `locale`，再立即切换 vue-i18n、Vant 和 Day.js。
 - `LanguageSelector` 在公开 Home 页和登录页复用；触发器显示当前语言名称，ActionSheet 固定提供“简体中文”和“English”并标记当前项。
 - 语言选择器不进入 `App` 或 `BasicLayout`，本轮也不创建只有语言一项的 Settings 页面。
 - 错误拦截器在错误发生时按当前 locale 调用 `$t`，不缓存启动时的翻译结果。
@@ -256,7 +257,7 @@ Mobile 不定义客户端请求认证元数据，也不在请求拦截器中判�
 
 - `requestClient` 是业务请求实例，负责登录和其他业务请求，并安装 token、locale、响应解包、并发刷新/单次重放和 Mobile 错误反馈。
 - `baseRequestClient` 是裸 Session 请求实例，只负责刷新和退出，不安装请求或响应拦截器。
-- `createRequestClient` 只读取 Mobile 本地环境、本地 `preferences`、精简认证 Store 和 i18n/Vant 反馈，不读取 `@vben/preferences`、Admin store、Element Plus 或动态路由。
+- `createRequestClient` 只读取 Mobile 本地环境、`@vben/preferences` 的 `enableRefreshToken`/`locale`、精简认证 Store 和 i18n/Vant 反馈，不读取 Admin store、Element Plus 或动态路由。
 - 复用 `defaultResponseInterceptor`、`authenticateResponseInterceptor` 和解耦后的 `errorMessageResponseInterceptor`。
 
 共享错误拦截器使用以下固定接口：
@@ -393,8 +394,9 @@ Customer Session 使用以下固定策略：
 - `useAuthStore.persist.pick` 只包含 `accessToken` 和 `refreshToken`；`userInfo`、`loginLoading`、登录询问状态、locale 和请求状态均不进入该持久化项。
 - 持久化插件必须在创建任何 Mobile Store 前完成安装，Store 创建后由插件提供已保存的 AT/RT。
 - 登录和刷新只更新 Store 中的 token pair，主动退出或确认 RT 失效时执行 `$reset()`；持久化插件同步保存最新状态。
-- locale 继续使用 `@vben/utils` 的 `StorageManager({ prefix: 'novum-mobile' })` 独立保存；值只能是 `zh-CN` 或 `en-US`，缺失或无效时回退 `zh-CN`。
-- 语言选择后立即更新 locale；退出登录不得重置 locale。locale 测试显式使用 `MemoryStorageDriver`。
+- `main.ts` 在导入 `bootstrap.ts` 前使用应用 namespace 初始化 Preferences Manager，确保请求客户端创建时已经可以读取 `enableRefreshToken` 和 locale。
+- locale 由 Preferences Manager 使用相同 namespace 独立持久化；值只能是 `zh-CN` 或 `en-US`，缺失或无效时回退 `zh-CN`。
+- 语言选择后调用 `updatePreferences({ app: { locale } })` 更新并持久化 locale；退出登录不得重置 locale。测试直接验证 namespace 下的 Preferences Manager 存储项。
 - 客户端不设置 Session TTL；Server Redis 是会话有效期的唯一事实来源。
 
 ## 6. 认证状态流转
@@ -439,9 +441,9 @@ flowchart TD
 | `apps/mobile/package.json` | 精简后的运行/构建/测试依赖和 scripts |
 | `apps/mobile/tsconfig.json`、`tsconfig.node.json` | 使用标准 TypeScript/Vue 配置并声明本地路径别名，不继承 Vben RouteMeta 或应用约定 |
 | `apps/mobile/vite.config.ts` | 使用原生 Vite 配置 Vue、i18n 和 Vant Components + AutoImport resolver；开发环境将 `/api` 代理到 `http://localhost:3888`，不接入 Vben 应用插件集合 |
-| `apps/mobile/src/main.ts`、`bootstrap.ts`、`app.vue` | 最小 Vue + Pinia + Router + i18n 启动链；在创建 Store 前安装持久化插件 |
-| `apps/mobile/src/locales/index.ts`、`langs/{en-US,zh-CN}/common.json` | Mobile 本地消息、持久化 locale 校验及 Vant/Day.js/HTML locale 同步 |
-| `apps/mobile/src/preferences.ts` | Mobile 本地最小通用配置：`enableRefreshToken` 和当前 `locale` |
+| `apps/mobile/src/main.ts`、`bootstrap.ts`、`app.vue` | 最小 Preferences Manager + Vue + Pinia + Router + i18n 启动链；在导入应用模块前初始化 preferences，在创建 Store 前安装持久化插件 |
+| `apps/mobile/src/locales/index.ts`、`langs/{en-US,zh-CN}/common.json` | Mobile 本地消息、持久化 locale 校验，以及显式的 vue-i18n/Vant/Day.js/HTML locale 同步 |
+| `apps/mobile/src/preferences.ts` | Mobile Preferences Manager overrides：`enableRefreshToken`、默认 `locale` 和固定浅色模式 |
 | `apps/mobile/src/components/language/index.vue` | 当前语言触发器及 Vant ActionSheet；在 Home 和登录页复用，即时切换并持久化 |
 | `apps/mobile/src/layouts/basic.vue` | 无 DOM 包裹的 RouterView + 全局认证提示宿主 |
 | `apps/mobile/src/components/authentication/login-required.vue` | Vant 底部登录询问、取消与 redirect 行为 |
@@ -499,7 +501,7 @@ flowchart TD
 | `src/adapter/**` | 全部绑定 Element Plus/Vben Form/VXE Table |
 | `src/layouts/auth.vue`、`basic.vue` | Admin 页面壳、菜单、通知、水印和过期登录 Modal |
 | `src/locales/dynamic.ts` 和 Admin 翻译 JSON 内容 | 删除数据库动态翻译和管理端文案；保留 Mobile 本地 i18n 目录与最小消息键 |
-| `@vben/preferences` 完整状态管理、主题配置和偏好 UI | Mobile 只实现本地 `src/preferences.ts` 的两项已使用配置 |
+| `@vben/preferences` 的偏好抽屉、布局与主题切换 UI | Mobile 只复用 Preferences Manager，并以本地 overrides 固定当前所需配置 |
 | `src/router/access.ts`、动态模块加载和后端路由生成 | Mobile 只有前端静态路由 |
 | `src/api/system/**`、Admin 管理 API | RBAC/菜单/用户管理不是 Mobile 骨架职责 |
 | Admin store、Admin 登录/资料页、dashboard、system、fallback 页面 | 用 Mobile 最小页面与精简认证 Store 替换 |
@@ -524,7 +526,7 @@ flowchart TD
 5. 实现 Customer DAO、Service、Controller 和响应模型，依次覆盖登录、刷新、退出、当前信息、全局 RBAC 显式授权和完整 API 链路。
 6. 解耦 `@vben/request` 错误翻译与 UI，更新 Admin 注入适配并通过共享请求包及 Admin 回归测试。
 7. 新增 Mobile 原生 Vite 骨架、可配置 Hash/Web Router、依赖、scripts、开发代理和 Vant 组件/函数/样式按需导入，然后更新 lockfile。
-8. 实现本地 i18n、locale 持久化、Pinia AT/RT 持久化、认证 Store 和 Customer API 请求层，覆盖登录、刷新、重新认证和退出测试。
+8. 引入 Preferences Manager，并实现本地 i18n、locale 持久化、Pinia AT/RT 持久化、认证 Store 和 Customer API 请求层，覆盖偏好初始化、语言切换、登录、刷新、重新认证和退出测试。
 9. 实现四个页面、fragment BasicLayout、全局登录询问、语言选择器和安全 redirect，覆盖重复登录、受保护页面与取消状态测试。
 10. 清理 Admin UI/配置残留，运行前后端完整测试、类型、依赖、lint 和构建检查，再用 Browser/Playwright 验证移动安全区、默认 Hash 刷新、认证交互及桌面回归；全部通过后使用 `pnpm run commit` 提交，不推送或创建 PR。
 
@@ -561,4 +563,4 @@ flowchart TD
 
 ## 10. 已确认边界
 
-Customer 的范围、表结构、端点、登录失败边界、内置数据、Session TTL、刷新策略、当前信息合同、Server Java 文件落点及 `08`/`09` SQL 顺序均已确定。Mobile 认证 Store、Admin 式 AT/RT 持久化、请求刷新行为、本地 preferences、外部 Store namespace、登录询问取消范围、重复登录、首期四个路由、可配置 Hash/Web History 和根开发命令均已确定。Customer 与 Admin 共享全局 RBAC 授权域，显式角色绑定直接生效；`admin` 与 `customer` 基础角色绑定不可移除，但其他角色可自由追加或移除。实现必须遵循现有代码风格、专业命名和最小脚手架约束；验收后只创建本地提交，不推送或创建 PR。当前没有需要在实现前继续确认的核心产品或架构边界。
+Customer 的范围、表结构、端点、登录失败边界、内置数据、Session TTL、刷新策略、当前信息合同、Server Java 文件落点及 `08`/`09` SQL 顺序均已确定。Mobile 认证 Store、Admin 式 AT/RT 持久化、请求刷新行为、Preferences Manager、显式 locale 切换链、外部 Store namespace、登录询问取消范围、重复登录、首期四个路由、可配置 Hash/Web History 和根开发命令均已确定。Mobile 不引入 Admin 偏好 UI、布局、动态 locale 或其他无使用场景的配置。Customer 与 Admin 共享全局 RBAC 授权域，显式角色绑定直接生效；`admin` 与 `customer` 基础角色绑定不可移除，但其他角色可自由追加或移除。实现必须遵循现有代码风格、专业命名和最小脚手架约束；验收后只创建本地提交，不推送或创建 PR。当前没有需要在实现前继续确认的核心产品或架构边界。

@@ -2,17 +2,16 @@ import type { App } from 'vue';
 
 import type { AppLocale } from '#/preferences';
 
-import { watch } from 'vue';
 import { createI18n } from 'vue-i18n';
 
-import { StorageManager } from '@vben/utils/cache';
+import { preferences, updatePreferences } from '@vben/preferences';
 
 import dayjs from 'dayjs';
 import { Locale } from 'vant';
 import enUSVant from 'vant/es/locale/lang/en-US';
 import zhCNVant from 'vant/es/locale/lang/zh-CN';
 
-import { DEFAULT_LOCALE, preferences } from '#/preferences';
+import { DEFAULT_LOCALE } from '#/preferences';
 
 import enUS from './langs/en-US/common.json';
 import zhCN from './langs/zh-CN/common.json';
@@ -25,9 +24,6 @@ export const SUPPORTED_LOCALES = ['zh-CN', 'en-US'] as const;
 export type { AppLocale } from '#/preferences';
 export { DEFAULT_LOCALE } from '#/preferences';
 
-type LocaleStorage = Pick<StorageManager, 'getItem' | 'setItem'>;
-
-const storage = new StorageManager({ prefix: 'novum-mobile' });
 const messages = {
   'en-US': enUS,
   'zh-CN': zhCN,
@@ -43,42 +39,20 @@ const i18n = createI18n({
 const $t = i18n.global.t;
 const $te = i18n.global.te;
 
-let stopLocaleSync: (() => void) | undefined;
-
-export async function loadLocale(target: LocaleStorage = storage) {
-  const locale = await target.getItem<string>('locale');
-  return isAppLocale(locale) ? locale : DEFAULT_LOCALE;
-}
-
-export async function saveLocale(
-  locale: AppLocale,
-  target: LocaleStorage = storage,
-) {
-  await target.setItem('locale', locale);
-}
-
-export async function setupI18n(app: App, locale?: AppLocale) {
-  preferences.app.locale = locale ?? (await loadLocale());
-  i18n.global.locale.value = preferences.app.locale;
+export async function setupI18n(app: App) {
   app.use(i18n);
-  stopLocaleSync?.();
-  stopLocaleSync = watch(getLocale, syncLocale, { immediate: true });
+  const locale = isAppLocale(preferences.app.locale)
+    ? preferences.app.locale
+    : DEFAULT_LOCALE;
+  if (locale !== preferences.app.locale) {
+    updatePreferences({ app: { locale } });
+  }
+  await loadLocaleMessages(locale);
   return i18n;
 }
 
-export function getLocale(): AppLocale {
-  const locale = i18n.global.locale.value;
-  return isAppLocale(locale) ? locale : DEFAULT_LOCALE;
-}
-
-export async function setLocale(locale: AppLocale) {
-  preferences.app.locale = locale;
+export async function loadLocaleMessages(locale: AppLocale) {
   i18n.global.locale.value = locale;
-  await saveLocale(locale);
-}
-
-function syncLocale(locale: AppLocale) {
-  preferences.app.locale = locale;
   document.documentElement.lang = locale;
   Locale.use(locale, vantLocales[locale]);
   dayjs.locale(dayjsLocales[locale]);

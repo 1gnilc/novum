@@ -5,7 +5,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { DEFAULT_LOCALE, setupI18n } from '#/locales';
+import { setupI18n } from '#/locales';
 import { useAuthStore } from '#/stores';
 import AccountView from '#/views/account.vue';
 
@@ -65,7 +65,7 @@ describe('account view', () => {
     });
     await router.push('/account');
     await router.isReady();
-    const i18n = await setupI18n(createApp({}), DEFAULT_LOCALE);
+    const i18n = await setupI18n(createApp({}));
     const wrapper = mount(AccountView, {
       global: {
         plugins: [pinia, router, i18n],

@@ -5,7 +5,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { DEFAULT_LOCALE, setupI18n } from '#/locales';
+import { setupI18n } from '#/locales';
 import { useAuthStore } from '#/stores';
 import LoginView from '#/views/login.vue';
 
@@ -57,7 +57,7 @@ describe('login view', () => {
       query: { redirect: encodeURIComponent('/account?tab=profile') },
     });
     await router.isReady();
-    const i18n = await setupI18n(createApp({}), DEFAULT_LOCALE);
+    const i18n = await setupI18n(createApp({}));
     const wrapper = mount(LoginView, {
       global: {
         plugins: [pinia, router, i18n],

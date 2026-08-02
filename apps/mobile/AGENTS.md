@@ -12,7 +12,8 @@
 - Keep routes static and client-side. Do not add authentication router guards or backend route generation.
 - Mark protected pages with `meta.requiresAuth: true`.
 - Keep the global login prompt derived from the current route and authentication state; do not copy route state into a Store.
-- Do not depend on Admin layouts, adapters, preferences, stores, dynamic locales, or UI packages.
+- Do not depend on Admin layouts, adapters, stores, dynamic locales, or UI packages.
+- Reuse the UI-independent Preferences Manager from `@vben/preferences` only for Mobile runtime settings and persistence; do not add the Admin preferences UI or unused layout and theme configuration.
 - Reuse `@vben/request` and `@vben/utils` only at the concrete Mobile use sites documented in the implementation plan.
 
 ## Dependencies

@@ -6,7 +6,9 @@ import type { AppLocale } from '#/locales';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-import { getLocale, setLocale, SUPPORTED_LOCALES } from '#/locales';
+import { preferences, updatePreferences } from '@vben/preferences';
+
+import { loadLocaleMessages, SUPPORTED_LOCALES } from '#/locales';
 
 type LocaleAction = ActionSheetAction & { value: AppLocale };
 
@@ -19,12 +21,13 @@ const localeNames: Record<AppLocale, string> = {
   'zh-CN': 'language.zhCN',
 };
 
-const currentName = computed(() => t(localeNames[getLocale()]));
+const currentName = computed(() => t(localeNames[preferences.app.locale]));
 const actions = computed<LocaleAction[]>(() =>
   SUPPORTED_LOCALES.map((locale) => ({
-    color: locale === getLocale() ? '#1989fa' : undefined,
+    color: locale === preferences.app.locale ? '#1989fa' : undefined,
     name: t(localeNames[locale]),
-    subname: locale === getLocale() ? t('language.current') : undefined,
+    subname:
+      locale === preferences.app.locale ? t('language.current') : undefined,
     value: locale,
   })),
 );
@@ -33,7 +36,8 @@ async function select(action: LocaleAction) {
   if (!SUPPORTED_LOCALES.includes(action.value)) {
     return;
   }
-  await setLocale(action.value);
+  updatePreferences({ app: { locale: action.value } });
+  await loadLocaleMessages(action.value);
   show.value = false;
 }
 </script>

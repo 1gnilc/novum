@@ -1,5 +1,6 @@
 import type { RequestClientOptions, RequestErrorType } from '@vben/request';
 
+import { preferences } from '@vben/preferences';
 import {
   authenticateResponseInterceptor,
   defaultResponseInterceptor,
@@ -8,7 +9,6 @@ import {
 } from '@vben/request';
 
 import { $t } from '#/locales';
-import { preferences } from '#/preferences';
 import { useAuthStore } from '#/stores';
 
 import { refresh } from './core';

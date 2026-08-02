@@ -658,6 +658,9 @@ importers:
 
   apps/mobile:
     dependencies:
+      '@vben/preferences':
+        specifier: workspace:*
+        version: link:../../packages/preferences
       '@vben/request':
         specifier: workspace:*
         version: link:../../packages/effects/request

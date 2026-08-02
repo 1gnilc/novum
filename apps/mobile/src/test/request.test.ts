@@ -5,8 +5,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getCustomerUserInfo, login } from '#/api/core';
 import { baseRequestClient, requestClient } from '#/api/request';
-import { preferences } from '#/preferences';
 import { useAuthStore } from '#/stores';
+
+const preferenceMocks = vi.hoisted(() => ({
+  defineOverridesPreferences: <T>(overrides: T) => overrides,
+  preferences: {
+    app: { enableRefreshToken: true, locale: 'zh-CN' },
+  },
+}));
+
+vi.mock('@vben/preferences', () => preferenceMocks);
 
 vi.mock('#/router', () => ({
   router: {
@@ -18,8 +26,7 @@ vi.mock('#/router', () => ({
 describe('mobile request client', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    preferences.app.enableRefreshToken = true;
-    preferences.app.locale = 'zh-CN';
+    preferenceMocks.preferences.app.locale = 'zh-CN';
     requestClient.isRefreshing = false;
     requestClient.refreshTokenQueue.splice(0);
   });
@@ -42,7 +49,7 @@ describe('mobile request client', () => {
     const auth = useAuthStore();
     auth.setAccessToken('access');
     auth.setRefreshToken('refresh');
-    preferences.app.locale = 'en-US';
+    preferenceMocks.preferences.app.locale = 'en-US';
     const adapter = vi.fn(async (config: AxiosRequestConfig) =>
       response(config, { code: 0, data: { ok: true } }),
     );
