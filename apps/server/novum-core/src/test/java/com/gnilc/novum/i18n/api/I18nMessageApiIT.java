@@ -41,7 +41,7 @@ class I18nMessageApiIT extends AdminApiTestSupport {
     @Test
     void defaultAdministratorCanManageAndReloadDynamicMessages() {
         TokenPair pair = loginAsDefaultAdmin();
-        String auth = bearer(pair.accessToken());
+        String auth = bearer(pair.getAccessToken());
 
         given()
                 .header("Authorization", auth)
@@ -166,13 +166,13 @@ class I18nMessageApiIT extends AdminApiTestSupport {
 
         TokenPair limited = loginAsLimitedAdmin();
         given()
-                .header("Authorization", bearer(limited.accessToken()))
+                .header("Authorization", bearer(limited.getAccessToken()))
                 .post("/api/sys/i18n-message/bundle/admin")
                 .then()
                 .statusCode(200)
                 .body("code", equalTo(0));
         given()
-                .header("Authorization", bearer(limited.accessToken()))
+                .header("Authorization", bearer(limited.getAccessToken()))
                 .contentType(ContentType.JSON)
                 .body("{\"currentPage\":1,\"pageSize\":10}")
                 .post("/api/sys/i18n-message/page")
@@ -185,7 +185,7 @@ class I18nMessageApiIT extends AdminApiTestSupport {
     void runtimeBundleRequiresASupportedCategoryPath() {
         TokenPair admin = loginAsDefaultAdmin();
         given()
-                .header("Authorization", bearer(admin.accessToken()))
+                .header("Authorization", bearer(admin.getAccessToken()))
                 .header("Accept-Language", "en-US")
                 .post("/api/sys/i18n-message/bundle/unknown")
                 .then()
@@ -196,7 +196,7 @@ class I18nMessageApiIT extends AdminApiTestSupport {
 
     @Test
     void pathKeysUseTheExistingServiceValidationAndErrorEnvelope() {
-        String auth = bearer(loginAsDefaultAdmin().accessToken());
+        String auth = bearer(loginAsDefaultAdmin().getAccessToken());
 
         given()
                 .header("Authorization", auth)
@@ -217,7 +217,7 @@ class I18nMessageApiIT extends AdminApiTestSupport {
 
     @Test
     void createRejectsInvalidValueCollectionsWithoutPersistingPartialLocales() {
-        String auth = bearer(loginAsDefaultAdmin().accessToken());
+        String auth = bearer(loginAsDefaultAdmin().getAccessToken());
         List<String> invalidBodies = List.of(
                 """
                         {"category":"admin","messageKey":"api.invalid.null","values":null}
@@ -265,7 +265,7 @@ class I18nMessageApiIT extends AdminApiTestSupport {
 
     @Test
     void unicodeMessageValuesUseTheFourThousandCodePointBoundary() {
-        String auth = bearer(loginAsDefaultAdmin().accessToken());
+        String auth = bearer(loginAsDefaultAdmin().getAccessToken());
         String exactMaximum = "\uD83D\uDE00".repeat(4000);
 
         given()
@@ -309,7 +309,7 @@ class I18nMessageApiIT extends AdminApiTestSupport {
 
     @Test
     void concurrentDuplicateCreatesPersistExactlyOneMessage() throws Exception {
-        String auth = bearer(loginAsDefaultAdmin().accessToken());
+        String auth = bearer(loginAsDefaultAdmin().getAccessToken());
         String body = """
                 {
                   "category":"admin",

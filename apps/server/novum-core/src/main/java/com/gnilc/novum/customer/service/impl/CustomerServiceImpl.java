@@ -3,6 +3,9 @@ package com.gnilc.novum.customer.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gnilc.auth.authz.rbac.entity.bo.RoleBo;
 import com.gnilc.auth.authz.rbac.service.RoleService;
+import com.gnilc.common.exception.AuthenticationFailedException;
+import com.gnilc.common.exception.UnauthorizedException;
+import com.gnilc.common.i18n.I18nMessageService;
 import com.gnilc.novum.auth.AccessPrincipalUtils;
 import com.gnilc.novum.customer.dao.CustomerDao;
 import com.gnilc.novum.customer.entity.bo.CustomerBo;
@@ -29,21 +32,28 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerDao, CustomerBo>
 
     private final CustomerSessionManager sessionManager;
     private final RoleService roleService;
+    private final I18nMessageService messages;
 
-    public CustomerServiceImpl(CustomerSessionManager sessionManager, RoleService roleService) {
+    public CustomerServiceImpl(CustomerSessionManager sessionManager,
+                               RoleService roleService,
+                               I18nMessageService messages) {
         this.sessionManager = sessionManager;
         this.roleService = roleService;
+        this.messages = messages;
     }
 
     @Override
     public CustomerTokenVo login(String username, String password) {
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
-            return null;
+            throw new AuthenticationFailedException(
+                    messages.get("system.customer.login.invalidCredentials"));
         }
         CustomerBo customer = getCustomerByUsername(username);
-        if (customer == null || Boolean.FALSE.equals(customer.getStatus())
+        if (customer == null
+                || Boolean.FALSE.equals(customer.getStatus())
                 || !PASSWORD_ENCODER.matches(password, customer.getPassword())) {
-            return null;
+            throw new AuthenticationFailedException(
+                    messages.get("system.customer.login.invalidCredentials"));
         }
         SessionTokenPair pair = sessionManager.createSession(customer.getUserId());
         return CustomerTokenVo.of(pair.getAccessToken(), pair.getRefreshToken());
@@ -52,15 +62,20 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerDao, CustomerBo>
     @Override
     public CustomerTokenVo refresh(String refreshToken) {
         if (StringUtils.isBlank(refreshToken)) {
-            return null;
+            throw new UnauthorizedException(messages.get("system.auth.session.expired"));
         }
         SessionTokenPair pair = sessionManager.refreshSession(refreshToken);
-        return pair == null ? null : CustomerTokenVo.of(pair.getAccessToken(), pair.getRefreshToken());
+        if (pair == null) {
+            throw new UnauthorizedException(messages.get("system.auth.session.expired"));
+        }
+        return CustomerTokenVo.of(pair.getAccessToken(), pair.getRefreshToken());
     }
 
     @Override
-    public boolean logout(String refreshToken) {
-        return StringUtils.isNotBlank(refreshToken) && sessionManager.logout(refreshToken);
+    public void logout(String refreshToken) {
+        if (StringUtils.isBlank(refreshToken) || !sessionManager.logout(refreshToken)) {
+            throw new UnauthorizedException(messages.get("system.auth.unauthorized"));
+        }
     }
 
     @Override
@@ -99,4 +114,5 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerDao, CustomerBo>
                 .distinct()
                 .toList();
     }
+
 }

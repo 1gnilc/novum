@@ -7,6 +7,7 @@ import com.gnilc.auth.authz.rbac.service.RoleMenuService;
 import com.gnilc.auth.authz.rbac.service.RolePermissionService;
 import com.gnilc.auth.authz.rbac.service.UserRoleService;
 import com.gnilc.common.exception.InvalidArgumentException;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -48,7 +49,7 @@ class RoleServiceImplTest extends RbacMessageTestSupport {
         dto.setCode("operator");
         dto.setName("   ");
 
-        assertThatThrownBy(() -> fixture.service().createRole(dto))
+        assertThatThrownBy(() -> fixture.getService().createRole(dto))
                 .isInstanceOf(InvalidArgumentException.class)
                 .hasMessage("Role name is required.");
         verifyNoRoleWrite(fixture);
@@ -60,7 +61,7 @@ class RoleServiceImplTest extends RbacMessageTestSupport {
         RoleDto dto = validRole();
         dto.setCode("   ");
 
-        assertThatThrownBy(() -> fixture.service().createRole(dto))
+        assertThatThrownBy(() -> fixture.getService().createRole(dto))
                 .isInstanceOf(InvalidArgumentException.class)
                 .hasMessage("Role code is required.");
         verifyNoRoleWrite(fixture);
@@ -76,12 +77,12 @@ class RoleServiceImplTest extends RbacMessageTestSupport {
         RoleFixture fixture = roleFixture();
         RoleDto dto = validRole();
         setField(dto, field, character.repeat(maximum));
-        doReturn(null).when(fixture.service()).getRoleByCode(dto.getCode());
+        doReturn(null).when(fixture.getService()).getRoleByCode(dto.getCode());
 
-        fixture.service().createRole(dto);
+        fixture.getService().createRole(dto);
 
-        verify(fixture.service()).save(any(RoleBo.class));
-        verify(fixture.publisher()).publishEvent(any(AuthorizationEvent.class));
+        verify(fixture.getService()).save(any(RoleBo.class));
+        verify(fixture.getPublisher()).publishEvent(any(AuthorizationEvent.class));
     }
 
     @ParameterizedTest(name = "rejects {0} beyond business limit")
@@ -95,7 +96,7 @@ class RoleServiceImplTest extends RbacMessageTestSupport {
         RoleDto dto = validRole();
         setField(dto, field, character.repeat(maximum + 1));
 
-        assertThatThrownBy(() -> fixture.service().createRole(dto))
+        assertThatThrownBy(() -> fixture.getService().createRole(dto))
                 .isInstanceOf(InvalidArgumentException.class)
                 .hasMessage(message);
         verifyNoRoleWrite(fixture);
@@ -154,9 +155,9 @@ class RoleServiceImplTest extends RbacMessageTestSupport {
     }
 
     private void verifyNoRoleWrite(RoleFixture fixture) {
-        verify(fixture.service(), never()).save(any(RoleBo.class));
-        verify(fixture.service(), never()).updateById(any(RoleBo.class));
-        verifyNoInteractions(fixture.publisher());
+        verify(fixture.getService(), never()).save(any(RoleBo.class));
+        verify(fixture.getService(), never()).updateById(any(RoleBo.class));
+        verifyNoInteractions(fixture.getPublisher());
     }
 
     private static void setField(RoleDto dto, String field, String value) {
@@ -175,6 +176,9 @@ class RoleServiceImplTest extends RbacMessageTestSupport {
                 Arguments.of("remark", 500, "m", "Role description must not exceed 500 characters."));
     }
 
-    private record RoleFixture(RoleServiceImpl service, ApplicationEventPublisher publisher) {
+    @Data
+    private static final class RoleFixture {
+        private final RoleServiceImpl service;
+        private final ApplicationEventPublisher publisher;
     }
 }

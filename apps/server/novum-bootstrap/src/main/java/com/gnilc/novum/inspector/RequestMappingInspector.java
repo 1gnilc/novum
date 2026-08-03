@@ -1,5 +1,6 @@
 package com.gnilc.novum.inspector;
 
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -24,9 +25,9 @@ public class RequestMappingInspector {
     private static final Logger log = LoggerFactory.getLogger(RequestMappingInspector.class);
     private static final String ANY_METHOD = "*";
     private static final Comparator<MappingLogEntry> LOG_ORDER = Comparator
-            .comparing(MappingLogEntry::method)
-            .thenComparing(MappingLogEntry::path)
-            .thenComparing(MappingLogEntry::handler);
+            .comparing(MappingLogEntry::getMethod)
+            .thenComparing(MappingLogEntry::getPath)
+            .thenComparing(MappingLogEntry::getHandler);
 
     private final RequestMappingHandlerMapping handlerMapping;
 
@@ -41,7 +42,8 @@ public class RequestMappingInspector {
     public void logMappings() {
         List<MappingLogEntry> mappings = inspectMappings();
         mappings.forEach(mapping -> log.info(
-                "Request mapping: {} {} -> {}", mapping.method(), mapping.path(), mapping.handler()));
+                "Request mapping: {} {} -> {}",
+                mapping.getMethod(), mapping.getPath(), mapping.getHandler()));
         log.info("Discovered {} request mappings", mappings.size());
     }
 
@@ -64,6 +66,10 @@ public class RequestMappingInspector {
                 .map(path -> new MappingLogEntry(method, path, handler)));
     }
 
-    record MappingLogEntry(String method, String path, String handler) {
+    @Data
+    static final class MappingLogEntry {
+        private final String method;
+        private final String path;
+        private final String handler;
     }
 }

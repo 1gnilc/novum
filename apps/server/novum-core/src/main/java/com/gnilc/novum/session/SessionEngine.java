@@ -11,7 +11,7 @@ final class SessionEngine {
     SessionEngine(SessionPolicy policy, SessionRedisStore store) {
         this.policy = policy;
         this.store = store;
-        this.codec = new SessionTokenCodec(policy.tokenPrefix());
+        this.codec = new SessionTokenCodec(policy.getTokenPrefix());
     }
 
     boolean supportsAccessToken(String token) {

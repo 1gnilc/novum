@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -36,6 +37,8 @@ class PageResultTest {
         assertThat(json.get("list").get(0).get("id").isTextual()).isTrue();
     }
 
-    private record Item(Long id) {
+    @Data
+    private static final class Item {
+        private final Long id;
     }
 }

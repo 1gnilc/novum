@@ -39,9 +39,9 @@ final class SessionRedisStore {
 
     void saveSession(SessionPolicy policy, Long userId, String accessToken, String refreshToken) {
         redis.opsForValue().set(
-                policy.accessKey(userId, accessToken), refreshToken, policy.accessTtl());
+                policy.accessKey(userId, accessToken), refreshToken, policy.getAccessTtl());
         redis.opsForValue().set(
-                policy.refreshKey(userId, refreshToken), accessToken, policy.refreshTtl());
+                policy.refreshKey(userId, refreshToken), accessToken, policy.getRefreshTtl());
     }
 
     boolean hasAccessToken(SessionPolicy policy, Long userId, String accessToken) {
@@ -67,7 +67,7 @@ final class SessionRedisStore {
                 oldAccessToken,
                 newAccessToken,
                 refreshToken,
-                Long.toString(policy.accessTtl().toSeconds()));
+                Long.toString(policy.getAccessTtl().toSeconds()));
         return Long.valueOf(1L).equals(result);
     }
 

@@ -10,7 +10,7 @@ import java.time.Duration;
  * 管理客户会话。
  */
 @Service
-public class CustomerSessionManager {
+public class CustomerSessionManager implements SessionManager {
     private static final SessionPolicy POLICY = new SessionPolicy(
             "customer", "customer", Duration.ofDays(7), Duration.ofDays(30));
 
@@ -25,26 +25,32 @@ public class CustomerSessionManager {
         this.sessions = sessions;
     }
 
+    @Override
     public boolean supportsAccessToken(String token) {
         return sessions.supportsAccessToken(token);
     }
 
+    @Override
     public SessionTokenPair createSession(Long userId) {
         return sessions.createSession(userId);
     }
 
+    @Override
     public Long validateAccessToken(String accessToken) {
         return sessions.validateAccessToken(accessToken);
     }
 
+    @Override
     public SessionTokenPair refreshSession(String refreshToken) {
         return sessions.refreshSession(refreshToken);
     }
 
+    @Override
     public boolean logout(String refreshToken) {
         return sessions.logout(refreshToken);
     }
 
+    @Override
     public void cleanupUserSessions(Long userId) {
         sessions.cleanupUserSessions(userId);
     }

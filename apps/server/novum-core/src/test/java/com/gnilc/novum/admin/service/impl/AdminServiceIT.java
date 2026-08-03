@@ -3,8 +3,10 @@ package com.gnilc.novum.admin.service.impl;
 import com.gnilc.auth.authz.rbac.entity.bo.RoleBo;
 import com.gnilc.auth.authz.rbac.entity.dto.RoleDto;
 import com.gnilc.auth.authn.context.DefaultAccessPrincipal;
+import com.gnilc.common.exception.AuthenticationFailedException;
 import com.gnilc.common.exception.IllegalConditionException;
 import com.gnilc.common.exception.InvalidArgumentException;
+import com.gnilc.common.exception.UnauthorizedException;
 import com.gnilc.auth.authz.rbac.service.RoleService;
 import com.gnilc.novum.admin.cache.AdminCacheService;
 import com.gnilc.novum.admin.entity.bo.AdminBo;
@@ -97,9 +99,13 @@ class AdminServiceIT {
         authenticateAs(admins.getAdminByUsername("other-admin").getUserId());
         admins.removeAdmin(stored.getId());
         assertThat(admins.getAdmin(stored.getId())).isNull();
-        assertThat(admins.login("alice", "Strong#123")).isNull();
+        assertThatThrownBy(() -> admins.login("alice", "Strong#123"))
+                .isInstanceOf(AuthenticationFailedException.class)
+                .hasMessage("Incorrect username or password.");
         assertThat(sessions.validateAccessToken(token.getAccessToken())).isNull();
-        assertThat(admins.refresh(token.getRefreshToken())).isNull();
+        assertThatThrownBy(() -> admins.refresh(token.getRefreshToken()))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Your login has expired. Please sign in again.");
         assertThat(sessions.validateAccessToken(otherToken.getAccessToken()))
                 .isEqualTo(admins.getAdminByUsername("other-admin").getUserId());
         assertThat(admins.refresh(otherToken.getRefreshToken())).isNotNull();
@@ -141,11 +147,17 @@ class AdminServiceIT {
         assertThat(admins.getAdmin(bob.getId()).getNickname()).isEqualTo("Robert");
         assertThat(admins.getRoleCodes(bob.getUserId()))
                 .containsExactlyInAnyOrder("admin", "reviewer");
-        assertThat(admins.login("bob", "Changed#456")).isNull();
+        assertThatThrownBy(() -> admins.login("bob", "Changed#456"))
+                .isInstanceOf(AuthenticationFailedException.class)
+                .hasMessage("Incorrect username or password.");
         assertThat(sessions.validateAccessToken(firstBobSession.getAccessToken())).isNull();
         assertThat(sessions.validateAccessToken(secondBobSession.getAccessToken())).isNull();
-        assertThat(admins.refresh(firstBobSession.getRefreshToken())).isNull();
-        assertThat(admins.refresh(secondBobSession.getRefreshToken())).isNull();
+        assertThatThrownBy(() -> admins.refresh(firstBobSession.getRefreshToken()))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Your login has expired. Please sign in again.");
+        assertThatThrownBy(() -> admins.refresh(secondBobSession.getRefreshToken()))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Your login has expired. Please sign in again.");
         assertThat(sessions.validateAccessToken(enabledSession.getAccessToken()))
                 .isEqualTo(admins.getAdminByUsername("still-enabled").getUserId());
         assertThat(admins.refresh(enabledSession.getRefreshToken())).isNotNull();

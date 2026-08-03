@@ -16,6 +16,8 @@ import com.gnilc.auth.authz.rbac.service.UserRoleService;
 import com.gnilc.auth.authz.rbac.service.UserService;
 import com.gnilc.common.exception.IllegalConditionException;
 import com.gnilc.common.exception.InvalidArgumentException;
+import com.gnilc.common.exception.AuthenticationFailedException;
+import com.gnilc.common.exception.UnauthorizedException;
 import com.gnilc.common.i18n.I18nMessageService;
 import com.gnilc.novum.admin.cache.AdminCacheService;
 import com.gnilc.novum.admin.dao.AdminDao;
@@ -24,6 +26,7 @@ import com.gnilc.novum.admin.entity.dto.AdminDto;
 import com.gnilc.novum.admin.entity.vo.AdminVo;
 import com.gnilc.novum.admin.event.AdminEvent;
 import com.gnilc.novum.session.AdminSessionManager;
+import com.gnilc.novum.session.SessionTokenPair;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -128,6 +131,80 @@ class AdminServiceTest {
     void tearDown() {
         RequestContextHolder.resetRequestAttributes();
         LocaleContextHolder.resetLocaleContext();
+    }
+
+    @Test
+    void loginCreatesAnAdminSessionForValidCredentials() {
+        AdminBo admin = currentAdmin();
+        doReturn(admin).when(admins).getAdminByUsername("admin");
+        when(sessions.createSession(USER_ID)).thenReturn(SessionTokenPair.of("access", "refresh"));
+
+        var token = admins.login("admin", "Initial#123");
+
+        assertThat(token.getAccessToken()).isEqualTo("access");
+        assertThat(token.getRefreshToken()).isEqualTo("refresh");
+        verify(sessions).createSession(USER_ID);
+    }
+
+    @Test
+    void loginRejectsInvalidCredentialsAndDisabledAdmins() {
+        assertThatThrownBy(() -> admins.login(null, "Initial#123"))
+                .isInstanceOf(AuthenticationFailedException.class)
+                .hasMessage("Incorrect username or password.");
+        assertThatThrownBy(() -> admins.login("admin", " "))
+                .isInstanceOf(AuthenticationFailedException.class)
+                .hasMessage("Incorrect username or password.");
+
+        AdminBo admin = currentAdmin();
+        admin.setStatus(false);
+        doReturn(admin).when(admins).getAdminByUsername("admin");
+        assertThatThrownBy(() -> admins.login("admin", "Initial#123"))
+                .isInstanceOf(AuthenticationFailedException.class)
+                .hasMessage("Incorrect username or password.");
+
+        admin.setStatus(true);
+        assertThatThrownBy(() -> admins.login("admin", "wrong"))
+                .isInstanceOf(AuthenticationFailedException.class)
+                .hasMessage("Incorrect username or password.");
+        verify(sessions, never()).createSession(any());
+    }
+
+    @Test
+    void refreshAndLogoutDelegateToTheAdminSessionManager() {
+        when(sessions.refreshSession("refresh"))
+                .thenReturn(SessionTokenPair.of("new-access", "refresh"));
+        when(sessions.logout("refresh")).thenReturn(true);
+
+        var token = admins.refresh("refresh");
+
+        assertThat(token.getAccessToken()).isEqualTo("new-access");
+        assertThat(token.getRefreshToken()).isEqualTo("refresh");
+        admins.logout("refresh");
+        verify(sessions).logout("refresh");
+    }
+
+    @Test
+    void refreshRejectsMissingAndInvalidRefreshTokens() {
+        when(sessions.refreshSession("invalid")).thenReturn(null);
+
+        assertThatThrownBy(() -> admins.refresh(" "))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Your login has expired. Please sign in again.");
+        assertThatThrownBy(() -> admins.refresh("invalid"))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Your login has expired. Please sign in again.");
+    }
+
+    @Test
+    void logoutRejectsMissingAndInvalidRefreshTokens() {
+        when(sessions.logout("invalid")).thenReturn(false);
+
+        assertThatThrownBy(() -> admins.logout(null))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Unauthorized.");
+        assertThatThrownBy(() -> admins.logout("invalid"))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Unauthorized.");
     }
 
     @Test

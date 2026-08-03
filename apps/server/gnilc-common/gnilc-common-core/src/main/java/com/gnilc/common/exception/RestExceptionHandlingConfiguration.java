@@ -117,6 +117,19 @@ public class RestExceptionHandlingConfiguration {
             return R.error(ResponseCode.ILLEGAL_CONDITION, exception.getMessage());
         }
 
+        @ExceptionHandler(AuthenticationFailedException.class)
+        public R<?> handleAuthenticationFailed(AuthenticationFailedException exception) {
+            log.warn("Authentication failed: {}", exception.getMessage());
+            return R.error(ResponseCode.AUTHENTICATION_FAILED, exception.getMessage());
+        }
+
+        @ExceptionHandler(UnauthorizedException.class)
+        public ResponseEntity<R<?>> handleUnauthorized(UnauthorizedException exception) {
+            log.warn("Unauthorized request: {}", exception.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(R.error(ResponseCode.UNAUTHORIZED, exception.getMessage()));
+        }
+
         @ExceptionHandler(UnknownErrorException.class)
         public ResponseEntity<R<?>> handleUnknownError(UnknownErrorException exception) {
             log.error("Application error", exception);

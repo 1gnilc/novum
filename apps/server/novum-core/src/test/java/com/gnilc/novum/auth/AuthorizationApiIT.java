@@ -49,7 +49,7 @@ class AuthorizationApiIT extends AdminApiTestSupport {
         TokenPair pair = loginAsDefaultAdmin();
 
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .when()
                 .get("/api/sys/admin/role-codes")
                 .then()
@@ -58,7 +58,7 @@ class AuthorizationApiIT extends AdminApiTestSupport {
                 .body("data", hasItem("i18n:manager"))
                 .body("data", hasItem("rbac:manager"));
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .when()
                 .get("/api/sys/admin/menu/access-codes")
                 .then()
@@ -73,14 +73,14 @@ class AuthorizationApiIT extends AdminApiTestSupport {
         TokenPair pair = loginAsLimitedAdmin();
 
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .when()
                 .get("/api/sys/admin/user-info")
                 .then()
                 .statusCode(403)
                 .body("code", equalTo(20003));
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .when()
                 .get("/api/sys/admin/menu/routes")
                 .then()
@@ -91,7 +91,7 @@ class AuthorizationApiIT extends AdminApiTestSupport {
     @Test
     void roleChangesApplyTheBaselineRbacAndI18nPermissionMatrixImmediately() {
         TokenPair manager = loginAsDefaultAdmin();
-        String managerAuth = bearer(manager.accessToken());
+        String managerAuth = bearer(manager.getAccessToken());
         String limitedAdminId = given()
                 .header("Authorization", managerAuth)
                 .contentType(ContentType.JSON)
@@ -105,7 +105,7 @@ class AuthorizationApiIT extends AdminApiTestSupport {
                 .getString("data.list[0].id");
 
         replaceRoles(managerAuth, limitedAdminId, List.of());
-        String limitedAuth = bearer(loginAsLimitedAdmin().accessToken());
+        String limitedAuth = bearer(loginAsLimitedAdmin().getAccessToken());
         assertGetStatus(limitedAuth, "/api/sys/admin/user-info", 200);
         assertPostStatus(limitedAuth, "/api/sys/i18n-message/bundle/admin", 200);
         assertPostStatus(limitedAuth, "/api/sys/admin/page", 403);
@@ -138,14 +138,14 @@ class AuthorizationApiIT extends AdminApiTestSupport {
         TokenPair pair = loginAsDefaultAdmin();
 
         given()
-                .header("Authorization", "bearer  " + pair.accessToken())
+                .header("Authorization", "bearer  " + pair.getAccessToken())
                 .get("/api/sys/admin/user-info")
                 .then()
                 .statusCode(200)
                 .body("code", equalTo(0));
 
         given()
-                .header("Authorization", bearer(pair.refreshToken()))
+                .header("Authorization", bearer(pair.getRefreshToken()))
                 .get("/api/sys/admin/user-info")
                 .then()
                 .statusCode(401)
@@ -167,7 +167,7 @@ class AuthorizationApiIT extends AdminApiTestSupport {
                 .body("message", equalTo("The access token is invalid or has expired."));
 
         given()
-                .header("Authorization", bearer(pair.accessToken()) + " trailing")
+                .header("Authorization", bearer(pair.getAccessToken()) + " trailing")
                 .get("/api/sys/admin/user-info")
                 .then()
                 .statusCode(401)
@@ -191,7 +191,7 @@ class AuthorizationApiIT extends AdminApiTestSupport {
 
         TokenPair pair = loginAsLimitedAdmin();
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .contentType("application/json")
                 .body("{\"nickname\":\"Limited\"}")
                 .when()
@@ -214,7 +214,7 @@ class AuthorizationApiIT extends AdminApiTestSupport {
 
         TokenPair pair = loginAsLimitedAdmin();
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .contentType("application/json")
                 .body(request)
                 .post("/api/sys/admin/password/update")
@@ -226,12 +226,12 @@ class AuthorizationApiIT extends AdminApiTestSupport {
     @Test
     void revokedNamespacedAccessTokenReturns401BeforeAuthorization() {
         TokenPair pair = loginAsDefaultAdmin();
-        given().header("X-Refresh-Token", pair.refreshToken())
+        given().header("X-Refresh-Token", pair.getRefreshToken())
                 .post("/api/sys/admin/logout")
                 .then().statusCode(200);
 
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .when()
                 .get("/api/sys/admin/user-info")
                 .then()

@@ -10,6 +10,7 @@ import com.gnilc.test.annotation.ApiTest;
 import com.gnilc.test.api.ApiTestSupport;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -39,7 +40,7 @@ class CustomerAuthApiIT extends ApiTestSupport {
     void loginRefreshUserInfoAndLogoutUseTheRealHttpAndRedisStack() {
         TokenPair pair = loginCustomer();
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .get("/api/customer/user-info")
                 .then()
                 .statusCode(200)
@@ -52,25 +53,30 @@ class CustomerAuthApiIT extends ApiTestSupport {
                 .body("data.homePath", nullValue());
 
         String newAccessToken = given()
-                .header("X-Refresh-Token", pair.refreshToken())
+                .header("X-Refresh-Token", pair.getRefreshToken())
                 .post("/api/customer/refresh")
                 .then()
                 .statusCode(200)
-                .body("data.refreshToken", equalTo(pair.refreshToken()))
-                .body("data.accessToken", not(equalTo(pair.accessToken())))
+                .body("data.refreshToken", equalTo(pair.getRefreshToken()))
+                .body("data.accessToken", not(equalTo(pair.getAccessToken())))
                 .extract().path("data.accessToken");
 
-        given().header("Authorization", bearer(pair.accessToken()))
+        given().header("Authorization", bearer(pair.getAccessToken()))
                 .get("/api/customer/user-info").then().statusCode(401);
         given().header("Authorization", bearer(newAccessToken))
                 .get("/api/customer/user-info").then().statusCode(200);
 
-        given().header("X-Refresh-Token", pair.refreshToken())
+        given().header("X-Refresh-Token", pair.getRefreshToken())
                 .post("/api/customer/logout").then().statusCode(200);
         given().header("Authorization", bearer(newAccessToken))
                 .get("/api/customer/user-info").then().statusCode(401);
-        given().header("X-Refresh-Token", pair.refreshToken())
+        given().header("X-Refresh-Token", pair.getRefreshToken())
                 .post("/api/customer/refresh").then().statusCode(401);
+        given().header("X-Refresh-Token", pair.getRefreshToken())
+                .post("/api/customer/logout")
+                .then().statusCode(401)
+                .body("code", equalTo(20002))
+                .body("error", equalTo("Unauthorized."));
     }
 
     @Test
@@ -82,11 +88,24 @@ class CustomerAuthApiIT extends ApiTestSupport {
                 .body("code", equalTo(20001))
                 .body("error", equalTo("Incorrect username or password."));
 
+        given().header("Accept-Language", "zh-CN")
+                .contentType(ContentType.JSON)
+                .body("{\"username\":\"customer\",\"password\":\"wrong\"}")
+                .post("/api/customer/login")
+                .then().statusCode(200)
+                .body("code", equalTo(20001))
+                .body("error", equalTo("用户名或密码错误。"));
+
         given().post("/api/customer/refresh")
                 .then().statusCode(401).body("code", equalTo(20002));
         given().header("X-Refresh-Token", "sys_admin.7.value")
                 .post("/api/customer/refresh")
                 .then().statusCode(401).body("code", equalTo(20002));
+        given().header("Accept-Language", "zh-CN")
+                .post("/api/customer/logout")
+                .then().statusCode(401)
+                .body("code", equalTo(20002))
+                .body("error", equalTo("未认证。"));
         given().header("Authorization", "Bearer customer.7.invalid")
                 .get("/api/customer/user-info")
                 .then().statusCode(401);
@@ -100,7 +119,7 @@ class CustomerAuthApiIT extends ApiTestSupport {
         permissionCache.resetAll();
         TokenPair pair = loginCustomer();
 
-        given().header("Authorization", bearer(pair.accessToken()))
+        given().header("Authorization", bearer(pair.getAccessToken()))
                 .get("/api/sys/admin/role-codes")
                 .then().statusCode(200)
                 .body("data", containsInAnyOrder("admin", "customer"));
@@ -134,6 +153,9 @@ class CustomerAuthApiIT extends ApiTestSupport {
         return "Bearer " + token;
     }
 
-    private record TokenPair(String accessToken, String refreshToken) {
+    @Data
+    private static final class TokenPair {
+        private final String accessToken;
+        private final String refreshToken;
     }
 }

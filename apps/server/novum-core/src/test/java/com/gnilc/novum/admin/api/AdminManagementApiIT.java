@@ -37,7 +37,7 @@ class AdminManagementApiIT extends AdminApiTestSupport {
     @Test
     void createQueryUpdateRolesAndRemoveAdminThroughApi() {
         TokenPair pair = loginAsDefaultAdmin();
-        String auth = bearer(pair.accessToken());
+        String auth = bearer(pair.getAccessToken());
 
         given()
                 .header("Authorization", auth)
@@ -123,7 +123,7 @@ class AdminManagementApiIT extends AdminApiTestSupport {
 
     @Test
     void duplicateSubmissionAndInvalidRolesDoNotCreateDuplicatesOrReplaceValidBindings() {
-        String auth = bearer(loginAsDefaultAdmin().accessToken());
+        String auth = bearer(loginAsDefaultAdmin().getAccessToken());
         Map<String, Object> request = adminRequest("repeat-user");
 
         postAdmin(auth, "/api/sys/admin/create", request).body("code", equalTo(0));
@@ -153,7 +153,7 @@ class AdminManagementApiIT extends AdminApiTestSupport {
     @Test
     void currentAdministratorCannotDisableOrRemoveItself() {
         TokenPair pair = loginAsDefaultAdmin();
-        String auth = bearer(pair.accessToken());
+        String auth = bearer(pair.getAccessToken());
         Long adminId = jdbc.queryForObject(
                 "select id from sys_admin where username = 'admin' and del = 0", Long.class);
 
@@ -179,7 +179,7 @@ class AdminManagementApiIT extends AdminApiTestSupport {
 
     @Test
     void createRejectsFieldsBeyondBusinessLimitsWithoutLeavingPartialUsers() {
-        String auth = bearer(loginAsDefaultAdmin().accessToken());
+        String auth = bearer(loginAsDefaultAdmin().getAccessToken());
         int adminCountBefore = countRows("sys_admin");
         int userCountBefore = countRows("az_user");
         List<Map<String, Object>> invalidRequests = List.of(
@@ -200,7 +200,7 @@ class AdminManagementApiIT extends AdminApiTestSupport {
 
     @Test
     void updateRejectsFieldsBeyondBusinessLimitsWithoutChangingTheAdministrator() {
-        String auth = bearer(loginAsDefaultAdmin().accessToken());
+        String auth = bearer(loginAsDefaultAdmin().getAccessToken());
         postAdmin(auth, "/api/sys/admin/create", adminRequest("bounded-update"))
                 .body("code", equalTo(0));
         Long adminId = jdbc.queryForObject(
@@ -232,7 +232,7 @@ class AdminManagementApiIT extends AdminApiTestSupport {
 
     @Test
     void exactMaximumProfileLengthsAreAcceptedWithoutTruncation() {
-        String auth = bearer(loginAsDefaultAdmin().accessToken());
+        String auth = bearer(loginAsDefaultAdmin().getAccessToken());
         String nickname = "\uD83D\uDE00".repeat(255);
         String avatarPrefix = "https://example.test/";
         String avatar = avatarPrefix + "a".repeat(500 - avatarPrefix.length());
@@ -257,7 +257,7 @@ class AdminManagementApiIT extends AdminApiTestSupport {
 
     @Test
     void maximumLengthUsernameCanBeRemovedAndRecreated() {
-        String auth = bearer(loginAsDefaultAdmin().accessToken());
+        String auth = bearer(loginAsDefaultAdmin().getAccessToken());
         String username = "u".repeat(255);
 
         postAdmin(auth, "/api/sys/admin/create", adminRequest(username))

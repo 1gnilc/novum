@@ -9,11 +9,12 @@ import com.gnilc.novum.customer.entity.vo.CustomerVo;
  * Customer 应用服务。
  */
 public interface CustomerService extends IService<CustomerBo> {
+
     CustomerTokenVo login(String username, String password);
 
     CustomerTokenVo refresh(String refreshToken);
 
-    boolean logout(String refreshToken);
+    void logout(String refreshToken);
 
     CustomerVo getUserInfo();
 

@@ -7,6 +7,7 @@ import com.gnilc.auth.authz.rbac.service.RolePermissionService;
 import com.gnilc.auth.authz.rbac.service.UserRoleService;
 import com.gnilc.common.exception.IllegalConditionException;
 import com.gnilc.common.exception.InvalidArgumentException;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -69,7 +70,7 @@ class PermissionServiceImplTest extends RbacMessageTestSupport {
         PermissionDto dto = validPermission();
         setField(dto, field, "   ");
 
-        assertThatThrownBy(() -> fixture.service().createPermission(dto))
+        assertThatThrownBy(() -> fixture.getService().createPermission(dto))
                 .isInstanceOf(InvalidArgumentException.class)
                 .hasMessage(message);
         verifyNoPermissionWrite(fixture);
@@ -85,12 +86,12 @@ class PermissionServiceImplTest extends RbacMessageTestSupport {
         PermissionFixture fixture = permissionFixture();
         PermissionDto dto = validPermission();
         setField(dto, field, character.repeat(maximum));
-        doReturn(null).when(fixture.service()).getPermissionByCode(dto.getCode());
+        doReturn(null).when(fixture.getService()).getPermissionByCode(dto.getCode());
 
-        fixture.service().createPermission(dto);
+        fixture.getService().createPermission(dto);
 
-        verify(fixture.service()).save(any(PermissionBo.class));
-        verify(fixture.publisher()).publishEvent(any(AuthorizationEvent.class));
+        verify(fixture.getService()).save(any(PermissionBo.class));
+        verify(fixture.getPublisher()).publishEvent(any(AuthorizationEvent.class));
     }
 
     @ParameterizedTest(name = "rejects {0} beyond business limit")
@@ -104,7 +105,7 @@ class PermissionServiceImplTest extends RbacMessageTestSupport {
         PermissionDto dto = validPermission();
         setField(dto, field, character.repeat(maximum + 1));
 
-        assertThatThrownBy(() -> fixture.service().createPermission(dto))
+        assertThatThrownBy(() -> fixture.getService().createPermission(dto))
                 .isInstanceOf(InvalidArgumentException.class)
                 .hasMessage(message);
         verifyNoPermissionWrite(fixture);
@@ -160,9 +161,9 @@ class PermissionServiceImplTest extends RbacMessageTestSupport {
     }
 
     private void verifyNoPermissionWrite(PermissionFixture fixture) {
-        verify(fixture.service(), never()).save(any(PermissionBo.class));
-        verify(fixture.service(), never()).updateById(any(PermissionBo.class));
-        verifyNoInteractions(fixture.publisher());
+        verify(fixture.getService(), never()).save(any(PermissionBo.class));
+        verify(fixture.getService(), never()).updateById(any(PermissionBo.class));
+        verifyNoInteractions(fixture.getPublisher());
     }
 
     private static void setField(PermissionDto dto, String field, String value) {
@@ -193,8 +194,9 @@ class PermissionServiceImplTest extends RbacMessageTestSupport {
                 Arguments.of("remark", 500, "m", "Permission description must not exceed 500 characters."));
     }
 
-    private record PermissionFixture(
-            PermissionServiceImpl service,
-            ApplicationEventPublisher publisher) {
+    @Data
+    private static final class PermissionFixture {
+        private final PermissionServiceImpl service;
+        private final ApplicationEventPublisher publisher;
     }
 }

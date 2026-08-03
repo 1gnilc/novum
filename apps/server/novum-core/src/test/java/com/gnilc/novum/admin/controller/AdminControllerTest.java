@@ -1,6 +1,9 @@
 package com.gnilc.novum.admin.controller;
 
 import com.gnilc.common.utils.PageResult;
+import com.gnilc.common.exception.AuthenticationFailedException;
+import com.gnilc.common.exception.RestExceptionHandlingConfiguration;
+import com.gnilc.common.exception.UnauthorizedException;
 import com.gnilc.common.i18n.I18nMessageService;
 import com.gnilc.novum.admin.entity.dto.AdminDto;
 import com.gnilc.novum.admin.entity.vo.AdminTokenVo;
@@ -19,6 +22,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,8 +40,11 @@ class AdminControllerTest {
         ResourceBundleMessageSource source = new ResourceBundleMessageSource();
         source.setBasename("i18n/system/messages");
         source.setDefaultEncoding("UTF-8");
+        I18nMessageService messages = new I18nMessageService(source, "en-US");
         mvc = MockMvcBuilders.standaloneSetup(
-                new AdminController(service, new I18nMessageService(source, "en-US")))
+                new AdminController(service))
+                .setControllerAdvice(
+                        new RestExceptionHandlingConfiguration.RestExceptionControllerAdvice(messages))
                 .build();
     }
 
@@ -45,6 +52,8 @@ class AdminControllerTest {
     void loginReturnsTokenOrAuthenticationBusinessError() throws Exception {
         when(service.login("admin", "secret"))
                 .thenReturn(AdminTokenVo.of("access", "refresh"));
+        doThrow(new AuthenticationFailedException("Incorrect username or password."))
+                .when(service).login(null, null);
 
         mvc.perform(post("/sys/admin/login").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"username\":\"admin\",\"password\":\"secret\"}"))
@@ -58,7 +67,12 @@ class AdminControllerTest {
     }
 
     @Test
-    void loginAndExpiredSessionResponsesUseTheRequestLocale() throws Exception {
+    void loginAndExpiredSessionResponsesPassThroughLocalizedServiceMessages() throws Exception {
+        doThrow(new AuthenticationFailedException("用户名或密码错误。"))
+                .when(service).login(null, null);
+        when(service.refresh(null))
+                .thenThrow(new UnauthorizedException("登录已过期，请重新登录。"));
+
         mvc.perform(post("/sys/admin/login")
                         .header("Accept-Language", "zh-CN")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -73,6 +87,8 @@ class AdminControllerTest {
                 .andExpect(jsonPath("$.error").value("登录已过期，请重新登录。"))
                 .andExpect(jsonPath("$.message").value("登录已过期，请重新登录。"));
 
+        doThrow(new AuthenticationFailedException("Incorrect username or password."))
+                .when(service).login(null, null);
         mvc.perform(post("/sys/admin/login")
                         .header("Accept-Language", "fr-FR")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -84,7 +100,10 @@ class AdminControllerTest {
     @Test
     void refreshAndLogoutUseHttp401ForInvalidRefreshToken() throws Exception {
         when(service.refresh("good")).thenReturn(AdminTokenVo.of("new", "good"));
-        when(service.logout("good")).thenReturn(true);
+        when(service.refresh(null)).thenThrow(new UnauthorizedException(
+                "Your login has expired. Please sign in again."));
+        doThrow(new UnauthorizedException("Unauthorized."))
+                .when(service).logout(null);
 
         mvc.perform(post("/sys/admin/refresh").header("X-Refresh-Token", "good"))
                 .andExpect(status().isOk())

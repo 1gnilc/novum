@@ -42,19 +42,19 @@ class AdminAuthApiIT extends AdminApiTestSupport {
         TokenPair pair = loginAsDefaultAdmin();
 
         String firstRefreshedAccessToken = given()
-                .header("X-Refresh-Token", pair.refreshToken())
+                .header("X-Refresh-Token", pair.getRefreshToken())
                 .when()
                 .post("/api/sys/admin/refresh")
                 .then()
                 .statusCode(200)
                 .body("code", equalTo(0))
-                .body("data.refreshToken", equalTo(pair.refreshToken()))
-                .body("data.accessToken", not(equalTo(pair.accessToken())))
+                .body("data.refreshToken", equalTo(pair.getRefreshToken()))
+                .body("data.accessToken", not(equalTo(pair.getAccessToken())))
                 .extract()
                 .path("data.accessToken");
 
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .when()
                 .get("/api/sys/admin/user-info")
                 .then()
@@ -69,13 +69,13 @@ class AdminAuthApiIT extends AdminApiTestSupport {
                 .body("data.username", equalTo("admin"));
 
         String secondRefreshedAccessToken = given()
-                .header("X-Refresh-Token", pair.refreshToken())
+                .header("X-Refresh-Token", pair.getRefreshToken())
                 .when()
                 .post("/api/sys/admin/refresh")
                 .then()
                 .statusCode(200)
                 .body("code", equalTo(0))
-                .body("data.refreshToken", equalTo(pair.refreshToken()))
+                .body("data.refreshToken", equalTo(pair.getRefreshToken()))
                 .body("data.accessToken", not(equalTo(firstRefreshedAccessToken)))
                 .extract()
                 .path("data.accessToken");
@@ -86,14 +86,14 @@ class AdminAuthApiIT extends AdminApiTestSupport {
                 .get("/api/sys/admin/user-info").then().statusCode(200);
 
         given()
-                .header("X-Refresh-Token", pair.refreshToken())
+                .header("X-Refresh-Token", pair.getRefreshToken())
                 .when()
                 .post("/api/sys/admin/logout")
                 .then()
                 .statusCode(200);
 
         given()
-                .header("X-Refresh-Token", pair.refreshToken())
+                .header("X-Refresh-Token", pair.getRefreshToken())
                 .when()
                 .post("/api/sys/admin/refresh")
                 .then()
@@ -110,7 +110,7 @@ class AdminAuthApiIT extends AdminApiTestSupport {
                 .statusCode(401);
 
         given()
-                .header("X-Refresh-Token", pair.refreshToken())
+                .header("X-Refresh-Token", pair.getRefreshToken())
                 .when()
                 .post("/api/sys/admin/logout")
                 .then()
@@ -135,7 +135,7 @@ class AdminAuthApiIT extends AdminApiTestSupport {
                 " ",
                 "not-a-token",
                 "sys_admin.not-a-number.value",
-                pair.accessToken())) {
+                pair.getAccessToken())) {
             given()
                     .header("X-Refresh-Token", invalidToken)
                     .post("/api/sys/admin/refresh")
@@ -178,7 +178,7 @@ class AdminAuthApiIT extends AdminApiTestSupport {
         TokenPair pair = loginAsDefaultAdmin();
 
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .when()
                 .get("/api/sys/admin/menu/routes")
                 .then()
@@ -260,7 +260,7 @@ class AdminAuthApiIT extends AdminApiTestSupport {
         TokenPair pair = loginAsLimitedAdmin();
 
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .when()
                 .get("/api/sys/admin/menu/routes")
                 .then()
@@ -309,7 +309,7 @@ class AdminAuthApiIT extends AdminApiTestSupport {
         TokenPair pair = loginAsDefaultAdmin();
 
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .contentType(ContentType.JSON)
                 .body("""
                         {
@@ -331,7 +331,7 @@ class AdminAuthApiIT extends AdminApiTestSupport {
                 .body("code", equalTo(0));
 
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .when()
                 .get("/api/sys/admin/user-info")
                 .then()
@@ -348,7 +348,7 @@ class AdminAuthApiIT extends AdminApiTestSupport {
         TokenPair pair = loginAsDefaultAdmin();
 
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .contentType(ContentType.JSON)
                 .body("{\"nickname\":\"   \",\"avatar\":\"https://example.test/changed.png\"}")
                 .when()
@@ -365,7 +365,7 @@ class AdminAuthApiIT extends AdminApiTestSupport {
         TokenPair second = loginAsDefaultAdmin();
 
         given()
-                .header("Authorization", bearer(first.accessToken()))
+                .header("Authorization", bearer(first.getAccessToken()))
                 .contentType(ContentType.JSON)
                 .body("""
                         {"oldPassword":"123456","newPassword":"Changed#456"}
@@ -376,13 +376,13 @@ class AdminAuthApiIT extends AdminApiTestSupport {
                 .statusCode(200)
                 .body("code", equalTo(0));
 
-        given().header("Authorization", bearer(first.accessToken()))
+        given().header("Authorization", bearer(first.getAccessToken()))
                 .get("/api/sys/admin/user-info").then().statusCode(401);
-        given().header("Authorization", bearer(second.accessToken()))
+        given().header("Authorization", bearer(second.getAccessToken()))
                 .get("/api/sys/admin/user-info").then().statusCode(401);
-        given().header("X-Refresh-Token", first.refreshToken())
+        given().header("X-Refresh-Token", first.getRefreshToken())
                 .post("/api/sys/admin/refresh").then().statusCode(401);
-        given().header("X-Refresh-Token", second.refreshToken())
+        given().header("X-Refresh-Token", second.getRefreshToken())
                 .post("/api/sys/admin/refresh").then().statusCode(401);
 
         given()
@@ -406,7 +406,7 @@ class AdminAuthApiIT extends AdminApiTestSupport {
         TokenPair pair = loginAsDefaultAdmin();
 
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .contentType(ContentType.JSON)
                 .body("{\"oldPassword\":\"Wrong#123\",\"newPassword\":\"Changed#456\"}")
                 .post("/api/sys/admin/password/update")
@@ -416,7 +416,7 @@ class AdminAuthApiIT extends AdminApiTestSupport {
                 .body("error", equalTo("Current password is incorrect."));
 
         given()
-                .header("Authorization", bearer(pair.accessToken()))
+                .header("Authorization", bearer(pair.getAccessToken()))
                 .get("/api/sys/admin/user-info")
                 .then()
                 .statusCode(200)

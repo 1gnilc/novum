@@ -3,6 +3,9 @@ package com.gnilc.novum.customer.service.impl;
 import com.gnilc.auth.authn.context.DefaultAccessPrincipal;
 import com.gnilc.auth.authz.rbac.entity.bo.RoleBo;
 import com.gnilc.auth.authz.rbac.service.RoleService;
+import com.gnilc.common.exception.AuthenticationFailedException;
+import com.gnilc.common.exception.UnauthorizedException;
+import com.gnilc.common.i18n.I18nMessageService;
 import com.gnilc.novum.customer.entity.bo.CustomerBo;
 import com.gnilc.novum.customer.entity.vo.CustomerTokenVo;
 import com.gnilc.novum.customer.entity.vo.CustomerVo;
@@ -11,6 +14,8 @@ import com.gnilc.novum.session.SessionTokenPair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -18,8 +23,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -38,7 +45,12 @@ class CustomerServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        customers = org.mockito.Mockito.spy(new CustomerServiceImpl(sessions, roles));
+        LocaleContextHolder.setLocale(Locale.US);
+        ResourceBundleMessageSource source = new ResourceBundleMessageSource();
+        source.setBasename("i18n/system/messages");
+        source.setDefaultEncoding("UTF-8");
+        customers = org.mockito.Mockito.spy(new CustomerServiceImpl(
+                sessions, roles, new I18nMessageService(source, "en-US")));
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setUserPrincipal(DefaultAccessPrincipal.of(USER_ID));
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
@@ -47,6 +59,7 @@ class CustomerServiceImplTest {
     @AfterEach
     void tearDown() {
         RequestContextHolder.resetRequestAttributes();
+        LocaleContextHolder.resetLocaleContext();
     }
 
     @Test
@@ -63,17 +76,25 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void loginUsesOneFailureResultForInvalidCredentialsAndDisabledCustomers() {
-        assertThat(customers.login(null, "123456")).isNull();
-        assertThat(customers.login("customer", " ")).isNull();
+    void loginRejectsInvalidCredentialsAndDisabledCustomers() {
+        assertThatThrownBy(() -> customers.login(null, "123456"))
+                .isInstanceOf(AuthenticationFailedException.class)
+                .hasMessage("Incorrect username or password.");
+        assertThatThrownBy(() -> customers.login("customer", " "))
+                .isInstanceOf(AuthenticationFailedException.class)
+                .hasMessage("Incorrect username or password.");
 
         CustomerBo customer = customer();
         customer.setStatus(false);
         doReturn(customer).when(customers).getCustomerByUsername("customer");
-        assertThat(customers.login("customer", "123456")).isNull();
+        assertThatThrownBy(() -> customers.login("customer", "123456"))
+                .isInstanceOf(AuthenticationFailedException.class)
+                .hasMessage("Incorrect username or password.");
 
         customer.setStatus(true);
-        assertThat(customers.login("customer", "wrong")).isNull();
+        assertThatThrownBy(() -> customers.login("customer", "wrong"))
+                .isInstanceOf(AuthenticationFailedException.class)
+                .hasMessage("Incorrect username or password.");
         verify(sessions, never()).createSession(any());
     }
 
@@ -87,9 +108,32 @@ class CustomerServiceImplTest {
 
         assertThat(token.getAccessToken()).isEqualTo("new-access");
         assertThat(token.getRefreshToken()).isEqualTo("refresh");
-        assertThat(customers.logout("refresh")).isTrue();
-        assertThat(customers.refresh(" ")).isNull();
-        assertThat(customers.logout(null)).isFalse();
+        customers.logout("refresh");
+        verify(sessions).logout("refresh");
+    }
+
+    @Test
+    void refreshRejectsMissingAndInvalidRefreshTokens() {
+        when(sessions.refreshSession("invalid")).thenReturn(null);
+
+        assertThatThrownBy(() -> customers.refresh(" "))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Your login has expired. Please sign in again.");
+        assertThatThrownBy(() -> customers.refresh("invalid"))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Your login has expired. Please sign in again.");
+    }
+
+    @Test
+    void logoutRejectsMissingAndInvalidRefreshTokens() {
+        when(sessions.logout("invalid")).thenReturn(false);
+
+        assertThatThrownBy(() -> customers.logout(null))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Unauthorized.");
+        assertThatThrownBy(() -> customers.logout("invalid"))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Unauthorized.");
     }
 
     @Test

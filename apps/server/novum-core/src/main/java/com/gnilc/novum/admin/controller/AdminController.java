@@ -1,8 +1,6 @@
 package com.gnilc.novum.admin.controller;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.gnilc.common.constant.ResponseCode;
-import com.gnilc.common.i18n.I18nMessageService;
 import com.gnilc.common.utils.PageResult;
 import com.gnilc.common.utils.R;
 import com.gnilc.novum.admin.entity.dto.AdminDto;
@@ -12,9 +10,6 @@ import com.gnilc.novum.admin.entity.vo.AdminTokenVo;
 import com.gnilc.novum.admin.entity.vo.AdminVo;
 import com.gnilc.auth.authz.rbac.entity.vo.MenuRouteVo;
 import com.gnilc.novum.admin.service.AdminService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,11 +28,9 @@ import java.util.List;
 public class AdminController {
     private static final String REFRESH_TOKEN_HEADER = "X-Refresh-Token";
     private final AdminService adminService;
-    private final I18nMessageService messages;
 
-    public AdminController(AdminService adminService, I18nMessageService messages) {
+    public AdminController(AdminService adminService) {
         this.adminService = adminService;
-        this.messages = messages;
     }
 
     /**
@@ -88,46 +81,29 @@ public class AdminController {
      * 登录管理员。
      */
     @PostMapping("/login")
-    public R<AdminTokenVo> login(@RequestBody(required = false) JSONObject body) {
-        String username = body == null ? null : body.getString("username");
-        String password = body == null ? null : body.getString("password");
-        AdminTokenVo vo = adminService.login(username, password);
-        if (vo == null) {
-            return R.error(ResponseCode.AUTHENTICATION_FAILED,
-                    messages.get("system.admin.login.invalidCredentials"));
-        }
-        return R.success(vo);
+    public R<AdminTokenVo> login(@RequestBody JSONObject body) {
+        String username = body.getString("username");
+        String password = body.getString("password");
+        return R.success(adminService.login(username, password));
     }
 
     /**
      * 刷新访问令牌。
      */
     @PostMapping("/refresh")
-    public ResponseEntity<R<?>> refresh(
+    public R<AdminTokenVo> refresh(
             @RequestHeader(value = REFRESH_TOKEN_HEADER, required = false) String refreshToken) {
-        if (StringUtils.isBlank(refreshToken)) {
-            return sessionExpired();
-        }
-        AdminTokenVo vo = adminService.refresh(refreshToken);
-        if (vo == null) {
-            return sessionExpired();
-        }
-        return ResponseEntity.ok(R.success(vo));
+        return R.success(adminService.refresh(refreshToken));
     }
 
     /**
      * 登出当前会话。
      */
     @PostMapping("/logout")
-    public ResponseEntity<R<?>> logout(
+    public R<?> logout(
             @RequestHeader(value = REFRESH_TOKEN_HEADER, required = false) String refreshToken) {
-        if (StringUtils.isBlank(refreshToken)) {
-            return unauthorized();
-        }
-        if (!adminService.logout(refreshToken)) {
-            return unauthorized();
-        }
-        return ResponseEntity.ok(R.success());
+        adminService.logout(refreshToken);
+        return R.success();
     }
 
     /**
@@ -182,13 +158,4 @@ public class AdminController {
         return R.success(adminService.getMenuRoutes());
     }
 
-    private ResponseEntity<R<?>> unauthorized() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(R.error(ResponseCode.UNAUTHORIZED, messages.get("system.auth.unauthorized")));
-    }
-
-    private ResponseEntity<R<?>> sessionExpired() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(R.error(ResponseCode.UNAUTHORIZED, messages.get("system.auth.session.expired")));
-    }
 }

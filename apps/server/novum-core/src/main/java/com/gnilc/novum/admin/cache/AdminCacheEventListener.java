@@ -29,7 +29,7 @@ public class AdminCacheEventListener {
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
     public void handleAdmin(AdminEvent event) {
         if (event != null) {
-            reset(() -> cacheService.removeUserInfo(event.userId()));
+            reset(() -> cacheService.removeUserInfo(event.getUserId()));
         }
     }
 

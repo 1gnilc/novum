@@ -1,17 +1,20 @@
 package com.gnilc.novum.session;
 
+import lombok.Data;
+
 import java.time.Duration;
 
 /**
  * 定义一种身份会话的令牌和 Redis 策略。
  */
-record SessionPolicy(
-        String tokenPrefix,
-        String redisNamespace,
-        Duration accessTtl,
-        Duration refreshTtl) {
+@Data
+final class SessionPolicy {
+    private final String tokenPrefix;
+    private final String redisNamespace;
+    private final Duration accessTtl;
+    private final Duration refreshTtl;
 
-    SessionPolicy {
+    SessionPolicy(String tokenPrefix, String redisNamespace, Duration accessTtl, Duration refreshTtl) {
         if (tokenPrefix == null || tokenPrefix.isBlank()) {
             throw new IllegalArgumentException("tokenPrefix is blank");
         }
@@ -24,6 +27,10 @@ record SessionPolicy(
         if (refreshTtl == null || refreshTtl.isNegative() || refreshTtl.isZero()) {
             throw new IllegalArgumentException("refreshTtl must be positive");
         }
+        this.tokenPrefix = tokenPrefix;
+        this.redisNamespace = redisNamespace;
+        this.accessTtl = accessTtl;
+        this.refreshTtl = refreshTtl;
     }
 
     String accessKey(Long userId, String token) {
