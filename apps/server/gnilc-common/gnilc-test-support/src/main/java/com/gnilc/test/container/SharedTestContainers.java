@@ -1,5 +1,6 @@
 package com.gnilc.test.container;
 
+import lombok.Data;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -107,23 +108,22 @@ public final class SharedTestContainers {
 
     /**
      * 共享 MySQL 的连接信息快照。
-     *
-     * @param jdbcUrl JDBC URL
-     * @param username 用户名
-     * @param password 密码
-     * @param driverClassName JDBC 驱动类名
      */
-    public record MySqlConnectionDetails(
-            String jdbcUrl, String username, String password, String driverClassName) {
+    @Data
+    public static final class MySqlConnectionDetails {
+        private final String jdbcUrl;
+        private final String username;
+        private final String password;
+        private final String driverClassName;
     }
 
     /**
      * 共享 Redis 的连接信息快照。
-     *
-     * @param host 主机名
-     * @param port 映射端口
-     * @param database Redis 数据库索引
      */
-    public record RedisConnectionDetails(String host, int port, int database) {
+    @Data
+    public static final class RedisConnectionDetails {
+        private final String host;
+        private final int port;
+        private final int database;
     }
 }

@@ -12,8 +12,13 @@ public final class SystemModuleContextInitializer
         SharedTestContainers.initializeMySqlSchema(
                 "sql/schema/01_rbac.sql",
                 "sql/schema/02_admin.sql",
+                "sql/schema/03_framework_permissions.sql",
+                "sql/schema/04_rbac_permissions.sql",
                 "sql/schema/05_admin_permissions.sql",
-                "sql/schema/06_i18n.sql");
+                "sql/schema/06_i18n.sql",
+                "sql/schema/07_rbac_admin.sql",
+                "sql/schema/08_customer.sql",
+                "sql/schema/09_customer_permissions.sql");
         TestPropertyValues.of(
                 "server.servlet.context-path=/api",
                 "spring.messages.basename=i18n/common/messages,i18n/rbac/messages,i18n/system/messages",

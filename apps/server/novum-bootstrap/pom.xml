@@ -19,6 +19,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -48,6 +54,8 @@
                     <include>05_admin_permissions.sql</include>
                     <include>06_i18n.sql</include>
                     <include>07_rbac_admin.sql</include>
+                    <include>08_customer.sql</include>
+                    <include>09_customer_permissions.sql</include>
                 </includes>
             </testResource>
         </testResources>

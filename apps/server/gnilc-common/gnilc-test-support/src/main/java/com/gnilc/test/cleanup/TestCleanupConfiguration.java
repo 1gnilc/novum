@@ -26,10 +26,10 @@ public class TestCleanupConfiguration {
                 environment,
                 dataSource,
                 redisConnectionFactory,
-                mysql.jdbcUrl(),
-                redis.host(),
-                redis.port(),
-                redis.database());
+                mysql.getJdbcUrl(),
+                redis.getHost(),
+                redis.getPort(),
+                redis.getDatabase());
     }
 
     /** 创建 MySQL 业务表清理器。 */

@@ -17,6 +17,7 @@ import com.gnilc.novum.i18n.entity.vo.I18nMessageValueVo;
 import com.gnilc.novum.i18n.entity.vo.I18nMessageVo;
 import com.gnilc.novum.i18n.entity.vo.I18nMessageItemVo;
 import com.gnilc.novum.i18n.service.DynamicI18nMessageService;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -128,37 +129,37 @@ public class DynamicI18nMessageServiceImpl extends ServiceImpl<I18nMessageDao, I
     @Override
     public I18nMessageVo createMessage(I18nMessageDto dto) {
         ValidatedMessage target = validateMessage(dto);
-        Preconditions.checkArgument(findRows(target.messageKey()).isEmpty(),
-                messages.get("system.i18n.targetKey.exists", target.messageKey()));
+        Preconditions.checkArgument(findRows(target.getMessageKey()).isEmpty(),
+                messages.get("system.i18n.targetKey.exists", target.getMessageKey()));
         Map<String, String> values = new LinkedHashMap<>();
-        applyValues(values, target.values());
+        applyValues(values, target.getValues());
 
         try {
-            persistRows(target.category(), target.messageKey(), List.of(), values);
+            persistRows(target.getCategory(), target.getMessageKey(), List.of(), values);
         } catch (DuplicateKeyException exception) {
             throw new InvalidArgumentException(
                     messages.get("system.i18n.targetKey.exists"), exception);
         }
-        return new I18nMessageVo(target.category(), target.messageKey(), toValues(values));
+        return new I18nMessageVo(target.getCategory(), target.getMessageKey(), toValues(values));
     }
 
     @Transactional
     @Override
     public I18nMessageVo saveMessage(I18nMessageDto dto) {
         ValidatedMessage target = validateMessage(dto);
-        List<I18nMessageBo> sourceRows = findRows(target.messageKey());
+        List<I18nMessageBo> sourceRows = findRows(target.getMessageKey());
         Map<String, String> mergedValues = sourceRows.stream().collect(Collectors.toMap(
                 I18nMessageBo::getLocale,
                 I18nMessageBo::getI18nValue,
                 (left, right) -> right,
                 LinkedHashMap::new));
-        applyValues(mergedValues, target.values());
+        applyValues(mergedValues, target.getValues());
 
         Preconditions.checkArgument(!sourceRows.isEmpty() || !mergedValues.isEmpty(),
                 messages.get("system.i18n.save.empty"));
 
-        persistRows(target.category(), target.messageKey(), sourceRows, mergedValues);
-        return new I18nMessageVo(target.category(), target.messageKey(), toValues(mergedValues));
+        persistRows(target.getCategory(), target.getMessageKey(), sourceRows, mergedValues);
+        return new I18nMessageVo(target.getCategory(), target.getMessageKey(), toValues(mergedValues));
     }
 
     private ValidatedMessage validateMessage(I18nMessageDto dto) {
@@ -292,10 +293,11 @@ public class DynamicI18nMessageServiceImpl extends ServiceImpl<I18nMessageDao, I
         return row;
     }
 
-    private record ValidatedMessage(
-            String category,
-            String messageKey,
-            List<I18nMessageValueDto> values) {
+    @Data
+    private static final class ValidatedMessage {
+        private final String category;
+        private final String messageKey;
+        private final List<I18nMessageValueDto> values;
     }
 
     private List<I18nMessageValueVo> toValues(Collection<I18nMessageBo> rows) {

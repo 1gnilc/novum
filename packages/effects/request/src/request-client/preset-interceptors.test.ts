@@ -1,6 +1,10 @@
+import axios from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 
-import { authenticateResponseInterceptor } from './preset-interceptors';
+import {
+  authenticateResponseInterceptor,
+  errorMessageResponseInterceptor,
+} from './preset-interceptors';
 import { RequestClient } from './request-client';
 
 function deferred<T>() {
@@ -149,5 +153,62 @@ describe('authenticateResponseInterceptor', () => {
     expect(doReAuthenticate).toHaveBeenCalledTimes(1);
     expect(client.refreshTokenQueue).toHaveLength(0);
     expect(client.isRefreshing).toBe(false);
+  });
+});
+
+describe('errorMessageResponseInterceptor', () => {
+  it('lets the application resolve and display the current localized message', async () => {
+    const onError = vi.fn();
+    const resolveMessage = vi.fn(() => 'Request forbidden');
+    const interceptor = errorMessageResponseInterceptor({
+      onError,
+      resolveMessage,
+    });
+    const error = { response: { status: 403 } };
+    if (!interceptor.rejected)
+      throw new Error('Rejected interceptor is missing');
+
+    await expect(interceptor.rejected(error)).rejects.toBe(error);
+
+    expect(resolveMessage).toHaveBeenCalledWith('forbidden', error);
+    expect(onError).toHaveBeenCalledWith('Request forbidden', error);
+  });
+
+  it('classifies network and timeout failures independently of translations', async () => {
+    const onError = vi.fn();
+    const resolveMessage = vi.fn((type: string) => type);
+    const interceptor = errorMessageResponseInterceptor({
+      onError,
+      resolveMessage,
+    });
+    if (!interceptor.rejected)
+      throw new Error('Rejected interceptor is missing');
+
+    const networkError = new Error('Network Error');
+    const timeoutError = new Error('timeout of 10000ms exceeded');
+    await expect(interceptor.rejected(networkError)).rejects.toBe(networkError);
+    await expect(interceptor.rejected(timeoutError)).rejects.toBe(timeoutError);
+
+    expect(resolveMessage.mock.calls.map(([type]) => type)).toEqual([
+      'network-error',
+      'request-timeout',
+    ]);
+  });
+
+  it('does not display cancelled requests', async () => {
+    const onError = vi.fn();
+    const resolveMessage = vi.fn();
+    const interceptor = errorMessageResponseInterceptor({
+      onError,
+      resolveMessage,
+    });
+    const error = new axios.CanceledError();
+    if (!interceptor.rejected)
+      throw new Error('Rejected interceptor is missing');
+
+    await expect(interceptor.rejected(error)).rejects.toBe(error);
+
+    expect(resolveMessage).not.toHaveBeenCalled();
+    expect(onError).not.toHaveBeenCalled();
   });
 });

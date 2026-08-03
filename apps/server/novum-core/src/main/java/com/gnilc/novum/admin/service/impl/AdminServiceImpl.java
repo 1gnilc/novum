@@ -3,6 +3,8 @@ package com.gnilc.novum.admin.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gnilc.common.base.Preconditions;
+import com.gnilc.common.exception.AuthenticationFailedException;
+import com.gnilc.common.exception.UnauthorizedException;
 import com.gnilc.common.i18n.I18nMessageService;
 import com.gnilc.common.utils.BeanPropertyUtils;
 import com.gnilc.common.utils.PageResult;
@@ -19,7 +21,7 @@ import com.gnilc.auth.authz.rbac.service.UserRoleService;
 import com.gnilc.auth.authz.rbac.service.UserService;
 import com.gnilc.novum.admin.dao.AdminDao;
 import com.gnilc.novum.session.AdminSessionManager;
-import com.gnilc.novum.session.AdminSessionTokenPair;
+import com.gnilc.novum.session.SessionTokenPair;
 import com.gnilc.novum.admin.entity.bo.AdminBo;
 import com.gnilc.novum.admin.entity.dto.AdminDto;
 import com.gnilc.novum.admin.entity.dto.AdminPageDto;
@@ -91,16 +93,19 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, AdminBo> implements 
     @Override
     public AdminTokenVo login(String username, String password) {
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
-            return null;
+            throw new AuthenticationFailedException(
+                    messages.get("system.admin.login.invalidCredentials"));
         }
         AdminBo bo = getAdminByUsername(username);
         if (bo == null || Boolean.FALSE.equals(bo.getStatus())) {
-            return null;
+            throw new AuthenticationFailedException(
+                    messages.get("system.admin.login.invalidCredentials"));
         }
         if (!PASSWORD_ENCODER.matches(password, bo.getPassword())) {
-            return null;
+            throw new AuthenticationFailedException(
+                    messages.get("system.admin.login.invalidCredentials"));
         }
-        AdminSessionTokenPair pair = sessionManager.createSession(bo.getUserId());
+        SessionTokenPair pair = sessionManager.createSession(bo.getUserId());
         return AdminTokenVo.of(pair.getAccessToken(), pair.getRefreshToken());
     }
 
@@ -110,11 +115,11 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, AdminBo> implements 
     @Override
     public AdminTokenVo refresh(String refreshToken) {
         if (StringUtils.isBlank(refreshToken)) {
-            return null;
+            throw new UnauthorizedException(messages.get("system.auth.session.expired"));
         }
-        AdminSessionTokenPair pair = sessionManager.refreshSession(refreshToken);
+        SessionTokenPair pair = sessionManager.refreshSession(refreshToken);
         if (pair == null) {
-            return null;
+            throw new UnauthorizedException(messages.get("system.auth.session.expired"));
         }
         return AdminTokenVo.of(pair.getAccessToken(), pair.getRefreshToken());
     }
@@ -123,11 +128,10 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, AdminBo> implements 
      * 登出当前会话。
      */
     @Override
-    public boolean logout(String refreshToken) {
-        if (StringUtils.isBlank(refreshToken)) {
-            return false;
+    public void logout(String refreshToken) {
+        if (StringUtils.isBlank(refreshToken) || !sessionManager.logout(refreshToken)) {
+            throw new UnauthorizedException(messages.get("system.auth.unauthorized"));
         }
-        return sessionManager.logout(refreshToken);
     }
 
     /**

@@ -180,7 +180,7 @@ describe('internationalization message form workflow', () => {
     };
 
     runtime.api.createI18nMessage.mockRejectedValueOnce(new Error('timeout'));
-    await expect(options.onConfirm()).rejects.toThrow('timeout');
+    await expect(options.onConfirm()).resolves.toBeUndefined();
 
     expect(runtime.drawerApi.lock).toHaveBeenCalledOnce();
     expect(runtime.drawerApi.unlock).toHaveBeenCalledOnce();

@@ -20,9 +20,9 @@ public final class RedisContainerContextInitializer
     public void initialize(@NotNull ConfigurableApplicationContext context) {
         SharedTestContainers.RedisConnectionDetails redis = SharedTestContainers.redisConnectionDetails();
         TestPropertyValues.of(
-                "spring.data.redis.host=" + redis.host(),
-                "spring.data.redis.port=" + redis.port(),
-                "spring.data.redis.database=" + redis.database(),
+                "spring.data.redis.host=" + redis.getHost(),
+                "spring.data.redis.port=" + redis.getPort(),
+                "spring.data.redis.database=" + redis.getDatabase(),
                 "app.test.cleanup.enabled=true"
         ).applyTo(context);
     }

@@ -3,6 +3,9 @@ package com.gnilc.common.exception;
 import com.gnilc.common.i18n.I18nMessageService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -56,6 +59,19 @@ class RestExceptionControllerAdviceControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(10002))
                 .andExpect(jsonPath("$.error").value("The requested operation is not allowed in the current state."));
+    }
+
+    @Test
+    void authenticationExceptionsRetainTheirTransportAndBusinessCodes() throws Exception {
+        mvc.perform(get("/test/authentication"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(20001))
+                .andExpect(jsonPath("$.error").value("Incorrect username or password."));
+
+        mvc.perform(get("/test/unauthorized"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(20002))
+                .andExpect(jsonPath("$.error").value("Unauthorized."));
     }
 
     @Test
@@ -128,6 +144,16 @@ class RestExceptionControllerAdviceControllerTest {
             throw new IllegalConditionException("The requested operation is not allowed in the current state.");
         }
 
+        @GetMapping("/test/authentication")
+        void authentication() {
+            throw new AuthenticationFailedException("Incorrect username or password.");
+        }
+
+        @GetMapping("/test/unauthorized")
+        void unauthorized() {
+            throw new UnauthorizedException("Unauthorized.");
+        }
+
         @GetMapping("/test/runtime")
         void runtime() {
             throw new RuntimeException("database password leaked");
@@ -146,6 +172,11 @@ class RestExceptionControllerAdviceControllerTest {
         }
     }
 
-    record TestRequest(@NotBlank(message = "Name is required.") String name) {
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class TestRequest {
+        @NotBlank(message = "Name is required.")
+        private String name;
     }
 }

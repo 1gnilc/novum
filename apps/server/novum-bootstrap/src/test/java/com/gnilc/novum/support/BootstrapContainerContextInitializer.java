@@ -18,7 +18,9 @@ public final class BootstrapContainerContextInitializer
                 "sql/schema/04_rbac_permissions.sql",
                 "sql/schema/05_admin_permissions.sql",
                 "sql/schema/06_i18n.sql",
-                "sql/schema/07_rbac_admin.sql");
+                "sql/schema/07_rbac_admin.sql",
+                "sql/schema/08_customer.sql",
+                "sql/schema/09_customer_permissions.sql");
         TestPropertyValues.of(
                 "mybatis-plus.configuration.map-underscore-to-camel-case=true",
                 "mybatis-plus.global-config.db-config.logic-delete-field=del",

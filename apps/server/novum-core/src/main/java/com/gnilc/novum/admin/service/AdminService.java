@@ -29,7 +29,7 @@ public interface AdminService extends IService<AdminBo> {
     /**
      * 登出刷新令牌对应的会话。
      */
-    boolean logout(String refreshToken);
+    void logout(String refreshToken);
 
     /**
      * 查询当前管理员资料。

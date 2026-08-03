@@ -17,8 +17,8 @@
 
 ## Session Boundaries
 
-- Keep access-token, refresh-token, pairing, revocation, cache-key, and TTL details inside the administrator-session implementation.
-- Controllers and administrator profile workflows consume the session abstraction; they must not reconstruct token or Redis behavior.
+- Keep access-token, refresh-token, pairing, revocation, cache-key, and TTL details inside the shared session engine and its domain-specific session managers.
+- Admin and Customer controllers consume their own session managers; they must not reconstruct token or Redis behavior or accept the other identity domain's tokens.
 
 ## Persistence And Services
 

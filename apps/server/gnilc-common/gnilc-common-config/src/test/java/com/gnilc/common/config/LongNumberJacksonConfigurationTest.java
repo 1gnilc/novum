@@ -2,6 +2,7 @@ package com.gnilc.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.std.NumberSerializer;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -63,10 +64,11 @@ class LongNumberJacksonConfigurationTest {
                 });
     }
 
-    private record LongNumbers(
-            Long maximumSafeInteger,
-            long firstUnsafeInteger,
-            long maximumLong,
-            BigInteger beyondLong) {
+    @Data
+    private static final class LongNumbers {
+        private final Long maximumSafeInteger;
+        private final long firstUnsafeInteger;
+        private final long maximumLong;
+        private final BigInteger beyondLong;
     }
 }

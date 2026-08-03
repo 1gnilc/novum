@@ -3,6 +3,7 @@ package com.gnilc.novum.admin.support;
 import com.gnilc.test.api.ApiTestSupport;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import lombok.Data;
 
 import static io.restassured.RestAssured.given;
 
@@ -35,6 +36,9 @@ public abstract class AdminApiTestSupport extends ApiTestSupport {
         return "Bearer " + token;
     }
 
-    protected record TokenPair(String accessToken, String refreshToken) {
+    @Data
+    protected static final class TokenPair {
+        private final String accessToken;
+        private final String refreshToken;
     }
 }

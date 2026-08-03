@@ -20,10 +20,10 @@ public final class MySqlContainerContextInitializer
     public void initialize(@NotNull ConfigurableApplicationContext context) {
         SharedTestContainers.MySqlConnectionDetails mysql = SharedTestContainers.mysqlConnectionDetails();
         TestPropertyValues.of(
-                "spring.datasource.url=" + mysql.jdbcUrl(),
-                "spring.datasource.username=" + mysql.username(),
-                "spring.datasource.password=" + mysql.password(),
-                "spring.datasource.driver-class-name=" + mysql.driverClassName(),
+                "spring.datasource.url=" + mysql.getJdbcUrl(),
+                "spring.datasource.username=" + mysql.getUsername(),
+                "spring.datasource.password=" + mysql.getPassword(),
+                "spring.datasource.driver-class-name=" + mysql.getDriverClassName(),
                 "spring.sql.init.mode=never",
                 "app.test.cleanup.enabled=true"
         ).applyTo(context);

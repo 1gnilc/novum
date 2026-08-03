@@ -1,8 +1,11 @@
 import type { RequestClient } from './request-client';
-import type { MakeErrorMessageFn, ResponseInterceptorConfig } from './types';
+import type {
+  ErrorMessageInterceptorOptions,
+  RequestErrorType,
+  ResponseInterceptorConfig,
+} from './types';
 
-import { $t } from '@vben/locales';
-import { isFunction } from '@vben/utils';
+import { isFunction } from '@vben/utils/shared';
 
 import axios from 'axios';
 
@@ -118,7 +121,7 @@ export const authenticateResponseInterceptor = ({
 };
 
 export const errorMessageResponseInterceptor = (
-  makeErrorMessage?: MakeErrorMessageFn,
+  options: ErrorMessageInterceptorOptions,
 ): ResponseInterceptorConfig => {
   return {
     rejected: (error: any) => {
@@ -127,46 +130,39 @@ export const errorMessageResponseInterceptor = (
       }
 
       const err: string = error?.toString?.() ?? '';
-      let errMsg = '';
+      let type: RequestErrorType;
       if (err?.includes('Network Error')) {
-        errMsg = $t('ui.fallback.http.networkError');
+        type = 'network-error';
       } else if (error?.message?.includes?.('timeout')) {
-        errMsg = $t('ui.fallback.http.requestTimeout');
-      }
-      if (errMsg) {
-        makeErrorMessage?.(errMsg, error);
-        return Promise.reject(error);
-      }
-
-      let errorMessage: string;
-      const status = error?.response?.status;
-
-      switch (status) {
-        case 400: {
-          errorMessage = $t('ui.fallback.http.badRequest');
-          break;
-        }
-        case 401: {
-          errorMessage = $t('ui.fallback.http.unauthorized');
-          break;
-        }
-        case 403: {
-          errorMessage = $t('ui.fallback.http.forbidden');
-          break;
-        }
-        case 404: {
-          errorMessage = $t('ui.fallback.http.notFound');
-          break;
-        }
-        case 408: {
-          errorMessage = $t('ui.fallback.http.requestTimeout');
-          break;
-        }
-        default: {
-          errorMessage = $t('ui.fallback.http.internalServerError');
+        type = 'request-timeout';
+      } else {
+        switch (error?.response?.status) {
+          case 400: {
+            type = 'bad-request';
+            break;
+          }
+          case 401: {
+            type = 'unauthorized';
+            break;
+          }
+          case 403: {
+            type = 'forbidden';
+            break;
+          }
+          case 404: {
+            type = 'not-found';
+            break;
+          }
+          case 408: {
+            type = 'request-timeout';
+            break;
+          }
+          default: {
+            type = 'internal-server-error';
+          }
         }
       }
-      makeErrorMessage?.(errorMessage, error);
+      options.onError(options.resolveMessage(type, error), error);
       return Promise.reject(error);
     },
   };

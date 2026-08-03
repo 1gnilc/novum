@@ -34,6 +34,10 @@ public class AdminApiTestConfiguration {
                     .execute(dataSource);
             new ResourceDatabasePopulator(new ClassPathResource("sql/schema/07_rbac_admin.sql"))
                     .execute(dataSource);
+            new ResourceDatabasePopulator(new ClassPathResource("sql/schema/08_customer.sql"))
+                    .execute(dataSource);
+            new ResourceDatabasePopulator(new ClassPathResource("sql/schema/09_customer_permissions.sql"))
+                    .execute(dataSource);
             jdbc.update("""
                     insert into az_role (del, create_time, code, name, built_in)
                     values (0, now(), 'limited', 'Limited', 0)

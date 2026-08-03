@@ -1,0 +1,49 @@
+.page {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  overflow: hidden;
+  color: var(--van-text-color);
+  background: var(--van-background);
+}
+
+.page__content {
+  padding: 24px 16px max(24px, env(safe-area-inset-bottom));
+}
+
+.page__heading {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.page__subtitle {
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--van-text-color-2);
+}
+
+.page__actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.page__empty {
+  padding-top: 64px;
+}
+
+.page__form {
+  margin-top: 12px;
+}
+
+@media (min-width: 600px) {
+  .page {
+    box-shadow: 0 0 0 1px rgb(15 23 42 / 6%);
+  }
+}
