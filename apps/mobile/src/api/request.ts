@@ -22,7 +22,7 @@ const requestErrorMessages: Record<RequestErrorType, string> = {
   unauthorized: 'request.unauthorized',
 };
 
-const apiURL = import.meta.env.VITE_APP_API_URL || '/api';
+const apiURL = import.meta.env.VITE_APP_API_URL;
 
 function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   const client = new RequestClient({ ...options, baseURL });

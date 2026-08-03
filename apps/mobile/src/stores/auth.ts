@@ -53,9 +53,8 @@ export const useAuthStore = defineStore(
     }
 
     async function getUserInfo() {
-      const info = await getCustomerUserInfo();
-      userInfo.value = info;
-      return info;
+      userInfo.value = await getCustomerUserInfo();
+      return userInfo.value;
     }
 
     async function logout(redirect = true) {
