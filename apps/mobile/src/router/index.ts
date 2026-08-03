@@ -1,6 +1,6 @@
 import type { App } from 'vue';
 
-import { computed } from 'vue';
+import { watchEffect } from 'vue';
 import {
   createRouter,
   createWebHashHistory,
@@ -13,7 +13,7 @@ import { $t } from '#/locales';
 
 import { routes } from './routes';
 
-const appTitle = import.meta.env.VITE_APP_TITLE || 'Novum Mobile';
+const appTitle = import.meta.env.VITE_APP_TITLE;
 
 export const router = createRouter({
   history:
@@ -27,10 +27,9 @@ export const router = createRouter({
 export async function setupRouter(app: App) {
   app.use(router);
   await router.isReady();
-  useTitle(
-    computed(() => {
-      const key = router.currentRoute.value.meta.title;
-      return key ? `${$t(key)} - ${appTitle}` : appTitle;
-    }),
-  );
+  watchEffect(() => {
+    const routeTitle = router.currentRoute.value.meta?.title;
+    const pageTitle = (routeTitle ? `${$t(routeTitle)} - ` : '') + appTitle;
+    useTitle(pageTitle);
+  });
 }

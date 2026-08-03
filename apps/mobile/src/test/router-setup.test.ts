@@ -2,11 +2,25 @@ import { createApp, nextTick } from 'vue';
 
 import { describe, expect, it } from 'vitest';
 
+import { BasicLayout } from '#/layouts';
 import { loadLocaleMessages, setupI18n } from '#/locales';
 import { router, setupRouter } from '#/router';
+import { routes } from '#/router/routes';
 import { initStores, usePreferences } from '#/stores';
 
 describe('router setup', () => {
+  it('loads application pages through the basic layout', () => {
+    const [rootRoute] = routes;
+
+    expect(rootRoute?.component).toBe(BasicLayout);
+    expect(rootRoute?.children?.map(({ path }) => path)).toEqual([
+      '',
+      'login',
+      'account',
+      ':pathMatch(.*)*',
+    ]);
+  });
+
   it('synchronizes the localized page title', async () => {
     const app = createApp({});
     await initStores(app, { namespace: 'mobile-router-setup-test' });

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import BasicLayout from '#/layouts/basic.vue';
 import { useThemeStore } from '#/stores';
 import { themeVars } from '#/styles/theme';
 
@@ -14,6 +13,6 @@ const themeStore = useThemeStore();
     :theme-vars="themeVars"
     theme-vars-scope="global"
   >
-    <BasicLayout />
+    <RouterView />
   </van-config-provider>
 </template>
