@@ -26,6 +26,7 @@ export default defineConfig({
       ...configDefaults.exclude,
       '**/e2e/**',
       '**/dist/**',
+      '**/apps/mobile/**',
       '**/.{idea,git,cache,output,temp}/**',
       '**/node_modules/**',
       '**/{stylelint,eslint}.config.*',
