@@ -1,17 +1,15 @@
-import type { SupportedLanguagesType } from '@vben/preferences';
+const SUPPORTED_LOCALES = ['zh-CN', 'en-US'] as const;
 
-import { defineOverridesPreferences } from '@vben/preferences';
+type AppLocale = (typeof SUPPORTED_LOCALES)[number];
 
-export type AppLocale = SupportedLanguagesType;
+interface Preferences {
+  locale: AppLocale;
+}
 
-export const DEFAULT_LOCALE: AppLocale = 'zh-CN';
+const DEFAULT_LOCALE: AppLocale = 'zh-CN';
+const defaultPreferences: Preferences = {
+  locale: DEFAULT_LOCALE,
+};
 
-export const overridesPreferences = defineOverridesPreferences({
-  app: {
-    enableRefreshToken: true,
-    locale: DEFAULT_LOCALE,
-  },
-  theme: {
-    mode: 'light',
-  },
-});
+export { DEFAULT_LOCALE, defaultPreferences, SUPPORTED_LOCALES };
+export type { AppLocale, Preferences };

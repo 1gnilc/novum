@@ -1,22 +1,20 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createApp } from 'vue';
 
-import { initPreferences, preferences } from '@vben/preferences';
-
 import { ActionSheet, Button } from 'vant';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import LanguageSelector from '#/components/language/index.vue';
 import { $t, setupI18n } from '#/locales';
-import { overridesPreferences } from '#/preferences';
+import { initStores, usePreferences } from '#/stores';
 
 describe('language selector', () => {
   it('switches and persists the selected locale', async () => {
-    await initPreferences({
-      namespace: 'mobile-language-test',
-      overrides: overridesPreferences,
-    });
-    const i18n = await setupI18n(createApp({}));
+    const app = createApp({});
+    await initStores(app, { namespace: 'mobile-language-test' });
+    const preferences = usePreferences();
+    preferences.setLocale('zh-CN');
+    const i18n = await setupI18n(app);
     const wrapper = mount(LanguageSelector, {
       global: { plugins: [i18n] },
     });
@@ -28,8 +26,10 @@ describe('language selector', () => {
     sheet.vm.$emit('select', { name: 'English', value: 'en-US' });
     await flushPromises();
 
-    expect(preferences.app.locale).toBe('en-US');
-    expect($t('account.title')).toBe('Account');
-    expect(sheet.props('show')).toBe(false);
+    expect(preferences.locale).toBe('en-US');
+    await vi.waitFor(() => {
+      expect($t('account.title')).toBe('Account');
+      expect(sheet.props('show')).toBe(false);
+    });
   });
 });

@@ -1,6 +1,5 @@
 import type { RequestClientOptions, RequestErrorType } from '@vben/request';
 
-import { preferences } from '@vben/preferences';
 import {
   authenticateResponseInterceptor,
   defaultResponseInterceptor,
@@ -9,7 +8,7 @@ import {
 } from '@vben/request';
 
 import { $t } from '#/locales';
-import { useAuthStore } from '#/stores';
+import { useAuthStore, usePreferences } from '#/stores';
 
 import { refresh } from './core';
 
@@ -50,8 +49,9 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   client.addRequestInterceptor({
     fulfilled: async (config) => {
       const auth = useAuthStore();
+      const preferences = usePreferences();
       config.headers.Authorization = formatToken(auth.accessToken);
-      config.headers['Accept-Language'] = preferences.app.locale;
+      config.headers['Accept-Language'] = preferences.locale;
       return config;
     },
   });
@@ -68,7 +68,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       client,
       doReAuthenticate,
       doRefreshToken,
-      enableRefreshToken: preferences.app.enableRefreshToken,
+      enableRefreshToken: true,
       formatToken,
     }),
   );

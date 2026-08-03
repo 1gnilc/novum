@@ -6,9 +6,8 @@ import type { AppLocale } from '#/locales';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-import { preferences, updatePreferences } from '@vben/preferences';
-
 import { loadLocaleMessages, SUPPORTED_LOCALES } from '#/locales';
+import { usePreferences } from '#/stores';
 
 type LocaleAction = ActionSheetAction & { value: AppLocale };
 
@@ -16,18 +15,18 @@ defineOptions({ name: 'LanguageSelector' });
 
 const { t } = useI18n();
 const show = ref(false);
+const preferences = usePreferences();
 const localeNames: Record<AppLocale, string> = {
   'en-US': 'language.enUS',
   'zh-CN': 'language.zhCN',
 };
 
-const currentName = computed(() => t(localeNames[preferences.app.locale]));
+const currentName = computed(() => t(localeNames[preferences.locale]));
 const actions = computed<LocaleAction[]>(() =>
   SUPPORTED_LOCALES.map((locale) => ({
-    color: locale === preferences.app.locale ? '#1989fa' : undefined,
+    color: locale === preferences.locale ? '#1989fa' : undefined,
     name: t(localeNames[locale]),
-    subname:
-      locale === preferences.app.locale ? t('language.current') : undefined,
+    subname: locale === preferences.locale ? t('language.current') : undefined,
     value: locale,
   })),
 );
@@ -36,7 +35,7 @@ async function select(action: LocaleAction) {
   if (!SUPPORTED_LOCALES.includes(action.value)) {
     return;
   }
-  updatePreferences({ app: { locale: action.value } });
+  preferences.setLocale(action.value);
   await loadLocaleMessages(action.value);
   show.value = false;
 }

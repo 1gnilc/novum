@@ -13,7 +13,8 @@
 - Mark protected pages with `meta.requiresAuth: true`.
 - Keep the global login prompt derived from the current route and authentication state; do not copy route state into a Store.
 - Do not depend on Admin layouts, adapters, stores, dynamic locales, or UI packages.
-- Reuse the UI-independent Preferences Manager from `@vben/preferences` only for Mobile runtime settings and persistence; do not add the Admin preferences UI or unused layout and theme configuration.
+- Keep Mobile preferences in its own typed Pinia store and persist them through the existing Mobile Pinia persistence setup. Do not depend on `@vben/preferences` or add Admin preference fields, UI, layout, or theme behavior.
+- Keep the Mobile `vue-i18n`, Vant, and Day.js locale pipeline local to the application. Do not depend on `@vben/locales` or add Admin dynamic messages.
 - Reuse `@vben/request` and `@vben/utils` only at the concrete Mobile use sites documented in the implementation plan.
 
 ## Dependencies

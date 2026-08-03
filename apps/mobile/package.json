@@ -14,7 +14,7 @@
     "#/*": "./src/*"
   },
   "dependencies": {
-    "@vben/preferences": "workspace:*",
+    "@vben-core/shared": "workspace:*",
     "@vben/request": "workspace:*",
     "@vben/utils": "workspace:*",
     "@vueuse/core": "catalog:",

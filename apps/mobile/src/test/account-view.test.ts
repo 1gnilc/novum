@@ -6,7 +6,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { setupI18n } from '#/locales';
-import { useAuthStore } from '#/stores';
+import { useAuthStore, usePreferences } from '#/stores';
 import AccountView from '#/views/account.vue';
 
 const api = vi.hoisted(() => ({
@@ -54,6 +54,7 @@ describe('account view', () => {
   async function mountView(authenticated = false) {
     const pinia = createPinia();
     setActivePinia(pinia);
+    usePreferences().setLocale('zh-CN');
     const auth = useAuthStore();
     if (authenticated) {
       auth.setAccessToken('access');

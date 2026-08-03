@@ -6,7 +6,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { setupI18n } from '#/locales';
-import { useAuthStore } from '#/stores';
+import { useAuthStore, usePreferences } from '#/stores';
 import LoginView from '#/views/login.vue';
 
 const api = vi.hoisted(() => ({
@@ -31,6 +31,7 @@ describe('login view', () => {
   it('allows an authenticated customer to sign in again and follows the redirect', async () => {
     const pinia = createPinia();
     setActivePinia(pinia);
+    usePreferences().setLocale('zh-CN');
     const auth = useAuthStore();
     auth.setAccessToken('old-access');
     auth.setRefreshToken('old-refresh');

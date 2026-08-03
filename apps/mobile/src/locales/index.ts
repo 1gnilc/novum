@@ -4,62 +4,135 @@ import type { AppLocale } from '#/preferences';
 
 import { createI18n } from 'vue-i18n';
 
-import { preferences, updatePreferences } from '@vben/preferences';
-
 import dayjs from 'dayjs';
 import { Locale } from 'vant';
-import enUSVant from 'vant/es/locale/lang/en-US';
-import zhCNVant from 'vant/es/locale/lang/zh-CN';
 
-import { DEFAULT_LOCALE } from '#/preferences';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '#/preferences';
+import { usePreferences } from '#/stores';
 
-import enUS from './langs/en-US/common.json';
-import zhCN from './langs/zh-CN/common.json';
+type LocaleMessages = Record<string, unknown>;
+type LoadMessages = (locale: AppLocale) => Promise<LocaleMessages>;
 
-import 'dayjs/locale/en';
-import 'dayjs/locale/zh-cn';
+interface LocaleModule {
+  default: LocaleMessages;
+}
 
-export const SUPPORTED_LOCALES = ['zh-CN', 'en-US'] as const;
+interface LocaleSetupOptions {
+  defaultLocale?: AppLocale;
+  loadMessages?: LoadMessages;
+  missingWarn?: boolean;
+}
 
-export type { AppLocale } from '#/preferences';
-export { DEFAULT_LOCALE } from '#/preferences';
-
-const messages = {
-  'en-US': enUS,
-  'zh-CN': zhCN,
-};
-const dayjsLocales = { 'en-US': 'en', 'zh-CN': 'zh-cn' } as const;
-const vantLocales = { 'en-US': enUSVant, 'zh-CN': zhCNVant } as const;
+const FALLBACK_LOCALE: AppLocale = 'en-US';
+const modules = import.meta.glob<LocaleModule>('./langs/*/common.json');
 const i18n = createI18n({
-  fallbackLocale: DEFAULT_LOCALE,
+  fallbackLocale: FALLBACK_LOCALE,
   legacy: false,
-  locale: DEFAULT_LOCALE,
-  messages,
+  locale: '',
+  messages: {},
 });
-const $t = i18n.global.t;
-const $te = i18n.global.te;
+let runtimeLoadMessages: LoadMessages = async () => ({});
 
-export async function setupI18n(app: App) {
+async function coreSetup(app: App, options: LocaleSetupOptions = {}) {
+  const {
+    defaultLocale = DEFAULT_LOCALE,
+    loadMessages = async () => ({}),
+    missingWarn = false,
+  } = options;
+  runtimeLoadMessages = loadMessages;
   app.use(i18n);
-  const locale = isAppLocale(preferences.app.locale)
-    ? preferences.app.locale
-    : DEFAULT_LOCALE;
-  if (locale !== preferences.app.locale) {
-    updatePreferences({ app: { locale } });
+  await loadLocaleMessages(defaultLocale);
+  i18n.global.setMissingHandler((_, key) => {
+    if (missingWarn && key.includes('.')) {
+      console.warn(`[intlify] Not found '${key}' locale message.`);
+    }
+  });
+}
+
+async function buildMessages(locale: AppLocale) {
+  const message = await modules[`./langs/${locale}/common.json`]?.();
+  return message?.default ?? {};
+}
+
+async function loadMessages(locale: AppLocale) {
+  const [messages] = await Promise.all([
+    buildMessages(locale),
+    loadThirdPartyMessage(locale),
+  ]);
+  return messages;
+}
+
+async function loadThirdPartyMessage(locale: AppLocale) {
+  await Promise.all([loadVantLocale(locale), loadDayjsLocale(locale)]);
+}
+
+async function loadVantLocale(locale: AppLocale) {
+  switch (locale) {
+    case 'en-US': {
+      const messages = await import('vant/es/locale/lang/en-US');
+      Locale.use(locale, messages.default);
+      break;
+    }
+    case 'zh-CN': {
+      const messages = await import('vant/es/locale/lang/zh-CN');
+      Locale.use(locale, messages.default);
+      break;
+    }
   }
-  await loadLocaleMessages(locale);
+}
+
+async function loadDayjsLocale(locale: AppLocale) {
+  switch (locale) {
+    case 'en-US': {
+      await import('dayjs/locale/en');
+      dayjs.locale('en');
+      break;
+    }
+    case 'zh-CN': {
+      await import('dayjs/locale/zh-cn');
+      dayjs.locale('zh-cn');
+      break;
+    }
+  }
+}
+
+async function loadLocaleMessages(locale: AppLocale) {
+  if (i18n.global.locale.value === locale) {
+    return setI18nLanguage(locale);
+  }
+
+  const messages = await runtimeLoadMessages(locale);
+  i18n.global.setLocaleMessage(locale, messages);
+  return setI18nLanguage(locale);
+}
+
+function setI18nLanguage(locale: AppLocale) {
+  i18n.global.locale.value = locale;
+  document?.documentElement.setAttribute('lang', locale);
+}
+
+async function setupI18n(app: App, options: LocaleSetupOptions = {}) {
+  const preferences = usePreferences();
+  await coreSetup(app, {
+    defaultLocale: preferences.locale,
+    loadMessages,
+    missingWarn: !import.meta.env.PROD,
+    ...options,
+  });
+  i18n.global.fallbackLocale.value = FALLBACK_LOCALE;
   return i18n;
 }
 
-export async function loadLocaleMessages(locale: AppLocale) {
-  i18n.global.locale.value = locale;
-  document.documentElement.lang = locale;
-  Locale.use(locale, vantLocales[locale]);
-  dayjs.locale(dayjsLocales[locale]);
-}
+const $t = i18n.global.t;
+const $te = i18n.global.te;
 
-function isAppLocale(locale: unknown): locale is AppLocale {
-  return SUPPORTED_LOCALES.includes(locale as AppLocale);
-}
-
-export { $t, $te };
+export {
+  $t,
+  $te,
+  coreSetup,
+  DEFAULT_LOCALE,
+  loadLocaleMessages,
+  setupI18n,
+  SUPPORTED_LOCALES,
+};
+export type { AppLocale, LocaleSetupOptions };

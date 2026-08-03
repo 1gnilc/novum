@@ -8,7 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import LoginRequired from '#/components/authentication/login-required.vue';
 import { setupI18n } from '#/locales';
-import { useAuthStore } from '#/stores';
+import { useAuthStore, usePreferences } from '#/stores';
 
 vi.mock('#/router', () => ({
   router: {
@@ -73,6 +73,7 @@ describe('login required', () => {
     await router.isReady();
     const pinia = createPinia();
     setActivePinia(pinia);
+    usePreferences().setLocale('zh-CN');
     const i18n = await setupI18n(createApp(page));
     const wrapper = mount(LoginRequired, {
       attachTo: '#test-root',
