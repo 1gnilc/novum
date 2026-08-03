@@ -135,14 +135,18 @@ const [Drawer, drawerApi] = useVbenDrawer({
       const persistMessage = values.editing
         ? saveI18nMessage
         : createI18nMessage;
-      await persistMessage({
-        category: values.category,
-        messageKey: values.messageKey,
-        values: [
-          { locale: 'en-US', value: values.enUS },
-          { locale: 'zh-CN', value: values.zhCN ?? '' },
-        ],
-      });
+      try {
+        await persistMessage({
+          category: values.category,
+          messageKey: values.messageKey,
+          values: [
+            { locale: 'en-US', value: values.enUS },
+            { locale: 'zh-CN', value: values.zhCN ?? '' },
+          ],
+        });
+      } catch {
+        return;
+      }
       saved.value = true;
       ElMessage.success($t('page.i18nMessage.messages.saveSuccess'));
       if (
