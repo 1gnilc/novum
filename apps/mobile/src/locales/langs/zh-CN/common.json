@@ -47,5 +47,11 @@
     "notFound": "请求的资源不存在。",
     "requestTimeout": "请求超时。",
     "unauthorized": "登录状态已失效。"
+  },
+  "theme": {
+    "dark": "深色",
+    "label": "主题",
+    "light": "浅色",
+    "system": "跟随系统"
   }
 }

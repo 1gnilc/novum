@@ -47,5 +47,11 @@
     "notFound": "The requested resource was not found.",
     "requestTimeout": "The request timed out.",
     "unauthorized": "Your session is no longer valid."
+  },
+  "theme": {
+    "dark": "Dark",
+    "label": "Theme",
+    "light": "Light",
+    "system": "System"
   }
 }

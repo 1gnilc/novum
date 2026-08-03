@@ -5,7 +5,8 @@
   min-height: 100dvh;
   margin: 0 auto;
   overflow: hidden;
-  background: #f7f8fa;
+  color: var(--van-text-color);
+  background: var(--van-background);
 }
 
 .page__content {
@@ -24,7 +25,7 @@
   margin: 8px 0 0;
   font-size: 15px;
   line-height: 1.5;
-  color: #6b7280;
+  color: var(--van-text-color-2);
 }
 
 .page__actions {

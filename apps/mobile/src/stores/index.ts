@@ -56,3 +56,4 @@ export async function initStores(app: App, options: InitStoreOptions) {
 
 export * from './auth';
 export * from './preferences';
+export * from './theme';

@@ -20,10 +20,13 @@ declare module 'vue' {
     VanButton: typeof import('vant/es')['Button']
     VanCell: typeof import('vant/es')['Cell']
     VanCellGroup: typeof import('vant/es')['CellGroup']
+    VanConfigProvider: typeof import('vant/es')['ConfigProvider']
     VanEmpty: typeof import('vant/es')['Empty']
     VanField: typeof import('vant/es')['Field']
     VanForm: typeof import('vant/es')['Form']
     VanNavBar: typeof import('vant/es')['NavBar']
+    VanRadio: typeof import('vant/es')['Radio']
+    VanRadioGroup: typeof import('vant/es')['RadioGroup']
     VanSkeleton: typeof import('vant/es')['Skeleton']
   }
 }
@@ -38,9 +41,12 @@ declare global {
   const VanButton: (typeof import('vant/es'))['Button'];
   const VanCell: (typeof import('vant/es'))['Cell'];
   const VanCellGroup: (typeof import('vant/es'))['CellGroup'];
+  const VanConfigProvider: (typeof import('vant/es'))['ConfigProvider'];
   const VanEmpty: (typeof import('vant/es'))['Empty'];
   const VanField: (typeof import('vant/es'))['Field'];
   const VanForm: (typeof import('vant/es'))['Form'];
   const VanNavBar: (typeof import('vant/es'))['NavBar'];
+  const VanRadio: (typeof import('vant/es'))['Radio'];
+  const VanRadioGroup: (typeof import('vant/es'))['RadioGroup'];
   const VanSkeleton: (typeof import('vant/es'))['Skeleton'];
 }
