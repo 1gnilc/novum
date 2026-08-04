@@ -1,0 +1,9 @@
+{
+  "badRequest": "The request could not be processed.",
+  "forbidden": "Access denied.",
+  "internalServerError": "The service is temporarily unavailable.",
+  "networkError": "Check your network connection.",
+  "notFound": "The requested resource was not found.",
+  "requestTimeout": "The request timed out.",
+  "unauthorized": "Your session is no longer valid."
+}

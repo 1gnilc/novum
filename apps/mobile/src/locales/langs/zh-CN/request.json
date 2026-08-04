@@ -1,0 +1,9 @@
+{
+  "badRequest": "请求无法处理。",
+  "forbidden": "没有访问权限。",
+  "internalServerError": "服务暂时不可用。",
+  "networkError": "请检查网络连接。",
+  "notFound": "请求的资源不存在。",
+  "requestTimeout": "请求超时。",
+  "unauthorized": "登录状态已失效。"
+}

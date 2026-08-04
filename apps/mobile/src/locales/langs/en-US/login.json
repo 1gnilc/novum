@@ -1,0 +1,9 @@
+{
+  "password": "Password",
+  "passwordRequired": "Enter your password",
+  "submit": "Sign in",
+  "success": "Signed in",
+  "title": "Customer sign in",
+  "username": "Username",
+  "usernameRequired": "Enter your username"
+}
