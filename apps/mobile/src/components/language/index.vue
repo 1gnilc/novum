@@ -24,7 +24,7 @@ const localeNames: Record<AppLocale, string> = {
 const currentName = computed(() => t(localeNames[preferences.locale]));
 const actions = computed<LocaleAction[]>(() =>
   SUPPORTED_LOCALES.map((locale) => ({
-    color: locale === preferences.locale ? '#1989fa' : undefined,
+    color: locale === preferences.locale ? 'var(--color-primary)' : undefined,
     name: t(localeNames[locale]),
     subname: locale === preferences.locale ? t('language.current') : undefined,
     value: locale,

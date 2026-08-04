@@ -8,8 +8,26 @@ import { $t, $te, coreSetup, loadLocaleMessages, setupI18n } from '#/locales';
 import { initStores, usePreferences } from '#/stores';
 
 const TestRoot = defineComponent({ name: 'TestRoot', render: () => null });
+const localeResources = import.meta.glob('../locales/langs/*/*.json', {
+  eager: true,
+});
 
 describe('locale setup', () => {
+  it('stores each message namespace in its own locale resource', () => {
+    expect(Object.keys(localeResources)).toEqual(
+      expect.arrayContaining([
+        '../locales/langs/en-US/home.json',
+        '../locales/langs/zh-CN/home.json',
+      ]),
+    );
+    expect(Object.keys(localeResources)).not.toContain(
+      '../locales/langs/en-US/common.json',
+    );
+    expect(Object.keys(localeResources)).not.toContain(
+      '../locales/langs/zh-CN/common.json',
+    );
+  });
+
   it('loads and activates messages through coreSetup', async () => {
     await coreSetup(createApp(TestRoot), {
       defaultLocale: 'en-US',
@@ -31,6 +49,8 @@ describe('locale setup', () => {
     expect(useCurrentLang().value).toBe('zh-CN');
     expect(dayjs.locale()).toBe('zh-cn');
     expect(preferences.locale).toBe('zh-CN');
+    expect($te('home.title')).toBe(true);
+    expect($t('home.title')).toBe('Novum');
     expect($te('account.title')).toBe(true);
     expect($t('account.title')).toBe('账户');
 

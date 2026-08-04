@@ -1,0 +1,9 @@
+{
+  "anonymous": "登录后查看账户信息",
+  "logout": "退出登录",
+  "nickname": "昵称",
+  "roles": "角色",
+  "title": "账户",
+  "unavailable": "账户信息暂时不可用",
+  "username": "用户名"
+}

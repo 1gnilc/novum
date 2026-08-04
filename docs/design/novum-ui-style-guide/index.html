@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="基于 novumaivip.com 实测数据整理的 Novum 移动端 UI Style Guide。"
+    />
+    <title>Novum UI Style Guide</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <img
+          class="brand-logo"
+          src="assets/images/logo-novum.png"
+          alt="Novum"
+        />
+        <div class="header-copy">
+          <p class="eyebrow">Mobile UI Inventory</p>
+          <h1>UI Style Guide</h1>
+          <p>
+            基于生产站点的可见页面、计算样式与静态资源整理。本文档描述现状，不构成重新设计方案。
+          </p>
+        </div>
+        <div class="header-facts" aria-label="采集摘要">
+          <span>3 档移动视口</span>
+          <span>83 个去重资源</span>
+          <span>2026-08-04</span>
+        </div>
+      </div>
+      <nav class="section-nav" aria-label="样式规范章节">
+        <a href="#overview">概览</a>
+        <a href="#foundation">基础规范</a>
+        <a href="#structure">布局与形状</a>
+        <a href="#components">组件</a>
+        <a href="#resources">资源与 Tokens</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="overview" class="guide-section">
+        <div class="section-heading">
+          <p class="section-number">01</p>
+          <div>
+            <h2>移动端概览</h2>
+            <p>三档均为竖屏触控环境，没有桌面端断点。</p>
+          </div>
+        </div>
+
+        <div class="viewport-grid">
+          <article>
+            <strong>小屏设备</strong>
+            <span>360 × 800 · DPR 3</span>
+            <small>65 / 74 页面记录可见</small>
+          </article>
+          <article>
+            <strong>标准手机</strong>
+            <span>430 × 932 · DPR 3</span>
+            <small>59 / 74 页面记录可见</small>
+          </article>
+          <article>
+            <strong>大屏 / 平板</strong>
+            <span>768 × 1024 · DPR 2</span>
+            <small>71 / 74 页面记录可见</small>
+          </article>
+        </div>
+
+        <div class="summary-row">
+          <p>
+            <strong>视觉特征</strong>
+            深青画布、蓝灰表面、橙色操作、紫色选中态与低阴影层级。
+          </p>
+          <p>
+            <strong>可信度</strong>
+            “实测值”来自运行时样式；“推测值”仅用于归纳 spacing scale。
+          </p>
+        </div>
+      </section>
+
+      <section id="foundation" class="guide-section alt-section">
+        <div class="section-heading">
+          <p class="section-number">02</p>
+          <div>
+            <h2>基础规范</h2>
+            <p>颜色、字体和间距集中展示，避免重复示例。</p>
+          </div>
+        </div>
+
+        <div class="subsection-heading">
+          <h3>Color Palette</h3>
+          <span>HEX · RGB 详见 tokens.json</span>
+        </div>
+        <div id="color-grid" class="color-grid"></div>
+
+        <div class="foundation-grid">
+          <div>
+            <div class="subsection-heading">
+              <h3>Typography</h3>
+              <span>实测值</span>
+            </div>
+            <div class="font-row">
+              <p class="font-default">Novum mobile interface</p>
+              <code>Times, "Times New Roman", serif</code>
+            </div>
+            <div id="type-scale" class="type-scale"></div>
+            <p class="compact-note">
+              原站没有使用原生 H1-H6；页面标题由普通 View/Text 元素实现。
+            </p>
+          </div>
+
+          <div>
+            <div class="subsection-heading">
+              <h3>Spacing</h3>
+              <span>推测值</span>
+            </div>
+            <div id="spacing-scale" class="spacing-scale"></div>
+            <dl class="metric-list">
+              <div>
+                <dt>常用页面边距</dt>
+                <dd>11px / 22px / 34px</dd>
+              </div>
+              <div>
+                <dt>标准内容宽度</dt>
+                <dd>408px @ 430px</dd>
+              </div>
+              <div>
+                <dt>标准表单宽度</dt>
+                <dd>386px @ 430px</dd>
+              </div>
+              <div>
+                <dt>底部导航</dt>
+                <dd>5 栏 · 62px 高</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section id="structure" class="guide-section">
+        <div class="section-heading">
+          <p class="section-number">03</p>
+          <div>
+            <h2>布局与形状</h2>
+            <p>宽度变化主要拉伸移动单列，组件本身没有独立响应式变体。</p>
+          </div>
+        </div>
+
+        <div class="structure-grid">
+          <div>
+            <div class="subsection-heading">
+              <h3>Responsive</h3>
+              <span>CSS px</span>
+            </div>
+            <div class="responsive-table-wrap">
+              <table class="responsive-table">
+                <thead>
+                  <tr>
+                    <th>档位</th>
+                    <th>视口</th>
+                    <th>布局</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Small</td>
+                    <td>360</td>
+                    <td>窄边距单列</td>
+                  </tr>
+                  <tr>
+                    <td>Standard</td>
+                    <td>430</td>
+                    <td>基准移动单列</td>
+                  </tr>
+                  <tr>
+                    <td>Large</td>
+                    <td>768</td>
+                    <td>放大的移动单列</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <div class="subsection-heading">
+              <h3>Radius</h3>
+              <span>实测值</span>
+            </div>
+            <div id="radius-grid" class="radius-grid"></div>
+          </div>
+        </div>
+
+        <div class="shape-summary">
+          <p>
+            <strong>Border</strong
+            ><span>1px #292F3B · 3px #3B3D66 selected</span>
+          </p>
+          <p>
+            <strong>Shadow</strong
+            ><span>默认 none · 极少使用 0 1px 5px rgb(0 0 0 / 5%)</span>
+          </p>
+          <p>
+            <strong>Icon</strong
+            ><span>22px / 24px / 28px / 48px · 位图与实心轮廓为主</span>
+          </p>
+        </div>
+      </section>
+
+      <section id="components" class="guide-section alt-section">
+        <div class="section-heading">
+          <p class="section-number">04</p>
+          <div>
+            <h2>核心组件</h2>
+            <p>仅保留能够代表原站视觉语言的组件实例。</p>
+          </div>
+        </div>
+
+        <div class="component-grid">
+          <article class="component-item">
+            <div class="component-title">
+              <h3>Buttons</h3>
+              <span>橙色主操作</span>
+            </div>
+            <div class="button-showcase">
+              <button class="novum-button" type="button">Login</button>
+              <button class="novum-button secondary" type="button">
+                Capital details
+              </button>
+              <button class="novum-button dark" type="button">
+                TRANSFER OUT
+              </button>
+            </div>
+            <p class="component-note">
+              40.5-63px 高 · 9-28px 圆角 · hover opacity .8
+            </p>
+          </article>
+
+          <article class="component-item">
+            <div class="component-title">
+              <h3>Inputs</h3>
+              <span>浅粉输入表面</span>
+            </div>
+            <div class="input-showcase">
+              <label
+                ><span>Default</span
+                ><input value="Mobile phone number" readonly
+              /></label>
+              <label
+                ><span>Selected</span
+                ><input
+                  class="selected-input"
+                  value="Withdrawal amount"
+                  readonly
+              /></label>
+              <label class="error-field"
+                ><span>Error</span
+                ><input value="Invalid value" readonly /><small
+                  >Validation message</small
+                ></label
+              >
+            </div>
+            <p class="component-note">#FDEBEB · 11px 圆角 · #DD524D 错误文字</p>
+          </article>
+
+          <article class="component-item">
+            <div class="component-title">
+              <h3>Product Card</h3>
+              <span>Market</span>
+            </div>
+            <div class="market-card">
+              <span class="device-tag">Device 1</span>
+              <dl>
+                <div>
+                  <dt>Working for</dt>
+                  <dd>9 / 365 Day</dd>
+                </div>
+                <div>
+                  <dt>Try Amt</dt>
+                  <dd>3000 NGN</dd>
+                </div>
+                <div>
+                  <dt>Earn Total</dt>
+                  <dd>1350</dd>
+                </div>
+              </dl>
+              <button type="button">start work</button>
+            </div>
+          </article>
+
+          <article class="component-item">
+            <div class="component-title">
+              <h3>Bottom Navigation</h3>
+              <span>固定五栏</span>
+            </div>
+            <div class="bottom-nav-preview">
+              <div class="active">
+                <img src="assets/icons/icon-home-active.png" alt="" /><span
+                  >Home</span
+                >
+              </div>
+              <div>
+                <img src="assets/icons/icon-market.png" alt="" /><span
+                  >Market</span
+                >
+              </div>
+              <div>
+                <img src="assets/icons/icon-team.png" alt="" /><span>Team</span>
+              </div>
+              <div>
+                <img src="assets/icons/icon-fund.png" alt="" /><span>Fund</span>
+              </div>
+              <div>
+                <img src="assets/icons/icon-profile.png" alt="" /><span
+                  >My</span
+                >
+              </div>
+            </div>
+            <p class="component-note">62px 高 · 图标 28px · 选中态 #6757D4</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="resources" class="guide-section">
+        <div class="section-heading">
+          <p class="section-number">05</p>
+          <div>
+            <h2>资源与 Tokens</h2>
+            <p>展示代表性资源；全部 83 个去重文件仍保留在 assets 目录。</p>
+          </div>
+        </div>
+
+        <div id="asset-gallery" class="asset-gallery"></div>
+
+        <div class="resource-footer">
+          <div>
+            <div class="subsection-heading"><h3>Data</h3></div>
+            <div class="file-links">
+              <a href="data/tokens.json">tokens.json</a>
+              <a href="data/assets.json">assets.json</a>
+              <a href="data/summary.json">summary.json</a>
+            </div>
+          </div>
+          <details>
+            <summary>查看 CSS Tokens</summary>
+            <pre id="token-code" class="token-code"></pre>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Novum UI Style Guide</span>
+      <span>Source: novumaivip.com · Mobile only</span>
+    </footer>
+
+    <script src="guide.js"></script>
+  </body>
+</html>

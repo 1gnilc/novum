@@ -24,7 +24,7 @@ interface LocaleSetupOptions {
 }
 
 const FALLBACK_LOCALE: AppLocale = 'en-US';
-const modules = import.meta.glob<LocaleModule>('./langs/*/common.json');
+const modules = import.meta.glob<LocaleModule>('./langs/*/*.json');
 const i18n = createI18n({
   fallbackLocale: FALLBACK_LOCALE,
   legacy: false,
@@ -50,8 +50,17 @@ async function coreSetup(app: App, options: LocaleSetupOptions = {}) {
 }
 
 async function buildMessages(locale: AppLocale) {
-  const message = await modules[`./langs/${locale}/common.json`]?.();
-  return message?.default ?? {};
+  const localePrefix = `./langs/${locale}/`;
+  const messages = await Promise.all(
+    Object.entries(modules)
+      .filter(([path]) => path.startsWith(localePrefix))
+      .map(async ([path, loadModule]) => {
+        const namespace = path.slice(localePrefix.length, -'.json'.length);
+        const message = await loadModule();
+        return [namespace, message.default] as const;
+      }),
+  );
+  return Object.fromEntries(messages);
 }
 
 async function loadMessages(locale: AppLocale) {
