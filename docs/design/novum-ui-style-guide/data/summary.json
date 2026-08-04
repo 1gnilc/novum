@@ -1,0 +1,53 @@
+{
+  "name": "Novum UI Style Guide",
+  "source": "https://www.novumaivip.com",
+  "capturedAt": "2026-08-04",
+  "environment": "AdsPower profile 37 / k1f658vy",
+  "scope": "Mobile portrait touch layouts only",
+  "viewports": [
+    {
+      "key": "small",
+      "label": "Small mobile",
+      "width": 360,
+      "height": 800,
+      "deviceScaleFactor": 3,
+      "records": 74,
+      "captured": 65,
+      "empty": 3,
+      "errors": 6
+    },
+    {
+      "key": "standard",
+      "label": "Standard mobile",
+      "width": 430,
+      "height": 932,
+      "deviceScaleFactor": 3,
+      "records": 74,
+      "captured": 59,
+      "empty": 14,
+      "errors": 1
+    },
+    {
+      "key": "large",
+      "label": "Large mobile / tablet",
+      "width": 768,
+      "height": 1024,
+      "deviceScaleFactor": 2,
+      "records": 74,
+      "captured": 71,
+      "empty": 3,
+      "errors": 0
+    }
+  ],
+  "assets": {
+    "uniqueFiles": 83,
+    "allVisibleAssetsDownloaded": true,
+    "manifest": "assets.json"
+  },
+  "notes": [
+    "All three profiles retain a mobile single-column layout.",
+    "The 768px profile enlarges the mobile layout; no desktop breakpoint was observed.",
+    "No mutating form was submitted during capture.",
+    "The rendering engine is AdsPower Chromium, not Safari/WebKit."
+  ]
+}

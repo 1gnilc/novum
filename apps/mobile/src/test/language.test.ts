@@ -22,6 +22,13 @@ describe('language selector', () => {
     await wrapper.findComponent(Button).trigger('click');
     const sheet = wrapper.findComponent(ActionSheet);
     expect(sheet.props('show')).toBe(true);
+    const actions = sheet.props('actions') ?? [];
+    expect(actions[0]).toMatchObject({
+      color: 'var(--color-primary)',
+      value: 'zh-CN',
+    });
+    expect(actions[1]).toMatchObject({ value: 'en-US' });
+    expect(actions[1]?.color).toBeUndefined();
 
     sheet.vm.$emit('select', { name: 'English', value: 'en-US' });
     await flushPromises();

@@ -1,0 +1,1388 @@
+[
+  {
+    "localPath": "assets/fonts/fontello-icons.ttf",
+    "mimeType": "application/octet-stream",
+    "byteSize": 4632,
+    "naturalWidth": null,
+    "naturalHeight": null,
+    "role": "font",
+    "originalUrls": [
+      "data:application/octet-stream;base64,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"
+    ],
+    "pages": ["/pages/money/recharge"],
+    "kinds": ["font"],
+    "modes": ["large"],
+    "sha256": "66d2fc7b46f53ae6f3a065bf05cff55a152226da764cfa4463d82c84e7b13de4"
+  },
+  {
+    "localPath": "assets/images/banner-app-download.png",
+    "mimeType": "image/png",
+    "byteSize": 95719,
+    "naturalWidth": 750,
+    "naturalHeight": 102,
+    "role": "banner",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260729/13dff5f600ccc694c1e08bef09b6a0b5.png"
+    ],
+    "pages": ["/pages/index/index"],
+    "kinds": ["background"],
+    "modes": ["standard"],
+    "sha256": "0133da4f96409842e33ba66f013f568515d5b96a711ad18dc43e31766f2d2574"
+  },
+  {
+    "localPath": "assets/images/captcha-sample.png",
+    "mimeType": "image/png",
+    "byteSize": 680,
+    "naturalWidth": 200,
+    "naturalHeight": 62,
+    "role": "banner",
+    "originalUrls": ["[inline data URI]"],
+    "pages": ["/pages/index/reg"],
+    "kinds": ["background"],
+    "modes": ["standard"],
+    "sha256": "02825a596fa9f158a3eb4f105accd2a392ffcb6204bae6b84acb4b39036673bf"
+  },
+  {
+    "localPath": "assets/images/company-5g-stage.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 53881,
+    "naturalWidth": 588,
+    "naturalHeight": 260,
+    "role": "news-image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260710/0c12b951277797349b9f99b43434c14d.jpg"
+    ],
+    "pages": [
+      "/pages/index/main?id=4",
+      "/pagesTwo/article/artlist",
+      "/pagesTwo/article/detail?id=15"
+    ],
+    "kinds": ["background", "image"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "59e3c92c58553ee8305c0a260b3ecbfb809097343db9c5c4aac972cbb76b9f99"
+  },
+  {
+    "localPath": "assets/images/company-nigeria-map.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 22251,
+    "naturalWidth": 600,
+    "naturalHeight": 600,
+    "role": "news-image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260710/012f13c26991893d1f9d7e134e24f76c.jpg"
+    ],
+    "pages": [
+      "/pages/index/main?id=4",
+      "/pagesTwo/article/artlist",
+      "/pagesTwo/article/detail?id=16"
+    ],
+    "kinds": ["background", "image"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "d81982065aae670775667b3e788d90b82f383ff19f89cb4a3a47e324965946f6"
+  },
+  {
+    "localPath": "assets/images/news-5g-globe.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 48507,
+    "naturalWidth": 612,
+    "naturalHeight": 367,
+    "role": "news-image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260712/74c65b90f61e93470b23ce3db2cbd679.jpg"
+    ],
+    "pages": [
+      "/pages/index/index",
+      "/pagesTwo/article/artlist",
+      "/pagesTwo/article/detail?id=13"
+    ],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "6296426b432738daa1865a5f7a173d5f1009076ea6de2f4bd1e382b29b52beaa"
+  },
+  {
+    "localPath": "assets/images/feature-earnings.png",
+    "mimeType": "image/png",
+    "byteSize": 74719,
+    "naturalWidth": 400,
+    "naturalHeight": 179,
+    "role": "illustration",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260729/b53d6b85fc4da314a7261ffcf82d7194.png"
+    ],
+    "pages": ["/pages/index/index"],
+    "kinds": ["background"],
+    "modes": ["standard"],
+    "sha256": "e824987e73ff351381f459a699e475baf9d4bf33b40db395ddb4727006c25cc8"
+  },
+  {
+    "localPath": "assets/images/feature-network.png",
+    "mimeType": "image/png",
+    "byteSize": 82359,
+    "naturalWidth": 400,
+    "naturalHeight": 179,
+    "role": "illustration",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260729/3ec6bb4f6e50aa314b4ab68aea098622.png"
+    ],
+    "pages": ["/pages/index/index"],
+    "kinds": ["background"],
+    "modes": ["standard"],
+    "sha256": "71f131ef451b40fb4dcf2040bd3bda1e1cf161ba701a884e397536f860cee4cd"
+  },
+  {
+    "localPath": "assets/images/feature-support.png",
+    "mimeType": "image/png",
+    "byteSize": 75158,
+    "naturalWidth": 400,
+    "naturalHeight": 179,
+    "role": "illustration",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260729/7b7ec7db2fb2cd0d7770797d178c03f1.png"
+    ],
+    "pages": ["/pages/index/index"],
+    "kinds": ["background"],
+    "modes": ["standard"],
+    "sha256": "d9363480a11953d56070133490a43d989815b7482219bae976160630ff8441a1"
+  },
+  {
+    "localPath": "assets/images/company-5g-device.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 135333,
+    "naturalWidth": 582,
+    "naturalHeight": 397,
+    "role": "content-image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/32a0268d4ff0b236c0c45e2e684c5763.jpg"
+    ],
+    "pages": ["/pages/index/main?id=4"],
+    "kinds": ["background", "image"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "b1b3098ee4288ad4dffaaeaf1d197bbc16a51681025c724eafa4d70bdd5bb7f7"
+  },
+  {
+    "localPath": "assets/images/company-ai-head.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 179486,
+    "naturalWidth": 582,
+    "naturalHeight": 388,
+    "role": "content-image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/c40ab1ae79f6542c2a771c5135b5ba22.jpg"
+    ],
+    "pages": ["/pages/index/main?id=4"],
+    "kinds": ["background", "image"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "0e77ea4915640fc0c91d293a145c702e2d8298957b3292926900ccdb5151a1cc"
+  },
+  {
+    "localPath": "assets/images/logo-novum-alt.png",
+    "mimeType": "image/png",
+    "byteSize": 66693,
+    "naturalWidth": 500,
+    "naturalHeight": 500,
+    "role": "content-image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/a83e2a5aa2b793908924173b19008480.png"
+    ],
+    "pages": ["/pages/index/main?id=16"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "f0c6d5c99ffe55c414ed0bb845eb918b3c76bd400aaa731574bc433e53024a8a"
+  },
+  {
+    "localPath": "assets/images/logo-novum-mark.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 31919,
+    "naturalWidth": 687,
+    "naturalHeight": 618,
+    "role": "content-image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/3f91981bffe12689554ac709b74d4058.jpg"
+    ],
+    "pages": ["/pages/index/main?id=16", "/pages/index/main?id=6"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "98bfb375c7016c5c46273ad908658bd5efd0dfe574d50e3f7d2bfd5f63cb270d"
+  },
+  {
+    "localPath": "assets/images/vip-profile-background.png",
+    "mimeType": "image/png",
+    "byteSize": 192786,
+    "naturalWidth": 686,
+    "naturalHeight": 344,
+    "role": "profile-background",
+    "originalUrls": ["https://www.novumaivip.com/static/img/VIPbg.png"],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "5f8be266edbc2e48955520e151103b08d6e8eab517cd2412128c9b0555f60b8d"
+  },
+  {
+    "localPath": "assets/images/notice-background.png",
+    "mimeType": "image/png",
+    "byteSize": 185758,
+    "naturalWidth": 750,
+    "naturalHeight": 1520,
+    "role": "modal-background",
+    "originalUrls": ["https://www.novumaivip.com/static/img/noticebg.png"],
+    "pages": ["/pages/index/popup"],
+    "kinds": ["background"],
+    "modes": ["large", "standard"],
+    "sha256": "965baaed5316190d8773ca87e4fe7ee883f733e0f44abd2ce0eae418f71a5f43"
+  },
+  {
+    "localPath": "assets/images/notice-footer.png",
+    "mimeType": "image/png",
+    "byteSize": 4893,
+    "naturalWidth": 664,
+    "naturalHeight": 69,
+    "role": "modal-background",
+    "originalUrls": ["https://www.novumaivip.com/static/img/noticebg2.png"],
+    "pages": ["/pages/index/popup"],
+    "kinds": ["background"],
+    "modes": ["large", "standard"],
+    "sha256": "ab1f81bccbcf4403258620af91d21b509cdd35bf0d46f1073263e1b9de262eb0"
+  },
+  {
+    "localPath": "assets/images/notice-header.png",
+    "mimeType": "image/png",
+    "byteSize": 4861,
+    "naturalWidth": 664,
+    "naturalHeight": 66,
+    "role": "modal-background",
+    "originalUrls": ["https://www.novumaivip.com/static/img/noticebg1.png"],
+    "pages": ["/pages/index/popup"],
+    "kinds": ["background"],
+    "modes": ["large", "standard"],
+    "sha256": "c797480510753ace029d4512156ca87304867c5d313b73110c52e2a1e26afeda"
+  },
+  {
+    "localPath": "assets/images/empty-state.png",
+    "mimeType": "image/png",
+    "byteSize": 3135,
+    "naturalWidth": 250,
+    "naturalHeight": 250,
+    "role": "empty-state",
+    "originalUrls": ["https://www.novumaivip.com/static/img/empty.png"],
+    "pages": [
+      "/pages/commission/index",
+      "/pages/commission/myteam",
+      "/pages/fund/orderlist",
+      "/pages/sign/signrecord"
+    ],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "8d97435001a6cc12503cb2c34026d1de868a0be7f0e041c707b6b9cd92f69d28"
+  },
+  {
+    "localPath": "assets/images/no-data.png",
+    "mimeType": "image/png",
+    "byteSize": 6259,
+    "naturalWidth": 327,
+    "naturalHeight": 128,
+    "role": "empty-state",
+    "originalUrls": ["https://www.novumaivip.com/static/img/no-data.png"],
+    "pages": ["/pages/my/bindbankcard", "/pages/my/binddigiccy"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "e5641203b92a799dbac6775d2c1244483f5b032b15dc2da18e2a8a414787642d"
+  },
+  {
+    "localPath": "assets/icons/icon-add-orange.png",
+    "mimeType": "image/png",
+    "byteSize": 792,
+    "naturalWidth": 48,
+    "naturalHeight": 48,
+    "role": "icon",
+    "originalUrls": ["[inline data URI]"],
+    "pages": ["/pages/my/binddigiccy"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "647b18386649703542af2352e4f9d8fff379eed614d13556f573de03580fb3a4"
+  },
+  {
+    "localPath": "assets/icons/icon-add-purple.png",
+    "mimeType": "image/png",
+    "byteSize": 1256,
+    "naturalWidth": 72,
+    "naturalHeight": 72,
+    "role": "icon",
+    "originalUrls": ["[inline data URI]"],
+    "pages": ["/pages/my/bindbankcard"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "03fd108aae6a737973d9375c6b05ea957017920c93b95406c953032252e56a84"
+  },
+  {
+    "localPath": "assets/icons/icon-arrow-right.png",
+    "mimeType": "image/png",
+    "byteSize": 248,
+    "naturalWidth": 24,
+    "naturalHeight": 24,
+    "role": "icon",
+    "originalUrls": [
+      "[inline data URI]",
+      "https://www.novumaivip.com/static/img/arrowright.png"
+    ],
+    "pages": [
+      "/pages/index/index",
+      "/pages/index/main?id=16",
+      "/pages/index/main?id=6",
+      "/pages/money/fundWithdraw",
+      "/pages/money/fundWithdraw2",
+      "/pages/money/withdraw2",
+      "/pages/my/set",
+      "/pages/my/usercenter"
+    ],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "e167102dba43dbb840f89aafa380c5c674c9f2538bdb8797de7b68da9bd8fb60"
+  },
+  {
+    "localPath": "assets/icons/icon-back.png",
+    "mimeType": "image/png",
+    "byteSize": 721,
+    "naturalWidth": 28,
+    "naturalHeight": 51,
+    "role": "icon",
+    "originalUrls": [
+      "[inline data URI]",
+      "https://www.novumaivip.com/static/img/goback.png"
+    ],
+    "pages": [
+      "/pages/commission/index",
+      "/pages/commission/poster",
+      "/pages/index/reg",
+      "/pages/money/fundWithdraw",
+      "/pages/money/fundWithdraw2",
+      "/pages/money/withdraw2",
+      "/pages/my/market",
+      "/pages/my/orderhistory",
+      "/pages/my/orderhistory?id=14",
+      "/pages/my/orderhistory?id=15",
+      "/pages/my/orderhistory?id=16",
+      "/pages/my/orderhistory?id=17",
+      "/pages/my/orderhistory?id=18",
+      "/pages/my/orderhistory?id=19",
+      "/pages/my/orderhistory?id=20",
+      "/pages/my/orderhistory?id=21",
+      "/pages/my/orderhistory?id=22",
+      "/pages/my/orderhistory?id=23"
+    ],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "492c27f560e40c34522105e9cda8e5f42cd6176b71eade9f6092b87ff0e53214"
+  },
+  {
+    "localPath": "assets/icons/icon-chevron-left.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 660,
+    "naturalWidth": 18,
+    "naturalHeight": 32,
+    "role": "icon",
+    "originalUrls": ["[inline data URI]"],
+    "pages": ["/pages/index/search", "/pages/my/binddigiccy"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "cefd7a41b713780f50f7eb107907d78e5f20cd65033d944eefc288eff9aa483e"
+  },
+  {
+    "localPath": "assets/icons/icon-close.png",
+    "mimeType": "image/png",
+    "byteSize": 368,
+    "naturalWidth": 64,
+    "naturalHeight": 64,
+    "role": "icon",
+    "originalUrls": ["https://www.novumaivip.com/static/img/close.png"],
+    "pages": ["/pages/index/main"],
+    "kinds": ["background"],
+    "modes": ["large"],
+    "sha256": "42e1977d7bd28a1913bae6b17ea1707ceeb9bd20e415cf96e5e138e91b3fd4da"
+  },
+  {
+    "localPath": "assets/icons/icon-company.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 48507,
+    "naturalWidth": 800,
+    "naturalHeight": 800,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260729/7b74e9f71e1be65b4bbe2af892968b71.jpg"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "14db5831bebfd70d4ce12c6a42d4f0f0893a8c67ba8234df7b4ad90460d851d8"
+  },
+  {
+    "localPath": "assets/icons/icon-copy.png",
+    "mimeType": "image/png",
+    "byteSize": 329,
+    "naturalWidth": 24,
+    "naturalHeight": 24,
+    "role": "icon",
+    "originalUrls": ["[inline data URI]"],
+    "pages": ["/pages/commission/poster"],
+    "kinds": ["image"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "35671ecfd48bd495c65cd45d071d9736641b48c5a091eb0cedc33b63420ccea8"
+  },
+  {
+    "localPath": "assets/icons/icon-eye-off.png",
+    "mimeType": "image/png",
+    "byteSize": 7147,
+    "naturalWidth": 200,
+    "naturalHeight": 200,
+    "role": "icon",
+    "originalUrls": ["https://www.novumaivip.com/static/img/eye-close.png"],
+    "pages": ["/pages/index/login"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "70db65f4c5fb379051a33db0322a872201c5f02839f89a1ef71b17db150fe1a0"
+  },
+  {
+    "localPath": "assets/icons/icon-fund.png",
+    "mimeType": "image/png",
+    "byteSize": 376,
+    "naturalWidth": 22,
+    "naturalHeight": 22,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260708/9322c75b3e77e1e4edb8a7df30c38c91.png"
+    ],
+    "pages": [
+      "/pages/index/index",
+      "/pages/index/main?id=10",
+      "/pages/index/main?id=12",
+      "/pages/index/main?id=16",
+      "/pages/index/main?id=6",
+      "/pages/my/market",
+      "/pages/my/ordercenter",
+      "/pages/my/orderhistory",
+      "/pages/my/orderhistory?id=14",
+      "/pages/my/orderhistory?id=15",
+      "/pages/my/orderhistory?id=16",
+      "/pages/my/orderhistory?id=17",
+      "/pages/my/orderhistory?id=18",
+      "/pages/my/orderhistory?id=19",
+      "/pages/my/orderhistory?id=20",
+      "/pages/my/orderhistory?id=21",
+      "/pages/my/orderhistory?id=22",
+      "/pages/my/orderhistory?id=23",
+      "/pages/my/setemail",
+      "/pagesTwo/article/artlist",
+      "/pagesTwo/article/detail?id=13",
+      "/pagesTwo/article/detail?id=14",
+      "/pagesTwo/article/detail?id=15",
+      "/pagesTwo/article/detail?id=16"
+    ],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "b67df335ce86494b73fbb023d0893d7f055405c77cc126934cde29ebf898c9f1"
+  },
+  {
+    "localPath": "assets/icons/icon-home-active.png",
+    "mimeType": "image/png",
+    "byteSize": 374,
+    "naturalWidth": 22,
+    "naturalHeight": 22,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260708/b2c7f52f73420a3a11bee3570138eaa0.png"
+    ],
+    "pages": ["/pages/index/index"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "d7860169021f92172498c30d96af4bd0e6cb8d555b412439eb93aa4ae1b5b730"
+  },
+  {
+    "localPath": "assets/icons/icon-home.png",
+    "mimeType": "image/png",
+    "byteSize": 356,
+    "naturalWidth": 22,
+    "naturalHeight": 22,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260708/b02f0db2664f50f296bece45daa1b62d.png"
+    ],
+    "pages": [
+      "/pages/index/main?id=10",
+      "/pages/index/main?id=11",
+      "/pages/index/main?id=12",
+      "/pages/index/main?id=16",
+      "/pages/index/main?id=6",
+      "/pages/index/reg",
+      "/pages/my/market",
+      "/pages/my/ordercenter",
+      "/pages/my/orderhistory",
+      "/pages/my/orderhistory?id=14",
+      "/pages/my/orderhistory?id=15",
+      "/pages/my/orderhistory?id=16",
+      "/pages/my/orderhistory?id=17",
+      "/pages/my/orderhistory?id=18",
+      "/pages/my/orderhistory?id=19",
+      "/pages/my/orderhistory?id=20",
+      "/pages/my/orderhistory?id=21",
+      "/pages/my/orderhistory?id=22",
+      "/pages/my/orderhistory?id=23",
+      "/pages/my/setemail",
+      "/pagesTwo/article/artlist",
+      "/pagesTwo/article/detail?id=13",
+      "/pagesTwo/article/detail?id=14",
+      "/pagesTwo/article/detail?id=15",
+      "/pagesTwo/article/detail?id=16"
+    ],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "f6d88b99b0211eddca6ce986cde64ed9dbbba694879b5deda4b633a8a22d243b"
+  },
+  {
+    "localPath": "assets/icons/icon-list.png",
+    "mimeType": "image/png",
+    "byteSize": 999,
+    "naturalWidth": 66,
+    "naturalHeight": 66,
+    "role": "icon",
+    "originalUrls": ["[inline data URI]"],
+    "pages": ["/pages/my/market"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "75ab2d49e5b521d69abf0ad15be9f3bd1770bb4b149da351e4bfc6a9eb5e96e6"
+  },
+  {
+    "localPath": "assets/icons/icon-loader.svg",
+    "mimeType": "image/svg+xml",
+    "byteSize": 1403,
+    "naturalWidth": 120,
+    "naturalHeight": 120,
+    "role": "icon",
+    "originalUrls": ["[inline data URI]"],
+    "pages": [
+      "/pages/index/index",
+      "/pages/index/main",
+      "/pages/index/webView2",
+      "/pages/my/message"
+    ],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "0ccf8dd29c61715a6364ea9ec36d32c295e82ca837488590130c51cee298b7d3"
+  },
+  {
+    "localPath": "assets/icons/icon-loading.png",
+    "mimeType": "image/png",
+    "byteSize": 4622,
+    "naturalWidth": 64,
+    "naturalHeight": 64,
+    "role": "icon",
+    "originalUrls": ["[inline data URI]"],
+    "pages": [
+      "/pages/fund/list",
+      "/pages/index/index",
+      "/pages/index/popup",
+      "/pages/my/orderlog",
+      "/pagesTwo/article/artlist",
+      "/pagesTwo/article/detail?id=13",
+      "/pagesTwo/article/detail?id=14",
+      "/pagesTwo/article/detail?id=15"
+    ],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "4b8cd4ac99490c9b6a68451488cc886708f1c13f6165a9b9ffb82f33ffb5c8c9"
+  },
+  {
+    "localPath": "assets/icons/icon-login.png",
+    "mimeType": "image/png",
+    "byteSize": 6509,
+    "naturalWidth": 132,
+    "naturalHeight": 132,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/d6fe4b52b00a389f7347a7973d6676ec.png"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "4c73012f217e874174cef4614f76d4aa21b8b73f5d5c9a26472e96b97be19033"
+  },
+  {
+    "localPath": "assets/icons/icon-mail-circle.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 27928,
+    "naturalWidth": 511,
+    "naturalHeight": 511,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260729/b4c444e66cc14fad0c7b382cada30b71.jpg"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "2094a10abdcee63aa51f3ad01141f210a961bc34fca87a23022da160ac3e5ab0"
+  },
+  {
+    "localPath": "assets/icons/icon-mail.png",
+    "mimeType": "image/png",
+    "byteSize": 6289,
+    "naturalWidth": 114,
+    "naturalHeight": 114,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/6e20fae544f330e650cea0901ce2d405.png"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "3005d7e9403dd092aebf8c5d0f475598fbdfe82c7b0d8f6ad292ebbb11f28a3d"
+  },
+  {
+    "localPath": "assets/icons/icon-market-active.png",
+    "mimeType": "image/png",
+    "byteSize": 350,
+    "naturalWidth": 22,
+    "naturalHeight": 22,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260708/882a28c0f5cc1e0100ac358cfa8aeef6.png"
+    ],
+    "pages": ["/pages/my/market"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "3920505e353f495fd552bdd91355270f0c435f22e0077ea158a500a404de5fb0"
+  },
+  {
+    "localPath": "assets/icons/icon-market.png",
+    "mimeType": "image/png",
+    "byteSize": 337,
+    "naturalWidth": 22,
+    "naturalHeight": 22,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260708/980f6130aaf99826562548f3ccac6101.png"
+    ],
+    "pages": [
+      "/pages/index/index",
+      "/pages/index/main?id=10",
+      "/pages/index/main?id=11",
+      "/pages/index/main?id=12",
+      "/pages/index/main?id=16",
+      "/pages/index/main?id=6",
+      "/pages/my/ordercenter",
+      "/pages/my/orderhistory",
+      "/pages/my/orderhistory?id=14",
+      "/pages/my/orderhistory?id=15",
+      "/pages/my/orderhistory?id=16",
+      "/pages/my/orderhistory?id=17",
+      "/pages/my/orderhistory?id=18",
+      "/pages/my/orderhistory?id=19",
+      "/pages/my/orderhistory?id=20",
+      "/pages/my/orderhistory?id=21",
+      "/pages/my/orderhistory?id=22",
+      "/pages/my/orderhistory?id=23",
+      "/pages/my/setemail",
+      "/pagesTwo/article/artlist",
+      "/pagesTwo/article/detail?id=13",
+      "/pagesTwo/article/detail?id=14",
+      "/pagesTwo/article/detail?id=15",
+      "/pagesTwo/article/detail?id=16"
+    ],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "476458456e8deb8b0ad1889f37bb2321bd33ced1f73eec65fe9f50b92752231e"
+  },
+  {
+    "localPath": "assets/icons/icon-person.png",
+    "mimeType": "image/png",
+    "byteSize": 635,
+    "naturalWidth": 22,
+    "naturalHeight": 22,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260708/4c9b1a2429417d3fdb72e02d6abe56d0.png"
+    ],
+    "pages": ["/pages/commission/index"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "445d41c1c1bb730c0923b6ddd3bc6fd1fdbc71e5d0954372d60afa0804801e79"
+  },
+  {
+    "localPath": "assets/icons/icon-profile-mini.png",
+    "mimeType": "image/png",
+    "byteSize": 436,
+    "naturalWidth": 22,
+    "naturalHeight": 22,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260708/e0bf9921d4214fb024025ecd2e144dfe.png"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "db35aeac623800beb87d833d2c485173d8e39a318ea17c0138d04114f23ff652"
+  },
+  {
+    "localPath": "assets/icons/icon-profile.png",
+    "mimeType": "image/png",
+    "byteSize": 416,
+    "naturalWidth": 22,
+    "naturalHeight": 22,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260708/75f0eab97760b90f1f6d5b9f704dfb7f.png"
+    ],
+    "pages": [
+      "/pages/index/index",
+      "/pages/index/main?id=10",
+      "/pages/index/main?id=12",
+      "/pages/index/main?id=16",
+      "/pages/index/main?id=6",
+      "/pages/my/market",
+      "/pages/my/ordercenter",
+      "/pages/my/orderhistory",
+      "/pages/my/orderhistory?id=14",
+      "/pages/my/orderhistory?id=15",
+      "/pages/my/orderhistory?id=16",
+      "/pages/my/orderhistory?id=17",
+      "/pages/my/orderhistory?id=18",
+      "/pages/my/orderhistory?id=19",
+      "/pages/my/orderhistory?id=20",
+      "/pages/my/orderhistory?id=21",
+      "/pages/my/orderhistory?id=22",
+      "/pages/my/orderhistory?id=23",
+      "/pages/my/setemail",
+      "/pagesTwo/article/artlist",
+      "/pagesTwo/article/detail?id=13",
+      "/pagesTwo/article/detail?id=14",
+      "/pagesTwo/article/detail?id=15",
+      "/pagesTwo/article/detail?id=16"
+    ],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "1bebff2e8bfa8ef376dbeba62b02fc763bac1e3f02c8e10b06f34391a23eab66"
+  },
+  {
+    "localPath": "assets/icons/icon-search.png",
+    "mimeType": "image/png",
+    "byteSize": 435,
+    "naturalWidth": 24,
+    "naturalHeight": 24,
+    "role": "icon",
+    "originalUrls": ["https://www.novumaivip.com/static/img/search_ico.png"],
+    "pages": ["/pages/commission/myteam", "/pagesTwo/article/artlist"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "b4cb06b460bc9b2657539e4305adeffbd4c1581cfb41f602b83739adefd2b75d"
+  },
+  {
+    "localPath": "assets/icons/icon-service.png",
+    "mimeType": "image/png",
+    "byteSize": 33092,
+    "naturalWidth": 150,
+    "naturalHeight": 150,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260729/d586f85af2fd5c836cda60fb484cef16.png"
+    ],
+    "pages": ["/pages/index/index"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "07bb7ff432a279c9c938caaaedc45caea78afb6e9cb6d792bf65eeb4b7c4b670"
+  },
+  {
+    "localPath": "assets/icons/icon-tap.png",
+    "mimeType": "image/png",
+    "byteSize": 46428,
+    "naturalWidth": 263,
+    "naturalHeight": 265,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260729/222dd2fbef5fcd343fc853b30d869474.png"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "19fe090ba7715a6de6e47a8941a7e56353607c33409c82328bd098f1f9f068a7"
+  },
+  {
+    "localPath": "assets/icons/icon-team-group.png",
+    "mimeType": "image/png",
+    "byteSize": 25926,
+    "naturalWidth": 640,
+    "naturalHeight": 640,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260729/15ad00e2ba9d9fc8657d025c0d3cbd02.png"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "677a83920dc7e45032e0c5ffc05e4964dc3d4fa833719d1603c9fc49a319bbbd"
+  },
+  {
+    "localPath": "assets/icons/icon-team.png",
+    "mimeType": "image/png",
+    "byteSize": 603,
+    "naturalWidth": 22,
+    "naturalHeight": 22,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260708/2a88f557cc5de2df45ea32ad801c0e91.png"
+    ],
+    "pages": [
+      "/pages/index/index",
+      "/pages/index/main?id=10",
+      "/pages/index/main?id=11",
+      "/pages/index/main?id=12",
+      "/pages/index/main?id=16",
+      "/pages/index/main?id=6",
+      "/pages/index/reg",
+      "/pages/my/market",
+      "/pages/my/ordercenter",
+      "/pages/my/orderhistory",
+      "/pages/my/orderhistory?id=14",
+      "/pages/my/orderhistory?id=15",
+      "/pages/my/orderhistory?id=16",
+      "/pages/my/orderhistory?id=17",
+      "/pages/my/orderhistory?id=18",
+      "/pages/my/orderhistory?id=19",
+      "/pages/my/orderhistory?id=20",
+      "/pages/my/orderhistory?id=21",
+      "/pages/my/orderhistory?id=22",
+      "/pages/my/orderhistory?id=23",
+      "/pages/my/setemail",
+      "/pagesTwo/article/artlist",
+      "/pagesTwo/article/detail?id=13",
+      "/pagesTwo/article/detail?id=14",
+      "/pagesTwo/article/detail?id=15",
+      "/pagesTwo/article/detail?id=16"
+    ],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "5696b5bfe8109370429c983687b01294a9c2c8cf482a5360669f56f6d628d8c8"
+  },
+  {
+    "localPath": "assets/icons/icon-wallet-send.png",
+    "mimeType": "image/png",
+    "byteSize": 6004,
+    "naturalWidth": 132,
+    "naturalHeight": 132,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/c7097d89d82e6ef74d71196c7937de16.png"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "24a2304bd5c5babbbdd4cc4ee611ffbdf07b0378c7c0001c7a7a4fee678cf5ec"
+  },
+  {
+    "localPath": "assets/icons/icon-wallet.png",
+    "mimeType": "image/png",
+    "byteSize": 6315,
+    "naturalWidth": 114,
+    "naturalHeight": 114,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/8c10542053c60eafd61dc30a047b5b5b.png"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "855084e49489d176990a681c52781d01c78609c10f94f3720cc233326e496d62"
+  },
+  {
+    "localPath": "assets/icons/icon-wheel.png",
+    "mimeType": "image/png",
+    "byteSize": 8657,
+    "naturalWidth": 114,
+    "naturalHeight": 114,
+    "role": "icon",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/915185920f508b4113d92ca41b825ed0.png"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "e2e8c08fefa304618ee8ae5c88b6e71301c62680173e549d138cf857fda6eb64"
+  },
+  {
+    "localPath": "assets/images/banner-brand.png",
+    "mimeType": "image/png",
+    "byteSize": 335945,
+    "naturalWidth": 1029,
+    "naturalHeight": 480,
+    "role": "image",
+    "originalUrls": ["https://www.novumaivip.com/static/img/brader.png"],
+    "pages": ["/pages/my/bindbankcard"],
+    "kinds": ["background"],
+    "modes": ["large"],
+    "sha256": "8e013b60be1ac15210a97535790dee4e57edac8fb22aa612cf1555112bd37b87"
+  },
+  {
+    "localPath": "assets/images/banner-invite.png",
+    "mimeType": "image/png",
+    "byteSize": 190690,
+    "naturalWidth": 750,
+    "naturalHeight": 174,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260729/511dd0ba002211e0a3c41965ccd8dfa8.png"
+    ],
+    "pages": ["/pages/index/index"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "a1485b58718ff46b1309bfb875f3d9fd45a5e9532c5a6adf9958e29a9de13af5"
+  },
+  {
+    "localPath": "assets/images/captcha-register-alt.png",
+    "mimeType": "image/png",
+    "byteSize": 651,
+    "naturalWidth": 200,
+    "naturalHeight": 62,
+    "role": "image",
+    "originalUrls": ["[inline data URI]"],
+    "pages": ["/pages/index/reg"],
+    "kinds": ["background"],
+    "modes": ["large"],
+    "sha256": "6c8fcff6e6c9f5d41a7c905588d9d2289cdf4cd6f0d0ab4634210159f620d210"
+  },
+  {
+    "localPath": "assets/images/captcha-register.png",
+    "mimeType": "image/png",
+    "byteSize": 694,
+    "naturalWidth": 200,
+    "naturalHeight": 62,
+    "role": "image",
+    "originalUrls": ["[inline data URI]"],
+    "pages": ["/pages/index/reg"],
+    "kinds": ["background"],
+    "modes": ["small"],
+    "sha256": "f5e0ffbf4e498673c6db434c6ce964fc98bd4e9057b84e2fe4a93b7aae406fc2"
+  },
+  {
+    "localPath": "assets/images/feature-wallet.png",
+    "mimeType": "image/png",
+    "byteSize": 72464,
+    "naturalWidth": 400,
+    "naturalHeight": 179,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260729/5dd7add701e21d1ca03ab20457d1f34a.png"
+    ],
+    "pages": ["/pages/index/index"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "326592d5cbd20fbbe7d2d626e0c128a17d1d9bfb16bea4978e4ca5d3426446f7"
+  },
+  {
+    "localPath": "assets/images/flag-us.png",
+    "mimeType": "image/png",
+    "byteSize": 19924,
+    "naturalWidth": 536,
+    "naturalHeight": 282,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/34e79f826bd0d41f0ae587436f2b450a.png"
+    ],
+    "pages": ["/pages/index/index", "/pages/my/language"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "da7329c55e08db44e2c46ec38305bfe9b0b289bb3ec2a3301287e23ab409c1c2"
+  },
+  {
+    "localPath": "assets/images/language-hausa.png",
+    "mimeType": "image/png",
+    "byteSize": 13239,
+    "naturalWidth": 536,
+    "naturalHeight": 357,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/1c86787f30271b227854cfa50baf6fcb.png"
+    ],
+    "pages": ["/pages/my/language"],
+    "kinds": ["background"],
+    "modes": ["large"],
+    "sha256": "827b5be1ea125a65980f0f37cd5f3611984777ad4c0b89355c895fbcfaa7b470"
+  },
+  {
+    "localPath": "assets/images/language-yoruba.png",
+    "mimeType": "image/png",
+    "byteSize": 17511,
+    "naturalWidth": 536,
+    "naturalHeight": 357,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/128bee8099ea8b4cd05ef6f176d2c10d.png"
+    ],
+    "pages": ["/pages/my/language"],
+    "kinds": ["background"],
+    "modes": ["large"],
+    "sha256": "b7e352d19774e98315a1e03ea19de8831ee014aaee5d23636ed32d205746272f"
+  },
+  {
+    "localPath": "assets/images/login-background.png",
+    "mimeType": "image/png",
+    "byteSize": 1210639,
+    "naturalWidth": 1355,
+    "naturalHeight": 890,
+    "role": "image",
+    "originalUrls": ["https://www.novumaivip.com/static/img/login-back.png"],
+    "pages": ["/pages/index/login", "/pages/index/reg"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "24c08935c053cddc58c5152ee5557e08c06a8adde62c76f285d146d22fd917df"
+  },
+  {
+    "localPath": "assets/images/logo-novum.png",
+    "mimeType": "image/png",
+    "byteSize": 16425,
+    "naturalWidth": 300,
+    "naturalHeight": 74,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/02aed49296d1053fc6e9d65977976167.png"
+    ],
+    "pages": ["/pages/index/index"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "14c9fccfb1fbbba17c08569ead8e85671a4ac128f43635b8e2b90cedd2116b1f"
+  },
+  {
+    "localPath": "assets/images/news-5g-city.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 82808,
+    "naturalWidth": 526,
+    "naturalHeight": 300,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260710/bc78b1be69db677a9cec6f4add542524.jpg"
+    ],
+    "pages": ["/pages/index/index", "/pagesTwo/article/artlist"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "e81caa9409c559d24744cf7093ce507deaaf8a596067552776b552d3d4fc32a7"
+  },
+  {
+    "localPath": "assets/images/news-5g-data.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 67013,
+    "naturalWidth": 588,
+    "naturalHeight": 260,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260710/152b847a9691afb333dc3190bde34169.jpg"
+    ],
+    "pages": ["/pages/index/index"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "e1f9c145497bb8546283dd921f0986c46ae8fdd69d71d29fe7637a75f0edaa6d"
+  },
+  {
+    "localPath": "assets/images/news-5g-network.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 82841,
+    "naturalWidth": 710,
+    "naturalHeight": 346,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260710/b71f0b1b09cd8a09740616081a137811.jpg"
+    ],
+    "pages": ["/pages/index/index", "/pages/index/main?id=4"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "b80c3e31e14e339597014501f55fa869ad2decf40dece26e5b4f79ed5c73cf23"
+  },
+  {
+    "localPath": "assets/images/news-ai-robot.png",
+    "mimeType": "image/png",
+    "byteSize": 198009,
+    "naturalWidth": 483,
+    "naturalHeight": 273,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/8320df9eaf6f795a6c1739d48d596635.png"
+    ],
+    "pages": ["/pages/index/index"],
+    "kinds": ["background"],
+    "modes": ["large", "small", "standard"],
+    "sha256": "ace3f79f55f49b93f34dfe79d4f60e065760302689cbe81972f151728947f50d"
+  },
+  {
+    "localPath": "assets/images/qr-invite-large.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 2670,
+    "naturalWidth": 320,
+    "naturalHeight": 320,
+    "role": "image",
+    "originalUrls": [
+      "https://api.novumapi6.cc/upload/qrcode/202608/04_0626024974.jpg"
+    ],
+    "pages": ["/pages/commission/poster"],
+    "kinds": ["background"],
+    "modes": ["large"],
+    "sha256": "450925599211e42e121e22599aed36668f3fdcf42ff8c09c6a5696d4717f1381"
+  },
+  {
+    "localPath": "assets/images/qr-invite-small.jpg",
+    "mimeType": "image/jpeg",
+    "byteSize": 2678,
+    "naturalWidth": 320,
+    "naturalHeight": 320,
+    "role": "image",
+    "originalUrls": [
+      "https://api.novumapi6.cc/upload/qrcode/202608/04_0529368134.jpg"
+    ],
+    "pages": ["/pages/commission/poster"],
+    "kinds": ["background"],
+    "modes": ["small"],
+    "sha256": "faba5a407f3f63a963271d653edf08747ae1f8bd44cd63e6e69c81b63441ad6d"
+  },
+  {
+    "localPath": "assets/images/sign-in-banner.png",
+    "mimeType": "image/png",
+    "byteSize": 346922,
+    "naturalWidth": 750,
+    "naturalHeight": 940,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/81979df27b539ae910d9c5bf6eb98d23.png"
+    ],
+    "pages": ["/pages/sign/index"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "1d1cdb87fb726760067cbb6eb2831d2b518d60ed48180fd0f9c48f6900ddb8fd"
+  },
+  {
+    "localPath": "assets/images/vip-badge-1-static.png",
+    "mimeType": "image/png",
+    "byteSize": 27370,
+    "naturalWidth": 214,
+    "naturalHeight": 448,
+    "role": "image",
+    "originalUrls": ["https://www.novumaivip.com/static/img/VIP1.png"],
+    "pages": ["/pages/commission/index"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "37d9ff2a29834cfedd73b6f5814d269422d5d5dee600f7cad1a58cdcaa3e73a0"
+  },
+  {
+    "localPath": "assets/images/vip-badge-1.png",
+    "mimeType": "image/png",
+    "byteSize": 271324,
+    "naturalWidth": 601,
+    "naturalHeight": 567,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/adfe70fbe61d1fd013e75d6e48bcf886.png"
+    ],
+    "pages": ["/pages/my/market", "/pages/my/orderlog"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "327e657d2aabdb284aae7339cc94a3dabb79fdf3f708c91fd5e1f7374429137a"
+  },
+  {
+    "localPath": "assets/images/vip-badge-10.png",
+    "mimeType": "image/png",
+    "byteSize": 272638,
+    "naturalWidth": 602,
+    "naturalHeight": 583,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/38c7a772abb5ecdc0d6e05291236bb16.png"
+    ],
+    "pages": ["/pages/my/market"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "2ce4761c8b960d42b952524baa8fb4abddc7d95f1c2ba101329b9ed1d3d5b005"
+  },
+  {
+    "localPath": "assets/images/vip-badge-2.png",
+    "mimeType": "image/png",
+    "byteSize": 272077,
+    "naturalWidth": 602,
+    "naturalHeight": 575,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/14b1cc351029be65a1ab52014307b8ae.png"
+    ],
+    "pages": ["/pages/my/market"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "ec2889e8f3a52651f177585302d8a0617e8ef2b14aec9062c9ac4fee0491c360"
+  },
+  {
+    "localPath": "assets/images/vip-badge-3.png",
+    "mimeType": "image/png",
+    "byteSize": 272695,
+    "naturalWidth": 599,
+    "naturalHeight": 580,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/9efbe5a30c9ddfdeef1902e66f2300c8.png"
+    ],
+    "pages": ["/pages/my/market"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "8311707fed6eca6175e801fd69cf8cd8dd8401823cfb17e4faf659128321e81f"
+  },
+  {
+    "localPath": "assets/images/vip-badge-4.png",
+    "mimeType": "image/png",
+    "byteSize": 272372,
+    "naturalWidth": 600,
+    "naturalHeight": 579,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/f150f11bd5d7756880f04984395caa55.png"
+    ],
+    "pages": ["/pages/my/market"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "b7502f53cfee101cdeeb5d15d4a00de94af39093fee59ffa0187a63f64f99d83"
+  },
+  {
+    "localPath": "assets/images/vip-badge-5.png",
+    "mimeType": "image/png",
+    "byteSize": 272602,
+    "naturalWidth": 597,
+    "naturalHeight": 581,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/1187be2fbb43523c95de819dd0c5bba6.png"
+    ],
+    "pages": ["/pages/my/market"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "5ea58d3ae6769560bd95b7b2266e8c387ce729dadb630b88307aec85e3720878"
+  },
+  {
+    "localPath": "assets/images/vip-badge-6.png",
+    "mimeType": "image/png",
+    "byteSize": 272920,
+    "naturalWidth": 600,
+    "naturalHeight": 581,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/5294b62ab6c80a6b139549696494248e.png"
+    ],
+    "pages": ["/pages/my/market"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "ccc948abd717b98dc0b9e9a743eb22f62eaf6f18a10a839be9f79edb93d11a1b"
+  },
+  {
+    "localPath": "assets/images/vip-badge-7.png",
+    "mimeType": "image/png",
+    "byteSize": 271721,
+    "naturalWidth": 600,
+    "naturalHeight": 575,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/be5ac45b55b358b21807c48eebb80356.png"
+    ],
+    "pages": ["/pages/my/market"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "4af7ed12c81749676b94d031c274d4b1870ac70d5db3f34c7d9465271b51d7d3"
+  },
+  {
+    "localPath": "assets/images/vip-badge-8.png",
+    "mimeType": "image/png",
+    "byteSize": 272381,
+    "naturalWidth": 602,
+    "naturalHeight": 583,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/9c55a3d16f7cbd3c7c029f80053cace5.png"
+    ],
+    "pages": ["/pages/my/market"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "bcb82db95c786ffb8f72adff21ca030dbbc9a1d8470daaa92bf2cf46a7354d0a"
+  },
+  {
+    "localPath": "assets/images/vip-badge-9.png",
+    "mimeType": "image/png",
+    "byteSize": 272513,
+    "naturalWidth": 602,
+    "naturalHeight": 583,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260709/35a1586e8fee6ba72b96e8c56fe51dbe.png"
+    ],
+    "pages": ["/pages/my/market"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "9b82ae986129aedbf332d1dfe1687f441e5d09a5c74fb48596b77a07b2d39736"
+  },
+  {
+    "localPath": "assets/images/vip-badge-diamond.png",
+    "mimeType": "image/png",
+    "byteSize": 266533,
+    "naturalWidth": 380,
+    "naturalHeight": 381,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260713/7f8a1e324c6402ffe0b85042169748e5.png"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "274384c00b2f2241237675d1c8e68a365f9c3850b4615aef9fb5950f61afab6a"
+  },
+  {
+    "localPath": "assets/images/vip-badge-gold.png",
+    "mimeType": "image/png",
+    "byteSize": 314072,
+    "naturalWidth": 432,
+    "naturalHeight": 402,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260713/973d1fb29d52cced51970afb60fc9fc3.png"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "11d165996138c3b230f1a07c5a98e5644ecc20afa82bb85a6aa124ec60286c70"
+  },
+  {
+    "localPath": "assets/images/vip-badge-platinum.png",
+    "mimeType": "image/png",
+    "byteSize": 286048,
+    "naturalWidth": 438,
+    "naturalHeight": 421,
+    "role": "image",
+    "originalUrls": [
+      "https://novumaiimage.oss-ap-southeast-1.aliyuncs.com/upload/1/20260713/6c21a6304ef39bbb51ba2aa50150fd6f.png"
+    ],
+    "pages": ["/pages/my/usercenter"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "f46f443db4eae1eea2267a8502a116332dc8ca90a6a34d2ce25fc6d0261a562c"
+  },
+  {
+    "localPath": "assets/images/vip-level-2-card.png",
+    "mimeType": "image/png",
+    "byteSize": 54093,
+    "naturalWidth": 214,
+    "naturalHeight": 448,
+    "role": "image",
+    "originalUrls": ["https://www.novumaivip.com/static/img/VIP2.png"],
+    "pages": ["/pages/commission/index"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "150be9540ddd1688fffca3194f338bef29a3872f2493e172865754aa09adf06f"
+  },
+  {
+    "localPath": "assets/images/vip-level-3-card.png",
+    "mimeType": "image/png",
+    "byteSize": 53782,
+    "naturalWidth": 214,
+    "naturalHeight": 448,
+    "role": "image",
+    "originalUrls": ["https://www.novumaivip.com/static/img/VIP3.png"],
+    "pages": ["/pages/commission/index"],
+    "kinds": ["background"],
+    "modes": ["large", "small"],
+    "sha256": "3e558d81e6c8b1dec884b1aab4d90493f9b1d988b58fa8533e71677e23f83a76"
+  }
+]
