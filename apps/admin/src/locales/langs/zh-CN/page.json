@@ -16,8 +16,8 @@
     "form": {
       "nickname": "昵称",
       "nicknamePlaceholder": "请输入昵称",
-      "avatarUrl": "头像 URL",
-      "avatarPlaceholder": "请输入头像 URL，留空可清除",
+      "avatarUrl": "头像对象键",
+      "avatarPlaceholder": "请输入头像对象键，留空可清除",
       "description": "个人简介",
       "oldPassword": "旧密码",
       "oldPasswordPlaceholder": "请输入旧密码",
@@ -148,7 +148,7 @@
       "passwordUnchanged": "留空则不修改密码",
       "nickname": "昵称",
       "homePath": "默认首页",
-      "avatar": "头像 URL",
+      "avatar": "头像对象键",
       "description": "描述",
       "status": "启用状态"
     },
@@ -168,6 +168,40 @@
       "statusTitle": "修改启用状态",
       "statusSuccess": "启用状态已更新",
       "currentProtected": "不能删除当前后台管理员"
+    }
+  },
+  "systemImage": {
+    "title": "图片管理",
+    "actions": {
+      "upload": "上传图片",
+      "selectFile": "选择图片",
+      "previewImage": "预览图片",
+      "copyUrl": "复制 URL"
+    },
+    "drawer": {
+      "uploadTitle": "上传图片"
+    },
+    "form": {
+      "file": "图片",
+      "fileHint": "支持 JPEG、PNG、WebP，单个文件不超过 3 MiB"
+    },
+    "table": {
+      "preview": "预览",
+      "url": "URL",
+      "createTime": "创建时间"
+    },
+    "validation": {
+      "fileRequired": "请选择要上传的图片",
+      "invalidFile": "仅支持不超过 3 MiB 的 JPEG、PNG、WebP 图片",
+      "singleFile": "每次只能上传一张图片"
+    },
+    "messages": {
+      "uploadSuccess": "图片上传成功",
+      "uploadFailed": "图片上传失败，请稍后重试",
+      "copySuccess": "URL 复制成功",
+      "removeConfirm": "确定删除这张图片吗？",
+      "removeTitle": "删除图片",
+      "removeSuccess": "图片已删除"
     }
   },
   "systemRole": {

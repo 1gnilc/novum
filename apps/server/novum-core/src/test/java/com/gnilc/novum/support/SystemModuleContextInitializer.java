@@ -18,12 +18,20 @@ public final class SystemModuleContextInitializer
                 "sql/schema/06_i18n.sql",
                 "sql/schema/07_rbac_admin.sql",
                 "sql/schema/08_customer.sql",
-                "sql/schema/09_customer_permissions.sql");
+                "sql/schema/09_customer_permissions.sql",
+                "sql/schema/10_image.sql");
         TestPropertyValues.of(
                 "server.servlet.context-path=/api",
                 "spring.messages.basename=i18n/common/messages,i18n/rbac/messages,i18n/system/messages",
                 "spring.messages.fallback-to-system-locale=false",
                 "app.i18n.default-locale=en-US",
+                "app.s3.endpoint=http://127.0.0.1:9",
+                "app.s3.region=auto",
+                "app.s3.bucket=test-images",
+                "app.s3.access-key=test-access-key",
+                "app.s3.secret-key=test-secret-key",
+                "app.s3.public-base-url=https://images.example.test",
+                "app.s3.cleanup-cron=-",
                 "mybatis-plus.configuration.map-underscore-to-camel-case=true",
                 "mybatis-plus.global-config.db-config.logic-delete-field=del",
                 "mybatis-plus.global-config.db-config.logic-delete-value=1",

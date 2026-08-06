@@ -231,11 +231,10 @@ class AdminManagementApiIT extends AdminApiTestSupport {
     }
 
     @Test
-    void exactMaximumProfileLengthsAreAcceptedWithoutTruncation() {
+    void exactMaximumProfileLengthsAndValidAvatarAreAcceptedWithoutTruncation() {
         String auth = bearer(loginAsDefaultAdmin().getAccessToken());
         String nickname = "\uD83D\uDE00".repeat(255);
-        String avatarPrefix = "https://example.test/";
-        String avatar = avatarPrefix + "a".repeat(500 - avatarPrefix.length());
+        String avatar = "images/2026/08/05/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.png";
         String description = "\uD83D\uDE00".repeat(500);
         String homePath = "/" + "h".repeat(499);
 

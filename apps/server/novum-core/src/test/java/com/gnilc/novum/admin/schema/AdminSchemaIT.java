@@ -128,7 +128,7 @@ class AdminSchemaIT {
                    SET del = 1,
                        password = 'operator-managed-hash',
                        nickname = 'Operator Managed',
-                       avatar = 'https://example.test/avatar.png',
+                       avatar = 'images/2026/08/05/avatar.png',
                        description = 'Operator managed description',
                        home_path = '/operator-home',
                        status = 0
@@ -150,7 +150,7 @@ class AdminSchemaIT {
                 """))
                 .containsEntry("password", "operator-managed-hash")
                 .containsEntry("nickname", "Operator Managed")
-                .containsEntry("avatar", "https://example.test/avatar.png")
+                .containsEntry("avatar", "images/2026/08/05/avatar.png")
                 .containsEntry("description", "Operator managed description")
                 .containsEntry("home_path", "/operator-home")
                 .containsEntry("status", true);

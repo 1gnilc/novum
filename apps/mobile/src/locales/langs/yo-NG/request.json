@@ -1,0 +1,9 @@
+{
+  "badRequest": "A kò lè ṣiṣẹ́ lórí ìbéèrè náà.",
+  "forbidden": "A kọ ìráyè.",
+  "internalServerError": "Iṣẹ́ kò sí fún ìgbà díẹ̀.",
+  "networkError": "Ṣàyẹ̀wò ìsopọ̀ nẹ́tíwọ́ọ̀kì rẹ.",
+  "notFound": "A kò rí ohun tí o béèrè.",
+  "requestTimeout": "Àkókò ìbéèrè ti parí.",
+  "unauthorized": "Ìgbà rẹ kò wúlò mọ́."
+}

@@ -38,6 +38,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
         "com.gnilc.novum.auth",
         "com.gnilc.novum.authz",
         "com.gnilc.novum.customer",
+        "com.gnilc.novum.image",
         "com.gnilc.novum.i18n",
         "com.gnilc.novum.session"
 },
@@ -48,7 +49,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
         MybatisPlusConfiguration.class,
         ServletCorsConfiguration.class,
         RestExceptionHandlingConfiguration.class,
-        I18nMessageService.class
+        I18nMessageService.class,
+        com.gnilc.novum.s3.S3Configuration.class
 })
 public class SystemAutoConfiguration {
 

@@ -1,14 +1,15 @@
 import type { App } from 'vue';
 
-import type { AppLocale } from '#/preferences';
+import type { AppLocale } from './locale';
 
 import { createI18n } from 'vue-i18n';
 
 import dayjs from 'dayjs';
 import { Locale } from 'vant';
 
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '#/preferences';
 import { usePreferences } from '#/stores';
+
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from './locale';
 
 type LocaleMessages = Record<string, unknown>;
 type LoadMessages = (locale: AppLocale) => Promise<LocaleMessages>;
@@ -87,6 +88,11 @@ async function loadVantLocale(locale: AppLocale) {
       Locale.use(locale, messages.default);
       break;
     }
+    default: {
+      const messages = await import('vant/es/locale/lang/en-US');
+      Locale.use(locale, messages.default);
+      break;
+    }
   }
 }
 
@@ -97,9 +103,19 @@ async function loadDayjsLocale(locale: AppLocale) {
       dayjs.locale('en');
       break;
     }
+    case 'yo-NG': {
+      await import('dayjs/locale/yo');
+      dayjs.locale('yo');
+      break;
+    }
     case 'zh-CN': {
       await import('dayjs/locale/zh-cn');
       dayjs.locale('zh-cn');
+      break;
+    }
+    default: {
+      await import('dayjs/locale/en');
+      dayjs.locale('en');
       break;
     }
   }

@@ -35,7 +35,7 @@ public class I18nMessageController {
 
     @PostMapping("/page")
     public R<PageResult<I18nMessageItemVo>> getMessagePage(
-            @RequestBody(required = false) I18nMessagePageDto dto) {
+            @RequestBody I18nMessagePageDto dto) {
         return R.success(i18nMessageService.getMessagePage(dto));
     }
 

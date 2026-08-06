@@ -75,6 +75,10 @@
 
 初始化 Customer 登录、刷新、退出三条公开权限，以及绑定到 `customer` 角色的当前信息查询权限。本脚本不创建菜单，依赖 `08_customer.sql`。
 
+### `10_image.sql`
+
+创建 `sys_image` 托管图片表，统一将 Admin 与 Customer 的 `avatar` 字段定义为 S3 对象键，并清理开发阶段遗留的绝对 URL。脚本还会初始化图片直传、确认、分页和删除权限，创建内置 `image:manager` 角色及图片管理菜单，并把该角色授予默认 Admin User。Admin 与 Customer 基线角色只能请求签名和确认上传，图片列表与删除只授予 `image:manager`。
+
 ## 首次部署
 
 准备一个空的 MySQL 8 数据库，并按以下顺序执行：
@@ -98,6 +102,8 @@ mysql --host=<host> --user=<user> --password --database=<database> \
   < deploy/sql/08_customer.sql
 mysql --host=<host> --user=<user> --password --database=<database> \
   < deploy/sql/09_customer_permissions.sql
+mysql --host=<host> --user=<user> --password --database=<database> \
+  < deploy/sql/10_image.sql
 ```
 
 执行前确认目标数据库：
@@ -131,6 +137,7 @@ SELECT id, code, built_in FROM az_role WHERE code = 'admin' AND del = 0;
 - `07_rbac_admin.sql` 会补齐 `built_in` 字段、恢复 RBAC 管理内置资源与关系、收紧管理接口公开状态，但不会覆盖已有动态翻译值；
 - `08_customer.sql` 会恢复默认 Customer、独立 RBAC 用户、内置角色和必需绑定，但不会覆盖已有密码、昵称或头像；
 - `09_customer_permissions.sql` 会恢复四条 Customer 权限和当前信息角色绑定，不创建菜单；
+- `10_image.sql` 会恢复图片表、内置图片管理资源及默认管理员绑定，并清理头像字段中的开发阶段绝对 URL；
 - 脚本不会删除额外的业务数据；
 - 历史版本升级、字段变更和索引变更仍需专门的迁移脚本。
 
@@ -145,8 +152,8 @@ deploy/sql/<script>.sql -> sql/schema/<script>.sql
 当前测试加载方式如下：
 
 - `gnilc-auth-rbac` 的 `RbacSchemaIT` 验证 `01_rbac.sql`、`03_framework_permissions.sql` 和 `04_rbac_permissions.sql`，其他模块集成测试只加载 `01_rbac.sql`；
-- `novum-core` 的 Schema 集成测试验证 `02_admin.sql`、`05_admin_permissions.sql` 至 `09_customer_permissions.sql`，包括上一版结构补列与重复执行；共享应用集成测试按 `01` 至 `09` 顺序初始化；
-- `novum-core` 的 API 测试恢复基线数据时会重新执行 `02_admin.sql` 至 `09_customer_permissions.sql`，确保全库清理后框架、RBAC、Admin、Customer 和国际化权限均恢复到真实部署基线；
+- `novum-core` 的 Schema 集成测试验证 `02_admin.sql`、`05_admin_permissions.sql` 至 `10_image.sql`，包括上一版结构补列与重复执行；共享应用集成测试按 `01` 至 `10` 顺序初始化；
+- `novum-core` 的 API 测试恢复基线数据时会重新执行 `02_admin.sql` 至 `10_image.sql`，确保全库清理后框架、RBAC、Admin、Customer、国际化和图片权限均恢复到真实部署基线；
 - `novum-bootstrap` 只验证最终应用组合和启动，不再复制或执行部署 SQL。
 
 测试数据库固定为 Testcontainers 创建的 `gnilc_auth_test`，测试不会使用 H2、本机 MySQL、开发数据库或共享数据库。

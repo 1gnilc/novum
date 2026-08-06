@@ -13,3 +13,16 @@ spring:
       host: localhost
       port: 6379
       database: 1
+app:
+  s3:
+    endpoint: ''
+    region: auto
+    bucket: ''
+    access-key: ''
+    secret-key: ''
+    public-base-url: ''
+    presign-expiry: 10m
+    pending-retention: 24h
+    cleanup-cron: '0 0 3 * * *'
+    cleanup-zone: UTC
+    max-file-size: 3145728

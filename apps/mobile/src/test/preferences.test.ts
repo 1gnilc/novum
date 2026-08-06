@@ -40,7 +40,7 @@ describe('mobile preferences', () => {
 
     await initStores(createApp(TestRoot), { namespace });
 
-    expect(usePreferences().locale).toBe('zh-CN');
+    expect(usePreferences().locale).toBe('en-US');
   });
 
   it('persists updates under the application namespace', async () => {

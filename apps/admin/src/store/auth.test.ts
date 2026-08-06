@@ -62,6 +62,8 @@ describe('administrator session state', () => {
 
   it('refreshes button access codes when restoring an existing session', async () => {
     api.getAdminUserInfo.mockResolvedValue({
+      avatar: 'https://images.example.test/images/2026/08/06/admin.png',
+      avatarObjectKey: 'images/2026/08/06/admin.png',
       roleCodes: ['admin', 'rbac:manager'],
       userId: '1',
       username: 'admin',
@@ -77,6 +79,12 @@ describe('administrator session state', () => {
       'system:admin:create',
       'system:role:create',
     ]);
+    expect(stores.user.setUserInfo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        avatar: 'https://images.example.test/images/2026/08/06/admin.png',
+        avatarObjectKey: 'images/2026/08/06/admin.png',
+      }),
+    );
   });
 
   it('allows a clean retry after the login request fails', async () => {

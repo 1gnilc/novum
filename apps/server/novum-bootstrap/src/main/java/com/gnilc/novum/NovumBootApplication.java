@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @MapperScan({
         "com.gnilc.novum.admin.dao",
         "com.gnilc.novum.customer.dao",
+        "com.gnilc.novum.image.dao",
         "com.gnilc.novum.i18n.dao"
 })
 public class NovumBootApplication {

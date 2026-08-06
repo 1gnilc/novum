@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.context.support.StaticMessageSource;
 
 import java.util.Locale;
@@ -71,5 +72,26 @@ class I18nMessageServiceTest {
         assertThatThrownBy(() -> messages.get(" "))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Internationalization code must not be blank.");
+    }
+
+    @Test
+    void exposesAllSupportedStaticLocales() {
+        assertThat(SupportedLocale.codes())
+                .containsExactly("zh-CN", "en-US", "ha-NG", "yo-NG");
+    }
+
+    @Test
+    void loadsHausaAndYorubaCommonMessages() {
+        ResourceBundleMessageSource source = new ResourceBundleMessageSource();
+        source.setBasename("i18n/common/messages");
+        source.setDefaultEncoding("UTF-8");
+        I18nMessageService bundleMessages = new I18nMessageService(source, "en-US");
+
+        assertThat(bundleMessages.get(
+                "validation.argument.invalid", Locale.forLanguageTag("ha-NG")))
+                .isEqualTo("Buƙatun ya ƙunshi filayen da ba daidai ba.");
+        assertThat(bundleMessages.get(
+                "validation.argument.invalid", Locale.forLanguageTag("yo-NG")))
+                .isEqualTo("Ibeere naa ni awọn aaye ti ko wulo.");
     }
 }

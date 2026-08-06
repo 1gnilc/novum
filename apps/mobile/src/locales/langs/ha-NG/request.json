@@ -1,0 +1,9 @@
+{
+  "badRequest": "Ba a iya aiwatar da bukatar ba.",
+  "forbidden": "An hana shiga.",
+  "internalServerError": "Sabis ba ya samuwa na dan lokaci.",
+  "networkError": "Duba haɗin intanet dinka.",
+  "notFound": "Ba a sami abin da aka nema ba.",
+  "requestTimeout": "Lokacin bukatar ya kare.",
+  "unauthorized": "Zamanka bai inganta ba."
+}

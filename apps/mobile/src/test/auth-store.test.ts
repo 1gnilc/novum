@@ -20,7 +20,7 @@ vi.mock('#/api/core', () => ({
 
 vi.mock('#/router', () => ({
   router: {
-    currentRoute: { value: { fullPath: '/account' } },
+    currentRoute: { value: { fullPath: '/my' } },
     replace: mocks.replace,
   },
 }));
@@ -108,7 +108,7 @@ describe('useAuthStore', () => {
     expect(auth.userInfo).toBeNull();
     expect(mocks.replace).toHaveBeenCalledWith({
       path: '/login',
-      query: { redirect: '%2Faccount' },
+      query: { redirect: '%2Fmy' },
     });
   });
 

@@ -2,6 +2,7 @@ package com.gnilc.novum.admin.entity.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.gnilc.novum.image.annotation.ObjectKeyToUrl;
 import lombok.Data;
 
 import java.time.Instant;
@@ -40,9 +41,15 @@ public class AdminVo {
     private String nickname;
 
     /**
-     * 头像地址。
+     * 头像 S3 对象键。
      */
     private String avatar;
+
+    /**
+     * 头像公共地址。
+     */
+    @ObjectKeyToUrl("avatar")
+    private String avatarUrl;
 
     /**
      * 管理员描述。

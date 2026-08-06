@@ -22,3 +22,10 @@
 - Add dependencies only for an implemented Mobile use case.
 - Use workspace packages and root catalog versions.
 - Keep Vant components, function APIs, and styles on-demand through the configured resolvers.
+
+## Styling
+
+- Use BEM names for every manually defined CSS class, including classes in scoped Vue style blocks.
+- Use Sass nesting such as `&__element` and `&--modifier` when it makes the BEM relationship clearer.
+- Reserve camelCase for TypeScript and JavaScript identifiers; do not use it as an alternate CSS class convention.
+- Use Tailwind utilities only when the element has no meaningful semantic class name; prefer component styles for reusable component structure and states.

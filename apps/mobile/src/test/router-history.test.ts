@@ -1,19 +1,18 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { createAppRouterHistory } from '#/router/history';
+
 describe('router history', () => {
   afterEach(() => {
     vi.unstubAllEnvs();
   });
 
   it.each([
-    ['hash', '#/account'],
-    ['history', '/account'],
-  ])('uses %s history from the environment', async (mode, href) => {
-    vi.resetModules();
+    ['hash', '#/my'],
+    ['history', '/my'],
+  ])('uses %s history from the environment', (mode, href) => {
     vi.stubEnv('VITE_ROUTER_HISTORY', mode);
 
-    const { router } = await import('#/router');
-
-    expect(router.options.history.createHref('/account')).toBe(href);
+    expect(createAppRouterHistory().createHref('/my')).toBe(href);
   });
 });

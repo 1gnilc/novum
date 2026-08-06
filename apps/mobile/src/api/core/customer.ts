@@ -9,6 +9,7 @@ export interface CustomerSession {
 
 export interface Customer {
   avatar?: string;
+  avatarUrl?: string;
   createTime: string;
   id: string;
   nickname: string;

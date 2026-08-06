@@ -50,12 +50,12 @@ describe('login view', () => {
       history: createMemoryHistory(),
       routes: [
         { component: LoginView, path: '/login' },
-        { component: { template: '<main>Account</main>' }, path: '/account' },
+        { component: { template: '<main>My</main>' }, path: '/my' },
       ],
     });
     await router.push({
       path: '/login',
-      query: { redirect: encodeURIComponent('/account?tab=profile') },
+      query: { redirect: encodeURIComponent('/my?tab=profile') },
     });
     await router.isReady();
     const i18n = await setupI18n(createApp({}));
@@ -74,6 +74,6 @@ describe('login view', () => {
 
     expect(api.login).toHaveBeenCalledWith('customer', '123456');
     expect(auth.accessToken).toBe('new-access');
-    expect(router.currentRoute.value.fullPath).toBe('/account?tab=profile');
+    expect(router.currentRoute.value.fullPath).toBe('/my?tab=profile');
   });
 });

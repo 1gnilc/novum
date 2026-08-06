@@ -139,6 +139,9 @@ class DynamicI18nMessageServiceImplTest {
         assertThatThrownBy(() -> service.saveMessage(save("menu.home.title",
                 value("zh-CN", "首页"))))
                 .isInstanceOf(InvalidArgumentException.class);
+        assertThatThrownBy(() -> service.saveMessage(save("menu.home.title",
+                value("en-US", "Home"), value("ha-NG", "Gida"))))
+                .isInstanceOf(InvalidArgumentException.class);
         verifyNoInteractions(dao);
     }
 

@@ -3,7 +3,8 @@ import type { Theme } from '#/stores';
 
 import { useI18n } from 'vue-i18n';
 
-import LanguageSelector from '#/components/language/index.vue';
+import bannerImage from '#/assets/images/banner-brand.png';
+import NavBar from '#/components/nav-bar/index.vue';
 import { useThemeStore } from '#/stores';
 
 interface ThemeOption {
@@ -22,12 +23,9 @@ const themeOptions: ThemeOption[] = [
 
 <template>
   <main class="page home-page">
+    <NavBar fixed placeholder locale :title="t('home.title')" />
     <header class="home-page__header">
-      <div class="home-page__toolbar">
-        <LanguageSelector />
-      </div>
-      <h1 class="page__heading">{{ t('home.title') }}</h1>
-      <p class="page__subtitle">{{ t('home.subtitle') }}</p>
+      <img class="home-page__banner" :src="bannerImage" alt="Novum" />
     </header>
 
     <section class="home-page__theme" aria-labelledby="theme-heading">
@@ -49,10 +47,7 @@ const themeOptions: ThemeOption[] = [
       </van-radio-group>
     </section>
 
-    <nav class="page__actions">
-      <van-button block icon="contact-o" to="/account" type="primary">
-        {{ t('home.account') }}
-      </van-button>
+    <nav class="home-page__actions">
       <van-button block icon="user-o" plain to="/login" type="primary">
         {{ t('home.login') }}
       </van-button>
@@ -62,38 +57,44 @@ const themeOptions: ThemeOption[] = [
 
 <style scoped src="../styles/page.css"></style>
 
-<style scoped>
+<style scoped lang="scss">
 .home-page {
-  padding: 24px 20px max(32px, env(safe-area-inset-bottom));
-}
+  padding-bottom: 24px;
 
-.home-page__header {
-  padding-top: clamp(32px, 10vh, 88px);
-}
+  &__header {
+    aspect-ratio: 1029 / 480;
+    overflow: hidden;
+    background: var(--color-surface-deep);
+  }
 
-.home-page__toolbar {
-  display: flex;
-  justify-content: flex-end;
-  min-height: 32px;
-  margin-bottom: 32px;
-}
+  &__banner {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
-.home-page__theme {
-  margin-top: 32px;
-}
+  &__theme {
+    padding: 24px 20px 0;
+  }
 
-.home-page__section-heading {
-  margin: 0 0 14px;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 20px;
-  color: var(--van-text-color-2);
-}
+  &__section-heading {
+    margin: 0 0 14px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    color: var(--van-text-color-2);
+  }
 
-.home-page__theme-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 20px;
-  min-height: 24px;
+  &__theme-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    min-height: 24px;
+  }
+
+  &__actions {
+    padding: 24px 20px 0;
+  }
 }
 </style>

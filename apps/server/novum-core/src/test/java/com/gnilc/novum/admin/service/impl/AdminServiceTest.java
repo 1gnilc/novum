@@ -170,6 +170,21 @@ class AdminServiceTest {
     }
 
     @Test
+    void getUserInfoKeepsTheCachedAvatarObjectKeyForResponseProcessing() {
+        String objectKey = "images/2026/08/05/admin.png";
+        AdminVo cached = new AdminVo();
+        cached.setAvatar(objectKey);
+        doReturn(cached).when(cacheService).getUserInfo(any(), any());
+        doReturn(List.of("admin")).when(admins).getRoleCodes(USER_ID);
+
+        AdminVo result = admins.getUserInfo();
+
+        assertThat(result.getAvatar()).isEqualTo(objectKey);
+        assertThat(result.getAvatarUrl()).isNull();
+        assertThat(result.getRoleCodes()).containsExactly("admin");
+    }
+
+    @Test
     void refreshAndLogoutDelegateToTheAdminSessionManager() {
         when(sessions.refreshSession("refresh"))
                 .thenReturn(SessionTokenPair.of("new-access", "refresh"));
@@ -251,7 +266,7 @@ class AdminServiceTest {
         profile.setAvatar("a".repeat(501));
         assertThatThrownBy(() -> admins.updateProfile(profile))
                 .isInstanceOf(InvalidArgumentException.class)
-                .hasMessage("Avatar URL must be at most 500 characters.");
+                .hasMessage("Avatar object key must be at most 500 characters.");
 
         profile.setAvatar(null);
         profile.setDesc("d".repeat(501));
@@ -259,6 +274,24 @@ class AdminServiceTest {
                 .isInstanceOf(InvalidArgumentException.class)
                 .hasMessage("Description must be at most 500 characters.");
         verify(adminDao, never()).update(isNull(), any());
+    }
+
+    @Test
+    void updateProfileAcceptsAvatarValuesWithoutObjectKeyValidation() {
+        stubQueryChain();
+        stubUpdateChain();
+        when(adminDao.selectOne(any())).thenReturn(currentAdmin());
+        when(adminDao.update(isNull(), any())).thenReturn(1);
+        AdminDto profile = new AdminDto();
+        profile.setNickname("Admin");
+        profile.setAvatar("https://images.example.test/avatar.png");
+
+        admins.updateProfile(profile);
+
+        ArgumentCaptor<Wrapper<AdminBo>> update = wrapperCaptor();
+        verify(adminDao).update(isNull(), update.capture());
+        assertThat(asLambdaUpdate(update.getValue()).getParamNameValuePairs())
+                .containsValue("https://images.example.test/avatar.png");
     }
 
     @Test

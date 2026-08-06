@@ -71,6 +71,12 @@ mvn verify
 mvn clean package
 ```
 
+## Profile-specific S3 configuration
+
+S3 values are configured directly under `app.s3` in `application-dev.yml` and `application-prod.yml`; the base `application.yml` does not contain S3 settings. No environment loader or IDEA environment-file configuration is required. Start the backend normally with `pnpm dev:server`, or run/debug `NovumBootApplication` directly in IntelliJ IDEA.
+
+Local development credentials in `application-dev.yml` are workstation-specific and excluded from delivery with Git's `skip-worktree` flag. Production S3 stays disabled until its own endpoint, bucket, credentials, and public base URL are configured; never copy development credentials into the production profile.
+
 All tests live under the owning module's `src/test`; there is no `src/intg-test` source set. Integration tests use disposable Testcontainers services, never H2, local services, or shared services. See the mandatory [testing guide](../../docs/test/testing-guide.md) for naming, module selection, cleanup, and HTTP assertion policy.
 
 ## Commit convention

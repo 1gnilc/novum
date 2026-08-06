@@ -19,7 +19,8 @@ public class CustomerApiTestConfiguration {
             "06_i18n.sql",
             "07_rbac_admin.sql",
             "08_customer.sql",
-            "09_customer_permissions.sql"
+            "09_customer_permissions.sql",
+            "10_image.sql"
     };
 
     @Bean

@@ -6,17 +6,21 @@ import {
   createMenu,
   createPermission,
   createRole,
+  finalizeImageUpload,
   getAdminPage,
   getI18nMessageCategories,
   getI18nMessagePage,
   getI18nMessageValues,
+  getImagePage,
   getMenuTree,
   getPermissionList,
   getRoleList,
   getRoleMenuIds,
   getRolePermissionIds,
+  presignImageUpload,
   removeAdmin,
   removeI18nMessage,
+  removeImage,
   removeMenu,
   removePermission,
   removeRole,
@@ -187,6 +191,24 @@ describe('system management API contracts', () => {
       ['/sys/i18n-message/save', data],
       ['/sys/i18n-message/remove/menu.example.title'],
       ['/sys/i18n-message/bundle/admin'],
+    ]);
+  });
+
+  it('uses the direct image upload and management contracts', async () => {
+    const image = {
+      contentLength: 1024,
+      contentType: 'image/png',
+    };
+    await presignImageUpload(image);
+    await finalizeImageUpload('images/2026/08/05/file.png');
+    await getImagePage({ currentPage: 2, pageSize: 10 });
+    await removeImage('42/unsafe');
+
+    expect(request.post.mock.calls).toEqual([
+      ['/image/presign', image],
+      ['/image/finalize', { objectKey: 'images/2026/08/05/file.png' }],
+      ['/image/page', { currentPage: 2, pageSize: 10 }],
+      ['/image/remove/42%2Funsafe'],
     ]);
   });
 });

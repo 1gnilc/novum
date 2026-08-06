@@ -10,5 +10,6 @@ public final class I18nMessageConstants {
     public static final String DEFAULT_CATEGORY = "default";
     public static final String ADMIN_CATEGORY = "admin";
     public static final List<String> SUPPORTED_CATEGORIES = List.of(DEFAULT_CATEGORY, ADMIN_CATEGORY);
+    public static final List<String> SUPPORTED_LOCALES = List.of("zh-CN", "en-US");
 
 }

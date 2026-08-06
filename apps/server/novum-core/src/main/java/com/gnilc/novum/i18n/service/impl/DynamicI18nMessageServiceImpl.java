@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gnilc.common.base.Preconditions;
 import com.gnilc.common.exception.InvalidArgumentException;
 import com.gnilc.common.i18n.I18nMessageService;
-import com.gnilc.common.i18n.SupportedLocale;
 import com.gnilc.common.utils.PageResult;
 import com.gnilc.novum.i18n.I18nMessageConstants;
 import com.gnilc.novum.i18n.dao.I18nMessageDao;
@@ -59,7 +58,7 @@ public class DynamicI18nMessageServiceImpl extends ServiceImpl<I18nMessageDao, I
                 .orderByAsc(I18nMessageBo::getMessageKey)
                 .list();
         Map<String, Object> bundle = new LinkedHashMap<>();
-        for (String locale : SupportedLocale.codes()) {
+        for (String locale : I18nMessageConstants.SUPPORTED_LOCALES) {
             Map<String, Object> localeMessages = new LinkedHashMap<>();
             rows.stream()
                     .filter(row -> locale.equals(row.getLocale()))
@@ -202,7 +201,7 @@ public class DynamicI18nMessageServiceImpl extends ServiceImpl<I18nMessageDao, I
     }
 
     private String requireLocale(String locale) {
-        Preconditions.checkArgument(SupportedLocale.supports(locale),
+        Preconditions.checkArgument(I18nMessageConstants.SUPPORTED_LOCALES.contains(locale),
                 messages.get("system.i18n.locale.unsupported", locale));
         return locale;
     }
@@ -309,7 +308,7 @@ public class DynamicI18nMessageServiceImpl extends ServiceImpl<I18nMessageDao, I
     }
 
     private List<I18nMessageValueVo> toValues(Map<String, String> values) {
-        return SupportedLocale.codes().stream()
+        return I18nMessageConstants.SUPPORTED_LOCALES.stream()
                 .filter(values::containsKey)
                 .map(locale -> new I18nMessageValueVo(locale, values.get(locale)))
                 .toList();

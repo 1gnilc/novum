@@ -50,7 +50,9 @@ class CustomerServiceImplTest {
         source.setBasename("i18n/system/messages");
         source.setDefaultEncoding("UTF-8");
         customers = org.mockito.Mockito.spy(new CustomerServiceImpl(
-                sessions, roles, new I18nMessageService(source, "en-US")));
+                sessions,
+                roles,
+                new I18nMessageService(source, "en-US")));
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setUserPrincipal(DefaultAccessPrincipal.of(USER_ID));
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
@@ -139,6 +141,8 @@ class CustomerServiceImplTest {
     @Test
     void getUserInfoReturnsOnlyCustomerFieldsAndRoleCodes() {
         CustomerBo customer = customer();
+        String objectKey = "images/2026/08/05/customer.webp";
+        customer.setAvatar(objectKey);
         doReturn(customer).when(customers).getCustomerByUserId(USER_ID);
         RoleBo baseline = new RoleBo();
         baseline.setCode("customer");
@@ -152,7 +156,8 @@ class CustomerServiceImplTest {
         assertThat(info.getUserId()).isEqualTo(USER_ID);
         assertThat(info.getUsername()).isEqualTo("customer");
         assertThat(info.getNickname()).isEqualTo("Customer");
-        assertThat(info.getAvatar()).isNull();
+        assertThat(info.getAvatar()).isEqualTo(objectKey);
+        assertThat(info.getAvatarUrl()).isNull();
         assertThat(info.getRoleCodes()).containsExactly("customer", "member");
     }
 

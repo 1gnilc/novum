@@ -184,7 +184,7 @@ class AdminServiceIT {
     @Test
     void updateClearsExplicitlySubmittedNullableProfileFields() {
         AdminDto create = admin("profile-clear", "Initial#123", List.of());
-        create.setAvatar("https://example.test/avatar.png");
+        create.setAvatar("images/2026/08/05/79f91166-e852-4a9d-a419-dabfb427cb8c.png");
         create.setDesc("Temporary description");
         admins.createAdmin(create);
         AdminBo stored = admins.getAdminByUsername("profile-clear");
@@ -194,7 +194,8 @@ class AdminServiceIT {
         omitted.setNickname("Profile unchanged");
         admins.updateAdmin(omitted);
         assertThat(admins.getAdmin(stored.getId())).satisfies(admin -> {
-            assertThat(admin.getAvatar()).isEqualTo("https://example.test/avatar.png");
+            assertThat(admin.getAvatar()).isEqualTo(
+                    "images/2026/08/05/79f91166-e852-4a9d-a419-dabfb427cb8c.png");
             assertThat(admin.getDescription()).isEqualTo("Temporary description");
         });
 
@@ -291,7 +292,7 @@ class AdminServiceIT {
         ensureRole("operator");
         AdminDto first = admin("page-one", "Strong#123", List.of("operator"));
         first.setNickname("Team Alpha");
-        first.setAvatar("https://example.test/alpha.png");
+        first.setAvatar("images/2026/08/05/458c36d8-f4c3-4270-87f2-55518b553efd.png");
         first.setDesc("First operator");
         admins.createAdmin(first);
         AdminBo firstStored = admins.getAdminByUsername("page-one");
@@ -317,7 +318,9 @@ class AdminServiceIT {
 
         assertThat(page).extracting(AdminVo::getUsername)
                 .containsExactly("page-two", "page-one");
-        assertThat(page.get(1).getAvatar()).isEqualTo("https://example.test/alpha.png");
+        assertThat(page.get(1).getAvatar()).isEqualTo(
+                "images/2026/08/05/458c36d8-f4c3-4270-87f2-55518b553efd.png");
+        assertThat(page.get(1).getAvatarUrl()).isNull();
         assertThat(page.get(1).getDesc()).isEqualTo("First operator");
         assertThat(page.get(1).getHomePath()).isEqualTo("/workspace");
         assertThat(page.get(1).getStatus()).isTrue();
