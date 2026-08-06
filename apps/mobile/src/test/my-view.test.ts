@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { setupI18n } from '#/locales';
 import { useAuthStore, usePreferences } from '#/stores';
-import AccountView from '#/views/account.vue';
+import MyView from '#/views/my.vue';
 
 const api = vi.hoisted(() => ({
   getCustomerUserInfo: vi.fn(),
@@ -18,12 +18,12 @@ const api = vi.hoisted(() => ({
 vi.mock('#/api/core', () => api);
 vi.mock('#/router', () => ({
   router: {
-    currentRoute: { value: { fullPath: '/account' } },
+    currentRoute: { value: { fullPath: '/my' } },
     replace: vi.fn(),
   },
 }));
 
-describe('account view', () => {
+describe('my view behavior', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -37,6 +37,8 @@ describe('account view', () => {
 
   it('loads customer information for an authenticated customer', async () => {
     api.getCustomerUserInfo.mockResolvedValue({
+      avatar: 'images/2026/08/06/customer.png',
+      avatarUrl: 'https://images.example.test/images/2026/08/06/customer.png',
       id: '1',
       nickname: 'Customer',
       roleCodes: ['customer'],
@@ -49,6 +51,9 @@ describe('account view', () => {
     expect(api.getCustomerUserInfo).toHaveBeenCalledOnce();
     expect(auth.userInfo?.username).toBe('customer');
     expect(wrapper.text()).toContain('Customer');
+    expect(wrapper.find('.my-page__avatar img').attributes('src')).toBe(
+      'https://images.example.test/images/2026/08/06/customer.png',
+    );
   });
 
   async function mountView(authenticated = false) {
@@ -62,12 +67,12 @@ describe('account view', () => {
     }
     const router = createRouter({
       history: createMemoryHistory(),
-      routes: [{ component: AccountView, path: '/account' }],
+      routes: [{ component: MyView, path: '/my' }],
     });
-    await router.push('/account');
+    await router.push('/my');
     await router.isReady();
     const i18n = await setupI18n(createApp({}));
-    const wrapper = mount(AccountView, {
+    const wrapper = mount(MyView, {
       global: {
         plugins: [pinia, router, i18n],
       },

@@ -2,6 +2,7 @@ package com.gnilc.novum.customer.entity.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.gnilc.novum.image.annotation.ObjectKeyToUrl;
 import lombok.Data;
 
 import java.time.Instant;
@@ -22,5 +23,7 @@ public class CustomerVo {
     private String username;
     private String nickname;
     private String avatar;
+    @ObjectKeyToUrl("avatar")
+    private String avatarUrl;
     private List<String> roleCodes;
 }

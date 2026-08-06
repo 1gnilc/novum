@@ -25,6 +25,7 @@
         <mysql.test.image>mysql:8.4.0</mysql.test.image>
         <redis.test.image>redis:8-alpine</redis.test.image>
         <rest-assured.version>5.5.6</rest-assured.version>
+        <s3.sdk.version>2.51.0</s3.sdk.version>
     </properties>
 
     <dependencyManagement>
@@ -67,6 +68,18 @@
                 <groupId>io.rest-assured</groupId>
                 <artifactId>rest-assured</artifactId>
                 <version>${rest-assured.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>s3</artifactId>
+                <version>${s3.sdk.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>url-connection-client</artifactId>
+                <version>${s3.sdk.version}</version>
             </dependency>
 
             <dependency>

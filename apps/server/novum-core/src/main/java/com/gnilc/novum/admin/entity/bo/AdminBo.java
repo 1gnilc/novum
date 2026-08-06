@@ -65,7 +65,7 @@ public class AdminBo implements Serializable {
     private String nickname;
 
     /**
-     * 头像地址。
+     * 头像 S3 对象键。
      */
     @TableField(updateStrategy = FieldStrategy.ALWAYS)
     private String avatar;

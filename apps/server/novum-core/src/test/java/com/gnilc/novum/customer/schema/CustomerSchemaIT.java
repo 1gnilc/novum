@@ -86,7 +86,7 @@ class CustomerSchemaIT {
                        status = 0,
                        password = 'operator-managed-hash',
                        nickname = 'Operator Managed',
-                       avatar = 'https://example.test/customer.png'
+                       avatar = 'images/2026/08/05/customer.png'
                  WHERE username = 'customer'
                 """);
 
@@ -105,7 +105,7 @@ class CustomerSchemaIT {
                 """))
                 .containsEntry("password", "operator-managed-hash")
                 .containsEntry("nickname", "Operator Managed")
-                .containsEntry("avatar", "https://example.test/customer.png")
+                .containsEntry("avatar", "images/2026/08/05/customer.png")
                 .containsEntry("status", true)
                 .containsEntry("del", 0);
     }

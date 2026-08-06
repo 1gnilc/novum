@@ -37,7 +37,7 @@ public class AdminController {
      * 分页查询管理员。
      */
     @PostMapping("/page")
-    public R<PageResult<AdminVo>> getAdminPage(@RequestBody(required = false) AdminPageDto dto) {
+    public R<PageResult<AdminVo>> getAdminPage(@RequestBody AdminPageDto dto) {
         return R.success(adminService.getAdminPage(dto));
     }
 
@@ -127,7 +127,7 @@ public class AdminController {
      * 更新当前管理员密码。
      */
     @PostMapping("/password/update")
-    public R<?> updatePassword(@RequestBody(required = false) JSONObject body) {
+    public R<?> updatePassword(@RequestBody JSONObject body) {
         String oldPassword = body == null ? null : body.getString("oldPassword");
         String newPassword = body == null ? null : body.getString("newPassword");
         adminService.updatePassword(oldPassword, newPassword);

@@ -28,6 +28,12 @@
 - Run fast backend tests with `mvn -f apps/server/pom.xml test`.
 - Run the complete backend suite with `mvn -f apps/server/pom.xml verify`. It requires Docker for Testcontainers MySQL 8 and Redis 8; do not substitute H2, local services, or shared services.
 
+## Agent Development Ports
+
+- When an AI agent starts Admin or Mobile in development, it must use the port currently configured in the owning application's `.env.development`: `VITE_PORT` for Admin and `VITE_APP_PORT` for Mobile. Start the normal development command so Vite loads that file; do not hard-code the current value or override it with a command-line port.
+- When an AI agent starts the backend, it must use the current `server.port` value from `apps/server/novum-bootstrap/src/main/resources/application.yml`; do not hard-code or override that value in the launch command.
+- Immediately before starting any of these services, an AI agent must read the current configured port, inspect that exact port, and automatically terminate any process listening on it. It must not choose a different port or modify application configuration merely to avoid a port conflict.
+
 ## Git And Delivery
 
 - Leave changes uncommitted unless the user explicitly requests a commit.

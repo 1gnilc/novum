@@ -71,6 +71,12 @@ mvn verify
 mvn clean package
 ```
 
+## 分环境 S3 配置
+
+S3 配置直接放在 `application-dev.yml` 和 `application-prod.yml` 的 `app.s3` 下，基础 `application.yml` 不包含 S3 配置。不再需要环境变量加载脚本或 IDEA 环境文件配置。使用 `pnpm dev:server` 正常启动，或者在 IntelliJ IDEA 中直接运行或调试 `NovumBootApplication` 即可。
+
+`application-dev.yml` 中的本地开发凭据仅用于当前工作环境，并通过 Git 的 `skip-worktree` 标记排除在交付内容之外。生产环境默认关闭 S3，必须配置独立的 endpoint、bucket、凭据和 public base URL 后才能启用；禁止把开发凭据复制到生产配置。
+
 所有测试都放在所属模块的 `src/test` 下，不使用 `src/intg-test` source set。集成测试只使用一次性的 Testcontainers 服务，不使用 H2、本地服务或共享服务。测试命名、模块选择、数据清理和 HTTP 断言规则见必须遵循的[测试指南](../../docs/test/testing-guide.md)。
 
 ## 提交规范

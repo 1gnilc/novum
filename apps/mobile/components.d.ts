@@ -12,10 +12,12 @@ export {};
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    Language: typeof import('./src/components/language/index.vue')['default']
+    Locale: typeof import('./src/components/locale/index.vue')['default']
     LoginRequired: typeof import('./src/components/authentication/login-required.vue')['default']
+    NavBar: typeof import('./src/components/nav-bar/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Tabbar: typeof import('./src/components/tabbar/index.vue')['default']
     VanActionSheet: typeof import('vant/es')['ActionSheet']
     VanButton: typeof import('vant/es')['Button']
     VanCell: typeof import('vant/es')['Cell']
@@ -24,19 +26,25 @@ declare module 'vue' {
     VanEmpty: typeof import('vant/es')['Empty']
     VanField: typeof import('vant/es')['Field']
     VanForm: typeof import('vant/es')['Form']
+    VanIcon: typeof import('vant/es')['Icon']
+    VanImage: typeof import('vant/es')['Image']
     VanNavBar: typeof import('vant/es')['NavBar']
     VanRadio: typeof import('vant/es')['Radio']
     VanRadioGroup: typeof import('vant/es')['RadioGroup']
     VanSkeleton: typeof import('vant/es')['Skeleton']
+    VanTabbar: typeof import('vant/es')['Tabbar']
+    VanTabbarItem: typeof import('vant/es')['TabbarItem']
   }
 }
 
 // For TSX support
 declare global {
-  const Language: (typeof import('./src/components/language/index.vue'))['default'];
+  const Locale: (typeof import('./src/components/locale/index.vue'))['default'];
   const LoginRequired: (typeof import('./src/components/authentication/login-required.vue'))['default'];
+  const NavBar: (typeof import('./src/components/nav-bar/index.vue'))['default'];
   const RouterLink: (typeof import('vue-router'))['RouterLink'];
   const RouterView: (typeof import('vue-router'))['RouterView'];
+  const Tabbar: (typeof import('./src/components/tabbar/index.vue'))['default'];
   const VanActionSheet: (typeof import('vant/es'))['ActionSheet'];
   const VanButton: (typeof import('vant/es'))['Button'];
   const VanCell: (typeof import('vant/es'))['Cell'];
@@ -45,8 +53,12 @@ declare global {
   const VanEmpty: (typeof import('vant/es'))['Empty'];
   const VanField: (typeof import('vant/es'))['Field'];
   const VanForm: (typeof import('vant/es'))['Form'];
+  const VanIcon: (typeof import('vant/es'))['Icon'];
+  const VanImage: (typeof import('vant/es'))['Image'];
   const VanNavBar: (typeof import('vant/es'))['NavBar'];
   const VanRadio: (typeof import('vant/es'))['Radio'];
   const VanRadioGroup: (typeof import('vant/es'))['RadioGroup'];
   const VanSkeleton: (typeof import('vant/es'))['Skeleton'];
+  const VanTabbar: (typeof import('vant/es'))['Tabbar'];
+  const VanTabbarItem: (typeof import('vant/es'))['TabbarItem'];
 }

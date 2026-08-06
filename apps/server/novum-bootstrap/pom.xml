@@ -56,6 +56,7 @@
                     <include>07_rbac_admin.sql</include>
                     <include>08_customer.sql</include>
                     <include>09_customer_permissions.sql</include>
+                    <include>10_image.sql</include>
                 </includes>
             </testResource>
         </testResources>

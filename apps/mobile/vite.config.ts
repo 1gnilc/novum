@@ -1,6 +1,7 @@
 import process from 'node:process';
 import { fileURLToPath, URL } from 'node:url';
 
+import tailwindcss from '@tailwindcss/vite';
 import { VantResolver } from '@vant/auto-import-resolver';
 import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
@@ -13,6 +14,7 @@ export default defineConfig(({ mode }) => {
   return {
     base: env.VITE_APP_BASE || '/',
     plugins: [
+      tailwindcss(),
       vue(),
       AutoImport({
         dts: 'auto-imports.d.ts',

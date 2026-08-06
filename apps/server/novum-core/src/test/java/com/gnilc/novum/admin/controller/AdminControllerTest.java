@@ -10,6 +10,8 @@ import com.gnilc.novum.admin.entity.vo.AdminTokenVo;
 import com.gnilc.novum.admin.entity.vo.AdminVo;
 import com.gnilc.auth.authz.rbac.entity.vo.MenuRouteVo;
 import com.gnilc.novum.admin.service.AdminService;
+import com.gnilc.novum.image.service.ImageService;
+import com.gnilc.novum.image.support.ObjectKeyToUrlProcessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -33,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class AdminControllerTest {
     private final AdminService service = mock(AdminService.class);
+    private final ImageService imageService = mock(ImageService.class);
     private MockMvc mvc;
 
     @BeforeEach
@@ -44,7 +47,8 @@ class AdminControllerTest {
         mvc = MockMvcBuilders.standaloneSetup(
                 new AdminController(service))
                 .setControllerAdvice(
-                        new RestExceptionHandlingConfiguration.RestExceptionControllerAdvice(messages))
+                        new RestExceptionHandlingConfiguration.RestExceptionControllerAdvice(messages),
+                        new ObjectKeyToUrlProcessor(imageService))
                 .build();
     }
 
@@ -126,6 +130,9 @@ class AdminControllerTest {
     void profileAndAuthorizationReadRoutesPreserveResponseShape() throws Exception {
         AdminVo admin = new AdminVo();
         admin.setUsername("alice");
+        admin.setAvatar("images/2026/08/05/alice.png");
+        when(imageService.getUrl("images/2026/08/05/alice.png"))
+                .thenReturn("https://images.example.test/images/2026/08/05/alice.png");
         when(service.getUserInfo()).thenReturn(admin);
         when(service.getRoleCodes()).thenReturn(List.of("admin"));
         when(service.getMenuAccessCodes()).thenReturn(List.of("user:create"));
@@ -134,7 +141,11 @@ class AdminControllerTest {
         when(service.getMenuRoutes()).thenReturn(List.of(route));
 
         mvc.perform(get("/sys/admin/user-info"))
-                .andExpect(jsonPath("$.data.username").value("alice"));
+                .andExpect(jsonPath("$.data.username").value("alice"))
+                .andExpect(jsonPath("$.data.avatar")
+                        .value("images/2026/08/05/alice.png"))
+                .andExpect(jsonPath("$.data.avatarUrl")
+                        .value("https://images.example.test/images/2026/08/05/alice.png"));
         mvc.perform(get("/sys/admin/role-codes"))
                 .andExpect(jsonPath("$.data[0]").value("admin"));
         mvc.perform(get("/sys/admin/menu/access-codes"))
@@ -152,7 +163,7 @@ class AdminControllerTest {
                           "id": 99,
                           "username": "ignored",
                           "nickname": "Alice",
-                          "avatar": "https://example.test/alice.png",
+                          "avatar": "images/2026/08/05/alice.png",
                           "desc": "Platform administrator",
                           "status": false,
                           "roleCodes": ["ignored"]
@@ -164,7 +175,7 @@ class AdminControllerTest {
         var captor = org.mockito.ArgumentCaptor.forClass(AdminDto.class);
         verify(service).updateProfile(captor.capture());
         assertThat(captor.getValue().getNickname()).isEqualTo("Alice");
-        assertThat(captor.getValue().getAvatar()).isEqualTo("https://example.test/alice.png");
+        assertThat(captor.getValue().getAvatar()).isEqualTo("images/2026/08/05/alice.png");
         assertThat(captor.getValue().getDesc()).isEqualTo("Platform administrator");
     }
 

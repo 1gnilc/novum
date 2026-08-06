@@ -7,6 +7,7 @@ import { requestClient } from '#/api/request';
 export namespace AdminApi {
   export interface Admin {
     avatar?: string;
+    avatarUrl?: string;
     createTime: string;
     desc?: string;
     homePath: string;
@@ -30,7 +31,10 @@ export async function getAdminPage(
 }
 
 export async function createAdmin(
-  data: Omit<AdminApi.Admin, 'createTime' | 'id' | 'roleCodes' | 'userId'> & {
+  data: Omit<
+    AdminApi.Admin,
+    'avatarUrl' | 'createTime' | 'id' | 'roleCodes' | 'userId'
+  > & {
     password: string;
   },
 ) {
@@ -39,7 +43,10 @@ export async function createAdmin(
 
 export async function updateAdmin(
   data: Partial<
-    Omit<AdminApi.Admin, 'createTime' | 'id' | 'roleCodes' | 'userId'>
+    Omit<
+      AdminApi.Admin,
+      'avatarUrl' | 'createTime' | 'id' | 'roleCodes' | 'userId'
+    >
   > &
     Pick<AdminApi.Admin, 'id'> & { password?: null | string },
 ) {

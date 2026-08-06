@@ -17,6 +17,8 @@ describe('locale setup', () => {
     expect(Object.keys(localeResources)).toEqual(
       expect.arrayContaining([
         '../locales/langs/en-US/home.json',
+        '../locales/langs/ha-NG/home.json',
+        '../locales/langs/yo-NG/home.json',
         '../locales/langs/zh-CN/home.json',
       ]),
     );
@@ -51,8 +53,8 @@ describe('locale setup', () => {
     expect(preferences.locale).toBe('zh-CN');
     expect($te('home.title')).toBe(true);
     expect($t('home.title')).toBe('Novum');
-    expect($te('account.title')).toBe(true);
-    expect($t('account.title')).toBe('账户');
+    expect($te('my.title')).toBe(true);
+    expect($t('my.title')).toBe('我的');
 
     preferences.setLocale('en-US');
     await loadLocaleMessages('en-US');
@@ -61,6 +63,18 @@ describe('locale setup', () => {
     expect(useCurrentLang().value).toBe('en-US');
     expect(dayjs.locale()).toBe('en');
     expect(preferences.locale).toBe('en-US');
-    expect($t('account.title')).toBe('Account');
+    expect($t('my.title')).toBe('My');
+
+    preferences.setLocale('ha-NG');
+    await loadLocaleMessages('ha-NG');
+    expect(useCurrentLang().value).toBe('ha-NG');
+    expect(dayjs.locale()).toBe('en');
+    expect($t('my.title')).toBe('Nawa');
+
+    preferences.setLocale('yo-NG');
+    await loadLocaleMessages('yo-NG');
+    expect(useCurrentLang().value).toBe('yo-NG');
+    expect(dayjs.locale()).toBe('yo');
+    expect($t('my.title')).toBe('Tèmi');
   });
 });

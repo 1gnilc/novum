@@ -25,7 +25,7 @@ describe('login required', () => {
   });
 
   it('shows after entering a protected route and resets dismissal on navigation', async () => {
-    const { auth, router, wrapper } = await mountSheet('/account');
+    const { auth, router, wrapper } = await mountSheet('/my');
     const sheet = wrapper.findComponent(ActionSheet);
 
     expect(wrapper.findComponent(RouterView).exists()).toBe(false);
@@ -35,7 +35,7 @@ describe('login required', () => {
     await nextTick();
     expect(sheet.props('show')).toBe(false);
 
-    await router.push('/account?tab=profile');
+    await router.push('/my?tab=profile');
     await nextTick();
     expect(sheet.props('show')).toBe(true);
 
@@ -45,7 +45,7 @@ describe('login required', () => {
   });
 
   it('opens the public login route with the current full path as redirect', async () => {
-    const { router, wrapper } = await mountSheet('/account?tab=profile');
+    const { router, wrapper } = await mountSheet('/my?tab=profile');
     const sheet = wrapper.findComponent(ActionSheet);
 
     sheet.vm.$emit('select', { name: 'Go', value: 'login' });
@@ -53,7 +53,7 @@ describe('login required', () => {
 
     expect(router.currentRoute.value.path).toBe('/login');
     expect(router.currentRoute.value.query.redirect).toBe(
-      '%2Faccount%3Ftab%3Dprofile',
+      '%2Fmy%3Ftab%3Dprofile',
     );
   });
 
@@ -65,7 +65,7 @@ describe('login required', () => {
         {
           component: page,
           meta: { requiresAuth: true },
-          path: '/account',
+          path: '/my',
         },
       ],
     });

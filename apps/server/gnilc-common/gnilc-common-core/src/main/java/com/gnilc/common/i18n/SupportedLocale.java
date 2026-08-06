@@ -9,7 +9,9 @@ import java.util.Locale;
  */
 public enum SupportedLocale {
     ZH_CN("zh-CN"),
-    EN_US("en-US");
+    EN_US("en-US"),
+    HA_NG("ha-NG"),
+    YO_NG("yo-NG");
 
     private final String code;
 

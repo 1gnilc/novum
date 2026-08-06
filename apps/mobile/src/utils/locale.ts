@@ -1,4 +1,4 @@
-export const DEFAULT_LOCALE = 'en-US';
+import { DEFAULT_LOCALE } from '#/locales/locale';
 
 function getLocale(
   supportedLocales: readonly string[],

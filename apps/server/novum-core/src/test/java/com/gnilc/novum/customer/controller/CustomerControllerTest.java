@@ -7,6 +7,8 @@ import com.gnilc.common.i18n.I18nMessageService;
 import com.gnilc.novum.customer.entity.vo.CustomerTokenVo;
 import com.gnilc.novum.customer.entity.vo.CustomerVo;
 import com.gnilc.novum.customer.service.CustomerService;
+import com.gnilc.novum.image.service.ImageService;
+import com.gnilc.novum.image.support.ObjectKeyToUrlProcessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -26,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class CustomerControllerTest {
     private final CustomerService service = mock(CustomerService.class);
+    private final ImageService imageService = mock(ImageService.class);
     private MockMvc mvc;
 
     @BeforeEach
@@ -37,7 +40,8 @@ class CustomerControllerTest {
         mvc = MockMvcBuilders.standaloneSetup(
                 new CustomerController(service))
                 .setControllerAdvice(
-                        new RestExceptionHandlingConfiguration.RestExceptionControllerAdvice(messages))
+                        new RestExceptionHandlingConfiguration.RestExceptionControllerAdvice(messages),
+                        new ObjectKeyToUrlProcessor(imageService))
                 .build();
     }
 
@@ -87,13 +91,20 @@ class CustomerControllerTest {
         customer.setUserId(8L);
         customer.setUsername("customer");
         customer.setNickname("Customer");
+        customer.setAvatar("images/2026/08/05/customer.webp");
         customer.setRoleCodes(List.of("customer"));
+        when(imageService.getUrl("images/2026/08/05/customer.webp"))
+                .thenReturn("https://images.example.test/images/2026/08/05/customer.webp");
         when(service.getUserInfo()).thenReturn(customer);
 
         mvc.perform(get("/customer/user-info"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(7))
                 .andExpect(jsonPath("$.data.username").value("customer"))
+                .andExpect(jsonPath("$.data.avatar")
+                        .value("images/2026/08/05/customer.webp"))
+                .andExpect(jsonPath("$.data.avatarUrl")
+                        .value("https://images.example.test/images/2026/08/05/customer.webp"))
                 .andExpect(jsonPath("$.data.roleCodes[0]").value("customer"))
                 .andExpect(jsonPath("$.data.password").doesNotExist())
                 .andExpect(jsonPath("$.data.status").doesNotExist());

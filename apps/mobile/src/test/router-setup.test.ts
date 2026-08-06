@@ -15,10 +15,31 @@ describe('router setup', () => {
     expect(rootRoute?.component).toBe(BasicLayout);
     expect(rootRoute?.children?.map(({ path }) => path)).toEqual([
       '',
+      'market',
+      'team',
+      'fund',
+      'my',
       'login',
-      'account',
       ':pathMatch(.*)*',
     ]);
+    expect(rootRoute?.children?.map(({ name }) => name)).toEqual([
+      'home',
+      'market',
+      'team',
+      'fund',
+      'my',
+      'login',
+      'not-found',
+    ]);
+    const children = rootRoute?.children ?? [];
+    expect(
+      children.find(({ name }) => name === 'market')?.meta?.requiresAuth,
+    ).toBeUndefined();
+    for (const name of ['team', 'fund', 'my']) {
+      expect(
+        children.find((route) => route.name === name)?.meta?.requiresAuth,
+      ).toBe(true);
+    }
   });
 
   it('synchronizes the localized page title', async () => {
@@ -33,13 +54,13 @@ describe('router setup', () => {
 
     expect(document.title).toBe('Novum - Novum Mobile');
 
-    await router.push('/account');
+    await router.push('/my');
     await nextTick();
-    expect(document.title).toBe('账户 - Novum Mobile');
+    expect(document.title).toBe('我的 - Novum Mobile');
 
     preferences.setLocale('en-US');
     await loadLocaleMessages('en-US');
     await nextTick();
-    expect(document.title).toBe('Account - Novum Mobile');
+    expect(document.title).toBe('My - Novum Mobile');
   });
 });

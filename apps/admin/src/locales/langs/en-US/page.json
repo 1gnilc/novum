@@ -16,8 +16,8 @@
     "form": {
       "nickname": "Nickname",
       "nicknamePlaceholder": "Enter your nickname",
-      "avatarUrl": "Avatar URL",
-      "avatarPlaceholder": "Enter an avatar URL, or leave blank to clear it",
+      "avatarUrl": "Avatar object key",
+      "avatarPlaceholder": "Enter an avatar object key, or leave blank to clear it",
       "description": "Bio",
       "oldPassword": "Current Password",
       "oldPasswordPlaceholder": "Enter your current password",
@@ -148,7 +148,7 @@
       "passwordUnchanged": "Leave blank to keep the current password",
       "nickname": "Nickname",
       "homePath": "Default home",
-      "avatar": "Avatar URL",
+      "avatar": "Avatar object key",
       "description": "Description",
       "status": "Enabled"
     },
@@ -168,6 +168,40 @@
       "statusTitle": "Change status",
       "statusSuccess": "Status updated",
       "currentProtected": "The current administrator cannot be deleted"
+    }
+  },
+  "systemImage": {
+    "title": "Images",
+    "actions": {
+      "upload": "Upload image",
+      "selectFile": "Select image",
+      "previewImage": "Preview image",
+      "copyUrl": "Copy URL"
+    },
+    "drawer": {
+      "uploadTitle": "Upload image"
+    },
+    "form": {
+      "file": "Image",
+      "fileHint": "JPEG, PNG, or WebP; maximum file size 3 MiB"
+    },
+    "table": {
+      "preview": "Preview",
+      "url": "URL",
+      "createTime": "Created"
+    },
+    "validation": {
+      "fileRequired": "Select an image to upload",
+      "invalidFile": "Select a JPEG, PNG, or WebP image no larger than 3 MiB",
+      "singleFile": "Only one image can be uploaded at a time"
+    },
+    "messages": {
+      "uploadSuccess": "Image uploaded",
+      "uploadFailed": "Image upload failed. Try again later.",
+      "copySuccess": "URL copied",
+      "removeConfirm": "Delete this image?",
+      "removeTitle": "Delete image",
+      "removeSuccess": "Image deleted"
     }
   },
   "systemRole": {

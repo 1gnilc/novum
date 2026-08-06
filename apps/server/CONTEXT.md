@@ -27,3 +27,11 @@ The Server establishes identities, evaluates access to protected targets, and en
 **Access Decision**: The allow or deny result produced by permission checking for one access context.
 
 **Access Denied Handling**: The environment-specific action taken after a denied access decision, such as returning an HTTP response, rejecting a message, or stopping a task.
+
+## Image Storage
+
+**Managed Image**: An image uploaded through Novum and confirmed as available for application use. Business resources reference it by its Image Object Key rather than by a public URL.
+
+**Image Object Key**: The stable storage identity of a Managed Image. A public presentation URL may change without changing this identity. _Avoid_: Image URL, Image ID
+
+**Image Upload**: The lifecycle that reserves storage for an image and ends when the stored object is confirmed as a Managed Image or the reservation expires.

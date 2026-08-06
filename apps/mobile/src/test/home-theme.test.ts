@@ -18,7 +18,7 @@ describe('home theme example', () => {
     const wrapper = mount(Home, {
       global: {
         plugins: [pinia, i18n],
-        stubs: { LanguageSelector: true },
+        stubs: { NavBar: true },
       },
     });
 

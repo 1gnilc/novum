@@ -38,6 +38,8 @@ public class AdminApiTestConfiguration {
                     .execute(dataSource);
             new ResourceDatabasePopulator(new ClassPathResource("sql/schema/09_customer_permissions.sql"))
                     .execute(dataSource);
+            new ResourceDatabasePopulator(new ClassPathResource("sql/schema/10_image.sql"))
+                    .execute(dataSource);
             jdbc.update("""
                     insert into az_role (del, create_time, code, name, built_in)
                     values (0, now(), 'limited', 'Limited', 0)

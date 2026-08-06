@@ -1,12 +1,11 @@
-const SUPPORTED_LOCALES = ['zh-CN', 'en-US'] as const;
+import type { AppLocale } from '#/locales/locale';
 
-type AppLocale = (typeof SUPPORTED_LOCALES)[number];
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '#/locales/locale';
 
 interface Preferences {
   locale: AppLocale;
 }
 
-const DEFAULT_LOCALE: AppLocale = 'zh-CN';
 const defaultPreferences: Preferences = {
   locale: DEFAULT_LOCALE,
 };

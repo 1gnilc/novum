@@ -3,7 +3,8 @@ import { reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
-import LanguageSelector from '#/components/language/index.vue';
+import Locale from '#/components/locale/index.vue';
+import NavBar from '#/components/nav-bar/index.vue';
 import { resolveRedirect } from '#/router/redirect';
 import { useAuthStore } from '#/stores';
 
@@ -31,15 +32,11 @@ async function submit() {
 
 <template>
   <main class="page">
-    <van-nav-bar
-      :title="t('login.title')"
-      left-arrow
-      @click-left="router.push('/')"
-    >
+    <NavBar :title="t('login.title')" left-arrow>
       <template #right>
-        <LanguageSelector />
+        <Locale />
       </template>
-    </van-nav-bar>
+    </NavBar>
 
     <section class="page__content">
       <van-form class="page__form" validate-first @submit="submit">

@@ -425,6 +425,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, AdminBo> implements 
         boolean usernameSpecified = dto.getUsername() != null;
         boolean nicknameSpecified = dto.getNickname() != null;
         BeanPropertyUtils.trimToNull(dto, "password");
+        if (dto.isAvatarSpecified()) {
+            dto.setAvatar(StringUtils.trimToNull(dto.getAvatar()));
+        }
         AdminBo admin = update ? getAdmin(dto.getId()) : null;
         if (update) {
             Preconditions.checkCondition(admin != null, messages.get("system.admin.notFound"));

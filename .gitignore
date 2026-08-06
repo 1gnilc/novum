@@ -28,6 +28,9 @@ vite.config.mjs.*
 vite.config.js.*
 vite.config.ts.*
 
+# Local development credentials
+/docs/plans/s3.txt
+
 # Editors and developer-specific AI tools
 .idea/
 *.iml
