@@ -29,7 +29,10 @@ vite.config.js.*
 vite.config.ts.*
 
 # Local development credentials
-/docs/plans/s3.txt
+/docs/local
+
+# Local deployment data
+/apps/server/novum-core/src/main/resources/IP2LOCATION-LITE-DB3.BIN.zip
 
 # Editors and developer-specific AI tools
 .idea/
