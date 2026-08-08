@@ -21,3 +21,4 @@ All repository ADRs live in this directory, including decisions scoped to a sing
 - [0017: Share session mechanics without sharing identity](0017-share-session-mechanics-without-sharing-identity.md)
 - [0018: Inject request error messages at the application boundary](0018-inject-request-error-messages-at-the-application-boundary.md)
 - [0019: Manage images by S3 object key](0019-manage-images-by-s3-object-key.md)
+- [0020: Require Customer registration](0020-require-customer-registration.md)

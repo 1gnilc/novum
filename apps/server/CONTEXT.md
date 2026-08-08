@@ -35,3 +35,13 @@ The Server establishes identities, evaluates access to protected targets, and en
 **Image Object Key**: The stable storage identity of a Managed Image. A public presentation URL may change without changing this identity. _Avoid_: Image URL, Image ID
 
 **Image Upload**: The lifecycle that reserves storage for an image and ends when the stored object is confirmed as a Managed Image or the reservation expires.
+
+## Settings
+
+**Setting**: A backend-owned runtime business rule persisted as a unique uppercase constant name and string value. Project code accesses a Setting through its centralized named constant rather than repeating its name literal. _Avoid_: Business Setting, Application Property, Feature Flag
+
+**Setting Log**: The append-only record of one Admin change to a Setting, retaining its previous value, new value, Admin identity, and creation time.
+
+## Client Network Identity
+
+**Client IP**: The IP recorded for a Customer request. Resolve the first valid address in `X-Forwarded-For`; if absent or invalid, use the Servlet remote address; if neither is valid, use `unknown`. _Avoid_: Proxy IP
