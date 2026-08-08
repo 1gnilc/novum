@@ -1,5 +1,7 @@
 # Novum UI Style Guide
 
+[中文版本](README_zh-CN.md)
+
 Measured mobile UI reference for `https://www.novumaivip.com`. It records the observed visual system and does not redesign the source site.
 
 ## View
